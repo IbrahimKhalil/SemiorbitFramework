@@ -1,0 +1,74 @@
+<?php
+/**@var Semiorbit\Field\Select $field * */
+
+$myTemplate = $field->ActiveTemplate();
+
+?>
+
+<?= $myTemplate->OpenField($field) ?>
+
+<?= $myTemplate->OpenInput($field) ?>
+
+    <select class="<?= $field->InputDefaultCssClass() ?>" <?= $field->InputAttrs() ?>
+            title="<?= htmlspecialchars($field->LabelText()) ?>">
+
+        <?php
+
+        $selected_options = $top_options = $fkey_options = $bottom_options = '';
+
+        $skip_options = array();
+
+        if ($field->SelectedFirst) :
+
+            foreach ($field->SelectedOptions() as $key => $value) :
+
+                $skip_options[] = $key;
+
+                $selected_options .= $field->OptionHtml($key, $value) . PHP_EOL;
+
+            endforeach;
+
+        endif;
+
+        foreach ($field->Options() as $opt_key => $opt) :
+
+            if ($field->SelectedFirst && in_array($opt_key, $skip_options)) continue;
+
+            /** @var Semiorbit\Field\Option $opt */
+
+            $option_html = $field->OptionHtml($opt_key, $opt->Value, $opt->EnableTextFormatting, $opt->Disabled);
+
+            if ($opt->AtBottom) $bottom_options .= $option_html . PHP_EOL;
+
+            else $top_options .= $option_html . PHP_EOL;
+
+        endforeach;
+
+
+        foreach ($field->ForeignKeyOptions() as $key => $value) :
+
+            if ($field->SelectedFirst && in_array($key, $skip_options)) continue;
+
+            $fkey_options .= $field->OptionHtml($key, $value) . PHP_EOL;
+
+        endforeach;
+
+        ?>
+
+        <?= $selected_options ?>
+
+        <?= $top_options ?>
+
+        <?= $fkey_options ?>
+
+        <?= $bottom_options ?>
+
+    </select>
+
+<?= $myTemplate->CloseInput($field) ?>
+
+<?= $myTemplate->OpenLabel($field) . htmlspecialchars($field->LabelText()) . $field->RequiredMark() . $myTemplate->CloseLabel($field) ?>
+
+<?= $myTemplate->OpenNote($field) . ($field->Note) . $myTemplate->CloseNote($field) ?>
+
+<?= $myTemplate->CloseField($field) ?>

@@ -1,0 +1,19 @@
+<?php if ( $this->Open ) : ?>
+
+<section class="rel-links-panel">
+
+<?php if ($this->Title != '') :?>
+	<h2 class="rel-links-title"><?=$this->Title?></h2>
+<?php endif; ?>
+
+
+<div class="rel-links-body" <?php if ($box_id) : ?> id="<?=$this->ID?>" <?php endif; ?>>
+
+<?php endif;
+
+if ( $this->Close ) : ?>
+
+</div>
+</section>
+
+<?php endif;

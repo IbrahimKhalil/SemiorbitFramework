@@ -1,0 +1,24 @@
+<?php
+/**@var Semiorbit\Field\Checkbox $field **/
+
+$myTemplate = $field->ActiveTemplate();
+
+$checked_html = (bool) $field->Value == true?  'checked value="1"' : 'value="0"';
+
+?>
+
+<?= $myTemplate->OpenField( $field ) ?>
+
+	<?= $myTemplate->OpenLabel( $field ) . $myTemplate->CloseLabel( $field )?>
+
+	<?= $myTemplate->OpenInput( $field ) ?>
+
+		<input type="checkbox"  class="<?= $field->InputDefaultCssClass() ?>" value="<?= htmlspecialchars( $field->Value ) ?>" <?= $field->InputAttrs() ?>   title="<?=  htmlspecialchars( $field->LabelText() ) ?>"
+            <?= $checked_html ?>  onclick="if(this.checked){this.value='1';}else{this.value='0';}" />
+        &nbsp; <label for="<?=  $field->DomInputID() ?>"><?= htmlspecialchars( $field->LabelText() ) ?></label>
+
+	<?= $myTemplate->CloseInput( $field ) ?>
+
+	<?= $myTemplate->OpenNote( $field ) . ( $field->Note ) . $myTemplate->CloseNote( $field ) ?>
+
+<?= $myTemplate->CloseField( $field ) ?>

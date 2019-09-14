@@ -1,0 +1,10 @@
+<?php
+if ( $this->type == 1 || in_array( $this->err_str_handle, array(1, 10, 11, 15, 21) ) ) :
+    $icon = 'tick';
+    $css_class= 'done-msg';
+else :
+    $icon = 'warning';
+    $css_class = '';
+endif;
+?>
+<div class="err-msg <?= $css_class ?>"><img class="err-msg-icon" src="<?= THEME ?>images/<?= $icon ?>.png" /><?= $this->msg ?></div>

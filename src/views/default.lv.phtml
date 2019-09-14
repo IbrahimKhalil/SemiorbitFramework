@@ -1,0 +1,45 @@
+<?php
+if (is_array($grps))
+foreach ($grps as $gk=>$grp) : 
+
+if (count_visible($grp) > 0 ) :
+?>
+<div class="lv_grp" id="<?=$gk?>">
+
+<?php if ($grp['caption'] != "") : ?>
+<div class="lv_grp_ttl"><?=  $grp['caption']  ?></div>
+<?php endif; ?>
+
+<div class="lv_grp_bdy">
+<div class="lv_grp_flds">
+<?php
+if (is_array($grp['items']))
+foreach ($grp['items'] as $k=>$fld) :
+
+if ($fld['control']=='none') continue;
+if ($fld['view']=='none') continue;
+if ($fld['value']=='' && $fld['ftype']=='' && $fld['htmltext'] == '') continue;
+?>
+
+<div class="lv_fld">
+	<div class="lv_fld_ttl"><?= constant ( $fld['caption'] )?></div>
+	<div class="lv_fld_val"><?= $fld['htmltext'] ?></div>
+</div>
+
+<?php 
+
+
+endforeach;
+
+?>
+</div>
+</div>
+</div>
+<!--
+<a href="skype:jawhersys?call">Link will initiate Skype to call my Skype username!</a>
+-->
+<?php
+
+endif;
+
+endforeach;

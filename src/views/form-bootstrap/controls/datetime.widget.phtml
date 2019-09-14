@@ -1,0 +1,39 @@
+<?php
+/**@var Semiorbit\Field\DateTime $field * */
+
+use Semiorbit\Field\DateTime;
+
+$myTemplate = $field->ActiveTemplate();
+
+if (!DateTime::CalendarLoaded()) :
+
+
+endif;
+
+DateTime::MarkCalendarLoaded();
+
+$dom_id = $field->DomInputID();
+
+?>
+
+<?= $myTemplate->OpenField($field) ?>
+
+<?= $myTemplate->OpenLabel($field) . htmlspecialchars($field->LabelText()) . $field->RequiredMark() . $myTemplate->CloseLabel($field) ?>
+
+    <div class="input-group date">
+
+        <input type="text" autocomplete="off" class="<?= $field->InputDefaultCssClass() ?>"
+               value="<?= htmlspecialchars($field->Value) ?>" <?= $field->InputAttrs() ?>
+               title="<?= htmlspecialchars($field->LabelText()) ?>"/>
+
+        <span class="input-group-addon">
+
+            <span class="glyphicon glyphicon-calendar" id="img_<?= $dom_id ?>" style="cursor: pointer;"></span>
+
+        </span>
+
+    </div>
+
+<?= $myTemplate->OpenNote($field) . ($field->Note) . $myTemplate->CloseNote($field) ?>
+
+<?= $myTemplate->CloseField($field) ?>

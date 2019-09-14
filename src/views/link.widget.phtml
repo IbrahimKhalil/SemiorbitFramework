@@ -1,0 +1,11 @@
+<?php /**@var \Semiorbit\Output\Link $this */ ?>
+
+<a class="semiorbit-link <?= $this->CssClass ?>" href="<?= $this->Url ?>" <?= $this->Target ?> title="<?= $this->Text ?>" >
+
+    <?php if ( ! empty( $this->HtmlIcon ) ) : echo $this->HtmlIcon; endif;?>
+
+    <?php if ( ! empty( $this->Icon ) ) : ?><img src="<?= $this->Icon ?>" alt="<?= $this->Text ?>" /><?php endif; ?>
+
+    <?php if ( ! empty( $this->Text ) && ! $this->TextIsHidden ) : ?><span><?= $this->Text ?></span><?php endif; ?>
+
+</a>

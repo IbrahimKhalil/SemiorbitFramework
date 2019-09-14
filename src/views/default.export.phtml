@@ -1,0 +1,21 @@
+<div>
+	
+	<form action="<?=$action?>" method="post">
+		
+		<h2>Select file type: </h2>
+		
+		<div>
+			<input type="radio" name="ext" id="ext_ansi" value="iso-8859-1" /><label for="ext_ansi"><img src="<?=BASE_URL . LANG?>/load/ext/icons|txt.png" /> ISO-8859-1</label>
+			<input type="radio" name="ext" id="ext_xls" value="csv" /><label for="ext_xls"><img src="<?=BASE_URL . LANG?>/load/ext/icons|xls.png" /> Excel/CSV</label>
+			<input type="radio" name="ext" id="ext_pdf" value="pdf" /><label for="ext_pdf"><img src="<?=BASE_URL . LANG?>/load/ext/icons|pdf.png" /> PDF</label>
+		</div>
+		
+		<input type="submit" id="doit" value="Export" name="export" />
+			
+	</form>
+	
+</div>
+
+<script type="text/javascript">
+$("input[type=file], input[type=checkbox], input[type=radio]").uniform();
+</script>

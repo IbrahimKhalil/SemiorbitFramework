@@ -1,0 +1,165 @@
+<?php
+/** @var Semiorbit\Output\TableView $myTableView  */
+
+use Semiorbit\Auth\Auth;
+use Semiorbit\Http\Url;
+use Semiorbit\Output\Render;
+
+echo '<table class="'. $myTableView->CssClass() .'">';
+
+echo '<thead>';
+
+$cols_count = 0;
+
+foreach ( $myTableView->Columns() as $col_id => $col ) {
+
+    /**@var Semiorbit\Output\TableViewCol $col */
+
+    $css_class = $col->CssClass ? ' class="' . $col->CssClass . '"' : '';
+
+    echo '<th'. $css_class .'>' . $col->HeaderText() . '</th>';
+
+    $cols_count++;
+
+}
+
+if ( $myTableView->ActiveController() && Auth::Check( $myTableView->Roles(), $myTableView->Permissions() ) ) {
+
+
+    if ($myTableView->IsShowEditLink()) {
+
+        echo '<th class="edit-cell"></th>';
+
+        $cols_count++;
+
+    }
+
+    if ($myTableView->IsShowDeleteLink()) {
+
+        echo '<th class="del-cell"></th>';
+
+        $cols_count++;
+
+    }
+
+
+}
+
+echo '</thead>';
+
+echo '<tbody>';
+
+if ($myTableView->CountPerPage() != 0) $myTableView->ActiveDataSet()->Paginate($myTableView->CountPerPage());
+
+while ( $myTableView->ActiveDataSet()->Row() ) {
+
+    if ($myTableView->ActiveDataSet()->Policy()->DeniesRead()) {
+
+        echo '<tr><td class="table-view-skipped-row" colspan="'.$cols_count.'"></td></tr>';
+
+        $myTableView->AddSkippedRow();
+
+        continue;
+
+    }
+
+    //Preparing link parameters values ---
+
+    $link_params_values = array();
+
+    $link_params_wildcards = array();
+
+    foreach ($myTableView->ActiveDataSet()->Fields() as $field) {
+
+        $link_params_values[] = $field['value'];
+
+        $link_params_wildcards[] = '@' . $field['name'];
+
+    }
+
+    //---
+
+    echo "<tr>";
+
+
+    foreach ( $myTableView->Columns() as $col_id => $col ) {
+
+        /**@var Semiorbit\Output\TableViewCol $col */
+
+        $link = "%s";
+
+        if ( ! empty( $col->Link ) ) {
+
+            $link_href = stristr($col->Link, '@' ) ?
+
+                str_ireplace( $link_params_wildcards, $link_params_values, $col->Link ) :
+
+                $col->Link . $myTableView->ActiveDataSet()->ID->Value;
+
+
+            $link = "<a href='{$link_href}' target='{$col->Target}' class='{$col->LinkCssClass}'>%s</a>";
+
+        }
+
+        /*
+        if ($col['control'] == 'link') {
+        
+            echo "<td id='{$col['id']}' class='{$col['cssclass']}'> {$link_open} {$col['value']} {$link_close} </td>";
+        
+        } elseif ($col['control'] == 'button') {
+        
+        
+            echo "<td id='{$col['id']}' class='{$col['cssclass']}'> {$link_open} " . '<input type="button" id="' . $col['btn_id'] . '" class="' . $col['btn_cssclass'] . '" value="'. $col['text'] .'" />' . " {$link_close} </td>";
+        
+        } elseif ($col['control'] == 'icon') {
+        
+        
+            echo "<td id='{$col['id']}' class='{$col['cssclass']}'> {$link_open} " . '<img class="' . $col['ico_cssclass'] . '" src="' . $col['ico_src'] . '" />' . " {$link_close} </td>";
+        
+        }
+
+        */
+
+        $css_class = $col->CssClass ? ' class="' . $col->CssClass . '"' : '';
+
+        echo '<td' . $css_class . '>' . sprintf( $link, $col->Html() ) . '</td>';
+
+
+
+    }
+
+    if ( $myTableView->ActiveController() && Auth::Check( $myTableView->Roles(), $myTableView->Permissions() ) ) {
+
+        $editable = $myTableView->IsShowEditLinkForReadOnlyRows() ?
+
+            $myTableView->ActiveDataSet()->Policy()->AllowsUpdate() || $myTableView->ActiveDataSet()->Policy()->AllowsRead() :
+
+            $myTableView->ActiveDataSet()->Policy()->AllowsUpdate();
+
+        if ($myTableView->IsShowEditLink() && $editable)
+
+            echo '<td class="edit-cell">' . Render::EditLink( $myTableView->ActiveController()->EditUrl( $myTableView->ActiveDataSet()->ID()->Value ) . Url::QueryString(), $myTableView->Roles() ) . '</td>';
+
+        if ($myTableView->IsShowDeleteLink() && $myTableView->ActiveDataSet()->Policy()->AllowsDelete())
+
+            echo '<td class="del-cell">' . Render::DeleteLink( $myTableView->ActiveController()->DeleteUrl( $myTableView->ActiveDataSet()->ID()->Value ) . Url::QueryString(), $myTableView->Roles() ) . '</td>';
+
+
+    }
+
+    echo "</tr>";
+
+}
+
+
+echo '</tbody>';
+
+echo "</table>";
+
+
+if ( $myTableView->ActiveDataSet() ) {
+    //4.Draw Pagination Control
+
+    echo $myTableView->ActiveDataSet()->Pagination();
+
+}

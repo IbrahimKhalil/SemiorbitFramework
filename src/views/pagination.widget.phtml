@@ -1,0 +1,55 @@
+<?php
+use Semiorbit\Translation\Lang;
+
+$cur_lbl = $this->links['current'] . '  <span class="sr-only">(' . Lang::Trans("semiorbit::pagination.current") . ')</span>';
+
+$prev_lbl =  '&laquo; <span class="sr-only">(' . Lang::Trans("semiorbit::pagination.previous") . ')</span>';
+
+$next_lbl =  '&raquo;  <span class="sr-only">(' . Lang::Trans("semiorbit::pagination.next") . ')</span>';
+
+$def = array(
+
+			'first'=> array('label'=>'1', 'class'=>'pagination_first'),
+
+			'prev' => array('label'=> $prev_lbl, 'class'=>'pagination_prev'),
+
+			'next' => array('label'=> $next_lbl, 'class'=>'pagination_next'),
+
+			'last' => array('label'=> $this->pages_count, 'class'=>'pagination_last'),
+
+			'current' => array('label'=> $cur_lbl, 'class'=>'active pagination_current')
+
+		);
+
+?>
+
+<div class="pagination_wrap <?=$this->class?>">
+
+<ul class="pagination" <?=$this->data_attr?>>
+
+	<li>
+		<a class="pagination_link pagination_counter" href="#"><?=$this->rows_count . ' '
+            . Lang::Trans("semiorbit::pagination.results") . ' / ' . $this->pages_count . ' ' . Lang::Trans("semiorbit::pagination.pages") ?></a>
+	</li>
+<?php 
+
+if ( is_array($this->links) )
+foreach ( $this->links as $link_txt => $link_href ) :
+
+	if ( isset( $def[$link_txt] ) ) $lnk = $def[$link_txt];
+	
+	else $lnk = array('label' => $link_txt, 'class' => 'pagination_goto');
+	
+	if ($link_txt == 'current') $link_href = "#";
+	
+	?>
+	<li>
+		<a class="pagination_link <?=$lnk['class']?>" href="<?=$link_href?>"><?=$lnk['label']?></a>
+	</li>
+	<?php
+
+endforeach;
+?>
+</ul>
+
+</div>

@@ -1,0 +1,16 @@
+<?php if ($this->Open) : ?>
+
+    <section class="panel">
+
+    <h1 class="panel-title"><?= $this->Title ?></h1>
+
+    <div class="panel-body" role="main" <?php if (trim($box_id) != "") : ?> id="<?= $this->ID ?>" <?php endif; ?>>
+
+<?php endif;
+
+if ($this->Close) : ?>
+
+    </div>
+    </section>
+
+<?php endif;

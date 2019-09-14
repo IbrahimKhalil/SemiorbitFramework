@@ -1,0 +1,48 @@
+<?php
+/**@var Semiorbit\Field\DateTime $field **/
+
+use Semiorbit\Field\DateTime;
+
+$myTemplate = $field->ActiveTemplate();
+
+if ( ! DateTime::CalendarLoaded() ) :
+?>
+<!-- Import the calendar script -->
+<script src="<?=EXT?>jscal2-1.9/src/js/jscal2.js"></script>
+<script src="<?=EXT?>jscal2-1.9/src/js/lang/en.js"></script>
+<link rel="stylesheet" type="text/css" href="<?=EXT?>jscal2-1.9/src/css/jscal2.css" />
+<link rel="stylesheet" type="text/css" href="<?=EXT?>jscal2-1.9/src/css/border-radius.css" />
+<link rel="stylesheet" type="text/css" href="<?=EXT?>jscal2-1.9/src/css/steel/steel.css" />
+<?php
+
+endif;
+
+DateTime::MarkCalendarLoaded();
+
+$dom_id = $field->DomInputID();
+
+?>
+
+<?= $myTemplate->OpenField( $field ) ?>
+
+	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ) . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
+
+	<?= $myTemplate->OpenInput( $field ) ?>
+
+		<input type="text" class="<?= $field->InputDefaultCssClass() ?>" readonly value="<?= htmlspecialchars( $field->Value ) ?>" <?= $field->InputAttrs() ?>   title="<?=  htmlspecialchars( $field->LabelText() ) ?>" />
+
+        <img id="img_<?= $dom_id  ?>" name="img_<?=  $field->Name ?>" style="cursor:pointer;" src="<?=THEME?>images/cal.gif" alt="<?=ClickHereToPickUpTheDate?>" class="date-cal-img"   />
+
+	<?= $myTemplate->CloseInput( $field ) ?>
+
+	<?= $myTemplate->OpenNote( $field ) . ( $field->Note ) . $myTemplate->CloseNote( $field ) ?>
+
+<?= $myTemplate->CloseField( $field ) ?>
+
+<script type="text/javascript">
+    var cal_<?= $field->Name ?> = Calendar.setup({
+        onSelect   : function() { this.hide() },
+        showTime   : <?= $field->ShowTime ? 'true' : 'false' ?>
+    });
+    cal_<?= $field->Name ?>.manageFields("img_<?= $dom_id ?>", "<?= $dom_id ?>", "<?= $field->Format ?>");
+</script>

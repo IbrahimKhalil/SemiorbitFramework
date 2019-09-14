@@ -1,0 +1,6 @@
+<?php
+use Semiorbit\Output\Render;
+?>
+<a href="<?= $this->url ?>?<?=$this->time?>" class="semiorbit-file-icon-link" target="_blank" title="<?= $this->title ?>">
+    <?= Render::FileIcon( $this->ext ) ?>
+</a>

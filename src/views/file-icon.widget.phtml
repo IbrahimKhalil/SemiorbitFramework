@@ -1,0 +1,12 @@
+<?php
+$ext = $this->file_extension;
+
+if ( file_exists( PUBLICPATH . "ext/icons/" . $ext . ".png" ) ) :
+
+    ?><img src="<?= PUBLIC_URL . "ext/icons/{$ext}.png" ?>" style="border-width:0;vertical-align:middle;" class="semiorbit-file-icon" /><?php
+
+else :
+
+    ?><img src="<?= PUBLIC_URL . "ext/icons/file.png" ?>" style="border-width:0;vertical-align:middle;" class="file_icon" /><?php
+
+endif;

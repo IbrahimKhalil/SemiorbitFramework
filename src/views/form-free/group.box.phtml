@@ -1,0 +1,36 @@
+<?php if ( $this->Open ) : ?>
+
+<?php if ($box_id == false) {$box_id = "group_0";} ?>
+
+<div class="semiorbit-form-free-group"  id="<?=$this->ID?>">
+
+<div class="semiorbit-form-free-group-title">
+
+<?php if (stristr($this->Title, "ttxtg") == false) : ?>
+
+	<span class="ttxtg"><?=$this->Title?></span>
+	
+<?php else : ?>
+
+	<span><?=$this->Title?></span>
+	
+<?php endif; ?>
+
+</div>
+
+<div class="semiorbit-form-free-group-body">
+
+    <?php if ( isset( $grp['note'] ) ) : ?>
+
+        <div class="semiorbit-form-free-group-note"><?=$grp['note']?></div>
+
+    <?php endif; ?>
+
+<?php endif;
+
+if ( $this->Close ) : ?>
+
+</div>
+</div>
+
+<?php endif;

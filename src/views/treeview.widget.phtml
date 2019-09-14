@@ -1,0 +1,42 @@
+<ul class='treeview' id='<?=$treeview_id?>'>
+<?php
+if (is_array($nodes))
+for ($i = 0 ; $i < count($nodes) ; $i++) :
+
+	$node = $nodes[$i];
+	$next_node = $nodes[$i + 1];
+	
+	$pms['node'] = $node;
+	
+	$level_distance = $node['level'] - $next_node['level'];
+	
+	?>
+	<li>
+		
+		<?=semiorbit_Render::Widget('treeviewnode', $pms, false)?>
+	
+		<ul class='treeview_sub'>
+	
+	<?php
+	 
+	if ( $level_distance >= 0 ) :
+	
+	for ($v = 0; $v <= $level_distance ; $v ++) :
+	
+	?>
+		</ul>
+	</li>
+	<?php
+		
+	endfor;
+	 
+	endif;
+	
+	?>
+	
+	
+	<?php 
+
+endfor;
+?>
+</ul>

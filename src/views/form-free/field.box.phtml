@@ -1,0 +1,17 @@
+<?php 
+use Semiorbit\Field\Field;
+
+$myField = Field::Create( $this->field );
+
+?>
+<?php if ( $this->Open ) : ?>
+
+<div class="semiorbit-form-free-field form-group <?= $myField->CssClass ?>" id="field-<?= $myField->Name ?>">
+	
+<?php endif;
+
+if ( $this->Close ) : ?>
+
+</div>
+
+<?php endif;

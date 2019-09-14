@@ -1,0 +1,28 @@
+<?php
+use Semiorbit\Form\Form;
+use Semiorbit\Http\Url;
+use Semiorbit\Field\Field;
+
+if (! isset($this->item_id)) { Url::GotoHomePage('?msg=DELETE_ERR'); exit; }
+
+Form::setID('del-form')->setAction($this->delete_action_url)->Open();
+
+Field::Hidden('del-item-id')->setValue($this->item_id)->RenderControl();
+
+$my_item = "<span style='color:red'>".$this->item_title."</span>";
+			
+printf(delete_question, $my_item);
+
+?>
+			
+<div class="del_form_btns">
+
+    <input type="submit" name="submit" class="submit" value="<?=Yes?>" style="cursor: pointer;"/>
+	&nbsp;&nbsp;&nbsp;
+	<input type="button" style="cursor:pointer" value="<?=No?>" name="submit" class="submit" onclick="window.location.href='<?=$this->no_action_url?>'" />
+
+</div>		
+
+<?php
+Form::Close();
+?>

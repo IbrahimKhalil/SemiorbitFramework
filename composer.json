@@ -1,0 +1,32 @@
+{
+  "name": "semiorbit/framework",
+  "description": "Semiorbit PHP Framework",
+  "keywords": ["framework", "php","semiorbit"],
+  "version": "7.0.0",
+  "license": "MIT",
+  "homepage": "https://framework.semiorbit.com",
+  "authors": [
+    {
+      "name": "Ibrahim Khalil Khalbous",
+      "email": "ibrahim@semiorbit.com"
+    },
+    {
+      "name": "Semiorbit Solution Co. LLC",
+      "email": "framework@semiorbit.com",
+      "homepage": "https://semiorbit.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0.0"
+  },
+  "autoload": {
+    "files": [
+      "src/semiorbit.php",
+      "src/helpers/global.php"
+    ],
+    "psr-4": {
+      "Semiorbit\\": "src/core/"
+    }
+  },
+  "minimum-stability": "dev"
+}

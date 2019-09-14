@@ -1,0 +1,17 @@
+<?php 
+use Semiorbit\field\Field;
+
+$myField = Field::Create( $this->field );
+
+?>
+<?php if ( $this->Open ) : ?>
+
+<div class="form-group label-floating <?= $myField->ControlDefaultCssClass() ?>" id="field-<?= $myField->Name ?>">
+	
+<?php endif;
+
+if ( $this->Close ) : ?>
+
+</div>
+
+<?php endif;

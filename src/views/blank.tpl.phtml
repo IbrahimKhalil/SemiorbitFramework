@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="<?= LANG ?>" dir="<?= DIR ?>">
+<head>
+
+    <?php
+    use Semiorbit\Output\Output;
+    use Semiorbit\Output\Render;
+    use Semiorbit\Output\View;
+    use App\App;
+    /**@var $this View */
+    ?>
+
+    <!-- Site Title-->
+    <title><?= $this->PageTitle() ?></title>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="keywords" content="<?=App::MetaKeyWords()?>">
+    <meta name="description" content="<?=App::MetaDescription()?>">
+    <link rel="icon" href="<?= PUBLIC_URL ?>favicon.ico" type="image/x-icon">
+
+</head>
+<body>
+    <?= $this->Content() ?>
+</body>
+</html>

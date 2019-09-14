@@ -1,0 +1,28 @@
+<?php if ( $this->Open ) : ?>
+
+<?php if ($box_id == false) {$box_id = "group_0";} ?>
+
+<div class="panel panel-primary row <?=( isset( $group['css_class'] ) ) ? $group['css_class'] : ''?>"  id="<?=$this->ID?>">
+
+<div class="panel-heading">
+
+	<span class="panel-title"><?=$this->Title?></span>
+
+</div>
+
+<div class="panel-body">
+
+    <?php if ( isset( $group['note'] ) ) : ?>
+
+        <div class="semiorbit-form-group-note"><?=$group['note']?></div>
+
+    <?php endif; ?>
+
+<?php endif;
+
+if ( $this->Close ) : ?>
+
+</div>
+</div>
+
+<?php endif;

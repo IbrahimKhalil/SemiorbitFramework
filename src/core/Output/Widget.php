@@ -1,0 +1,47 @@
+<?php
+/*
+*------------------------------------------------------------------------------------------------
+* SEMIORBIT - WIDGET Builder    					 					 semiorbit.com
+*------------------------------------------------------------------------------------------------
+*/
+
+namespace Semiorbit\Output;
+
+
+use Semiorbit\Component\Finder;
+use Semiorbit\Config\CFG;
+
+
+class Widget extends ViewBase
+{
+
+
+    /**
+     * Widget file path or FALSE if not found
+     *
+     * @param string $widget Widget name
+     * @return bool|string
+     */
+
+    public static function FindPath($widget)
+    {
+
+        $view_path = Render::CacheViewPath( CFG::$Views . '@Widget_' . $widget) ?: call_user_func( function () use ( $widget ) {
+
+            $view_ext =  '.' . trim( CFG::$WidgetExt, '.' );
+
+            $view_path = Finder::LookFor($widget . $view_ext, Finder::Views, true);
+
+            Render::CacheViewPath( CFG::$Views . '@Widget_' . $widget . $view_ext, $view_path);
+
+            return $view_path;
+
+        });
+
+        return $view_path ? $view_path['path'] : false;
+
+    }
+
+
+
+}

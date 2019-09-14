@@ -1,0 +1,22 @@
+<?php
+/** @var Semiorbit\Field\TextArea $field */
+
+$myTemplate = $field->ActiveTemplate();
+
+?>
+
+<?= $myTemplate->OpenField( $field ) ?>
+
+	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ) . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
+
+	<?= $myTemplate->OpenInput( $field ) ?>
+
+		<textarea  class="<?= $field->InputDefaultCssClass() ?>" cols="40" rows="8"  <?= $field->InputAttrs() ?>
+
+                   title="<?=  htmlspecialchars( $field->LabelText() ) ?>" ><?=  htmlspecialchars( $field->Value )  ?></textarea>
+
+	<?= $myTemplate->CloseInput( $field ) ?>
+
+	<?= $myTemplate->OpenNote( $field ) . ( $field->Note ) . $myTemplate->CloseNote( $field ) ?>
+
+<?= $myTemplate->CloseField( $field ) ?>

@@ -1,0 +1,20 @@
+<?php
+if (isset($err_list) && is_array($err_list)) :
+
+    foreach ($err_list as $k => $fld) :
+
+        /**@var Field $fld */
+
+        $ul[] = "<li>{$fld->LabelText()} (" . implode(", ", $fld->Err) . ")</li>";
+
+    endforeach;
+
+    if (!empty($ul)) :
+
+        ?>
+        <ul class='semiorbit-form-free-error-list'> <?= implode(" ", $ul)?> </ul>
+        <?php
+
+    endif;
+
+endif;

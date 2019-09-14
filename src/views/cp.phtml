@@ -1,0 +1,14 @@
+<?php
+use Semiorbit\Output\Render;
+
+Render::OpenBox(Tools, 'panel') ?>
+
+<div class="rel-links-panel">
+
+    <div><p class="rel-link"><?= Render::Link(BASE_URL, project_title(), SUPER_ADMIN) ?></p></div>
+
+    <div><p class="rel-link"><?= Render::Link(BASE_URL . "Users/edit/2", Change_Admin_Password, SUPER_ADMIN) ?></p></div>
+
+</div>
+
+<?php Render::CloseBox('panel') ?>

@@ -1,0 +1,43 @@
+<?php
+use Semiorbit\Output\Render;
+use Semiorbit\Translation\Lang;
+
+Render::OpenBox('', 'cp');
+
+if ( trim($extra_pms) != "" ) :
+
+    if ( ! starts_with( $extra_pms, "?" ) ) $extra_pms = "?" . $extra_pms;
+
+endif;
+
+echo '<ul  style="list-style:none;margin:0;padding:0;">';
+
+/** @noinspection PhpUndefinedConstantInspection */
+
+echo '<li class="rel-link rel-link-home">' . Render::Link(BASE_URL . LANG, project_title()) . '</li>';
+
+echo '<li class="rel-link rel-link-index">' . Render::Link($this->CTR_PATH . "" . $extra_pms, $this->CTR_TITLE == '' ? Lang::Trans($this->CTR_NAME . ".__index") : $this->CTR_TITLE) . '</li>';
+
+if ( empty($id) ) :
+
+    echo '<li class="rel-link rel-link-add">' . Render::Link($this->CTR_PATH . "create/" . $extra_pms, Lang::Trans($this->CTR_NAME . ".__create"), SUPER_ADMIN) . '</li>';
+
+else :
+
+    if ( ! empty($DS_TITLE) ) :
+
+        echo '<li class="rel-link rel-link-show">' . Render::Link($this->CTR_PATH . "view/" . $id . $extra_pms, $DS_TITLE) . '</li>';
+
+    endif;
+
+    echo '<li class="rel-link rel-link-edit">' . Render::Link($this->CTR_PATH . "edit/" . $id . $extra_pms, Lang::Trans($this->CTR_NAME . ".__edit"), SUPER_ADMIN) . '</li>';
+
+    echo '<li class="rel-link rel-link-del">' . Render::Link($this->CTR_PATH . "delete/" . $id . $extra_pms, Lang::Trans($this->CTR_NAME . ".__delete"), SUPER_ADMIN) . '</li>';
+
+    echo '<li class="rel-link rel-link-add">' . Render::Link($this->CTR_PATH . "create/" . $extra_pms, Lang::Trans($this->CTR_NAME . ".__create"), SUPER_ADMIN) . '</li>';
+
+endif;
+
+echo '</ul>';
+
+Render::CloseBox('cp');

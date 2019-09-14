@@ -1,0 +1,13 @@
+<?php /**@var Semiorbit\Field\Text $field **/ ?>
+
+<?php if ( $this->Open ) : ?>
+
+<label class="<?=$field->ActiveTemplate()->Settings('label_css_class')?>" for="<?= $field->DomInputID() ?>">
+	
+<?php endif;
+
+if ( $this->Close ) : ?>
+
+</label>
+
+<?php endif;
