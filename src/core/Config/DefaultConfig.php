@@ -113,7 +113,26 @@ class DefaultConfig
 	## File Extension ##
 	static $ControllersExt = ".class.php";
 
+    ## -----------------------------------------------------------
+    ## Api
+    ## -----------------------------------------------------------
+
+    ## Api Sub Directory ##
     static $ApiControllers = "Api";
+
+    ## Is Project an Api? ##
+
+    # True: all controllers should be restful controllers, and no sub directory/ version directory is needed #
+    # False: Api controllers should be located in
+    #        Http/{$ApiControllers} sub directory. Version sub directory is needed in this case #
+
+    static $IsApi = false;
+
+
+    # This controller is used in case of request failure like [404 not found] #
+    # Only in case of IsApi = true #
+
+    static $HttpErrorController = "HttpError";
 	
 	## -----------------------------------------------------------
     ## VIEWS 

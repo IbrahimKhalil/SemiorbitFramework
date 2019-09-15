@@ -136,7 +136,7 @@ class Request {
 		
 		// DETECT CONTROLLER
 		
-		$this->Controller = $this->DetectController();
+		$this->Controller = CFG::$IsApi ? $this->DetectApiController() : $this->DetectController();
 		
 		$this->LoadController();
 		
@@ -219,8 +219,6 @@ class Request {
 	public function DetectController() 
 	{
 
-        $mainController = CFG::MainPage();
-
         $controller = null;
 
         $api_call = false;
@@ -236,6 +234,7 @@ class Request {
         if ( isset( $pms[0] ) ) {
 
             $segment_0 = Str::PascalCaseByHyphen( Str::Sanitize($pms[0]) );
+
 
             // Check if request is an API call
 
@@ -318,10 +317,58 @@ class Request {
         }
 		
 
-		return $controller ?: $mainController;
+		return $controller ?: CFG::MainPage();
 		
 	}
-	
+
+	public function DetectApiController()
+	{
+
+        $controller = null;
+
+
+        // TRY TO EXTRACT "CONTROLLER" FROM PATH_INFO
+
+        $path_info_controller = '';
+
+        $pms = $this->Path2Array( $this->PathInfo );
+
+
+        if ( isset( $pms[0] ) ) {
+
+            $segment_0 = Str::PascalCaseByHyphen( Str::Sanitize($pms[0]) );
+
+            if ( $segment_0 )
+
+                    $path_info_controller = $segment_0;
+        }
+
+
+
+        if ( ! is_empty($path_info_controller) ) {
+
+            // FIND CONTROLLER BY NAME
+
+            $controller = Finder::LookForController( $path_info_controller, true );
+
+        }
+
+
+        if ( $controller && $controller->Selector == $path_info_controller ) {
+
+            // RESET PATH_INFO EXCLUDING CONTROLLER
+
+            unset($pms[0]);
+
+            $this->PathInfo = implode("/", $pms);
+
+        }
+
+
+		return $controller ?: CFG::HttpError();
+
+	}
+
 	public function LoadController()
 	{
 		

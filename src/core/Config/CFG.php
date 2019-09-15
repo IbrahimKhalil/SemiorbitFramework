@@ -121,27 +121,54 @@ class CFG extends DefaultConfig
 	
 	public static function MainPage() 
 	{
-        $class_path = false;
 
-		if (isset(self::$MainPage)) {
-			 $class_path = Finder::LookForController( self::$MainPage );
-		} 
-				
-		if ($class_path) {
-			return $class_path;
-		} else { 
-		
-		$my_main_page = Finder::LookForController( array('Index', 'Home', 'Main') );
-		
-		if ($my_main_page) {
-			CFG::$MainPage = $my_main_page->Class;
-			return $my_main_page;
-		} else{
-			return false;
-		}		
-		
-		}
+        $myFallbackController =
+
+            isset(self::$MainPage) ?
+
+                Finder::LookForController(self::$MainPage) : false;
+
+        if (!$myFallbackController) {
+
+            Finder::LookForController(['Index', 'Home', 'Main']);
+
+            if ($myFallbackController) CFG::$MainPage = $myFallbackController->Class;
+
+        }
+
+        return $myFallbackController;
+
+
 	}
+
+    /**
+     * Api fallback controller
+     *
+     * @return bool|\Semiorbit\Component\FinderResult
+     */
+
+	public static function HttpError()
+	{
+
+        $myFallbackController =
+
+            isset(self::$HttpErrorController) ?
+
+                Finder::LookForController(self::$HttpErrorController) : false;
+
+        if (!$myFallbackController) {
+
+            Finder::LookForController('HttpError');
+
+            if ($myFallbackController) CFG::$HttpErrorController = $myFallbackController->Class;
+
+        }
+
+        return $myFallbackController;
+
+	}
+
+
 	
 	public static function Actions() 
 	{
