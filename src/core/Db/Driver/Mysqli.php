@@ -41,6 +41,8 @@ class Mysqli implements Driver
 
     public $_Connector;
 
+    protected $_Stmts;
+
 
     public function __construct($db, $host = 'localhost', $user = 'root', $password = '', $port = null, $socket = null, $persistent = true)
     {
@@ -94,6 +96,7 @@ class Mysqli implements Driver
 
     }
 
+
     /**
      * @param $sql string
      * @param $params array
@@ -102,9 +105,19 @@ class Mysqli implements Driver
 
     public function Prepare($sql, $params)
     {
-        $stmt = $this->Connector()->prepare($sql);
+
+        $sql_hash = md5($sql);
+
+        $stmt = isset($this->_Stmts[$sql_hash]) ? $this->_Stmts[$sql_hash] :
+
+            $this->_Stmts[$sql_hash] = $this->Connector()->prepare($sql);
+
+        //print_r($this->stmt);
+
+        $stmt->bind_param($params[0], $params[1]);
 
         return $stmt;
+
     }
 
 
@@ -138,7 +151,7 @@ class Mysqli implements Driver
                 $stmt->free_result();
             }
 
-            $stmt->close();
+            //$stmt->close();
 
         }
 
