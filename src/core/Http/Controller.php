@@ -61,6 +61,7 @@ abstract class Controller
     public $ModelPath = '';
 
 
+
     use ClipboardTrait {
         Clipboard as protected;
     }

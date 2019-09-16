@@ -13,6 +13,8 @@ namespace Semiorbit\Db;
 
 
 
+use Semiorbit\Db\Driver\Driver;
+
 class DB
 {
 	
@@ -186,6 +188,11 @@ class DB
     public static function Row($query, $params = [], $class_name = 'AltaArray', $constructor_params = [] )
     {
         return static::ActiveConnection()->Row( $query, $params, $class_name, $constructor_params );
+    }
+    
+    public static function RowArray($query, $params = [], $result_type = Driver::ROW_ASSOC )
+    {
+        return static::ActiveConnection()->RowArray( $query, $params, $result_type );
     }
 
     public static function Find($query, $params = [], $field = 0)

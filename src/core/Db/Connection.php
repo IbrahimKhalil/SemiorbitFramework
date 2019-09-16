@@ -174,6 +174,30 @@ class Connection
         return $row;
 
     }
+    
+    /**
+     * Fetches row as an array from database.
+     *
+     * @param $query
+     * @param array $params
+     * @param int $result_type
+     * @return array|null
+     */
+
+    public function RowArray($query, $params = [], $result_type = Driver::ROW_ASSOC)
+    {
+
+        $row = null;
+
+        $result = $this->Cmd($query, $params);
+
+        if ($result)
+
+            $row = $this->Driver()->Fetch($result, $result_type);
+
+        return $row;
+
+    }
 
     /**
      * Returns value of a selected field from database, or NULL if it was not found.
