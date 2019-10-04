@@ -136,7 +136,7 @@ class Request {
 		
 		// DETECT CONTROLLER
 		
-		$this->Controller = CFG::$IsApi ? $this->DetectApiController() : $this->DetectController();
+		$this->Controller = CFG::$ApiMode ? $this->DetectApiController() : $this->DetectController();
 		
 		$this->LoadController();
 		

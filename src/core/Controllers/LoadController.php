@@ -88,11 +88,8 @@ class LoadController extends \Semiorbit\Http\Controller
                     $content_type = "text/javascript";
                     break;
 
-                case "htm":
-                    $content_type = "text/html";
-                    break;
-
                 case "html":
+                case "htm":
                     $content_type = "text/html";
                     break;
 

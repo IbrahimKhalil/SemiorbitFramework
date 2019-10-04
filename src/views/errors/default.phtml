@@ -1,0 +1,44 @@
+<?php
+
+use Semiorbit\Config\CFG;
+use Semiorbit\Output\Render;
+
+?>
+<html lang="en">
+
+<?= Render::Widget('errors/head') ?>
+
+<body>
+
+<div class="container">
+    <img
+            src="<?= Render::Widget(['errors/icons/' . $this->code, 'errors/icons/default']) ?>"
+            alt="<?= $this->code ?>"/>
+    <div dir="<?= DIR ?>">
+        <h1>
+            <i><?= $this->code ?: 503 ?></i>
+            <span><?= $this->msg ?: "An error occurred!" ?></span>
+        </h1>
+    </div>
+
+    <?php if (CFG::$DebugMode) :?>
+
+    <section>
+        <h5>Exception <?= $this->code ?></h5>
+        <p><?= $this->debug_msg ?: $this->msg ?></p>
+        <p class="lighter">
+            <strong>Line:</strong> <?= $this->line ?> -
+            <strong>File:</strong> <?= $this->file ?>
+        </p>
+    </section>
+
+    <div class="trace">
+        <?= Render::Widget('errors/trace')->With('trace', $this->trace) ?>
+    </div>
+
+    <?php endif; ?>
+</div>
+
+
+</body>
+</html>

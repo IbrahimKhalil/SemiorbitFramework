@@ -23,7 +23,7 @@ class Path
      * @param string $path PathInfo string to clean
      * @param bool|null $leading_slash  TRUE = force add, FALSE = force remove, NULL = leave as is
      * @param bool|null $trailing_slash TRUE = force add, FALSE = force remove, NULL = leave as is
-     * @return string cleaned path will be in this format<br/> path/to/folder/
+     * @return string cleaned path will be in this Format<br/> path/to/folder/
      */
 
     public static function Normalize($path, $leading_slash = null, $trailing_slash = true)
@@ -50,7 +50,7 @@ class Path
      * @param string $path PathInfo string to clean
      * @param bool|null $leading_backslash  TRUE = force add, FALSE = force remove, NULL = leave as is
      * @param bool|null $trailing_backslash TRUE = force add, FALSE = force remove, NULL = leave as is
-     * @return string cleaned path will be in this format<br/> path/to/folder/
+     * @return string cleaned path will be in this Format<br/> path/to/folder/
      */
 
     public static function NormalizeNamespace($path, $leading_backslash = false, $trailing_backslash = false)

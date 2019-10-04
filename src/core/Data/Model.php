@@ -1321,8 +1321,8 @@ class Model
     /**
      * Reset model's fields values to its default values.
      *
-     * @param bool $clear_all TRUE      reset all fields values to its default values <br />
-     *                        FALSE     reset only empty fields values to its default values
+     * @param bool $clear_all TRUE      Reset all fields values to its default values <br />
+     *                        FALSE     Reset only empty fields values to its default values
      *
      * @return $this returns this model
      */

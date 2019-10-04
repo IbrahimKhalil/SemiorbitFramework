@@ -262,7 +262,7 @@ class View extends ViewBase
     }
 
     /**
-     * Page layout file to use in render view. View content will be sent to layout and will be included in layout output
+     * Page layout file to use in Render view. View content will be sent to layout and will be included in layout output
      *
      * @param $layout
      * @return $this
@@ -276,7 +276,7 @@ class View extends ViewBase
     }
 
     /**
-     * No layout will be used in render. View content will sent directly to output
+     * No layout will be used in Render. View content will sent directly to output
      *
      * @return $this
      */
@@ -303,7 +303,7 @@ class View extends ViewBase
     }
 
     /**
-     * Project default layout will be used in render. Default layout can be set in config
+     * Project default layout will be used in Render. Default layout can be set in config
      * or can be set in $_REQUEST array
      *
      * @return $this

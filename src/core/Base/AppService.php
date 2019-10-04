@@ -11,6 +11,7 @@ namespace Semiorbit\Base;
 use Semiorbit\Component\Finder;
 use Semiorbit\Config\CFG;
 use Semiorbit\Http\Request;
+use Semiorbit\Http\Response;
 use Semiorbit\Http\Url;
 use Semiorbit\Output\Output;
 use Semiorbit\Support\Path;
@@ -521,8 +522,8 @@ class AppService
             if ( $this->_StartUpRequestLoaded === false ) {
 
                 //This property should be turned on
-                //before loading "start up request", because maybe some other
-                //sub-request sent on "start up request" loading process.
+                //before loading "Start up request", because maybe some other
+                //sub-request sent on "Start up request" loading process.
 
                 $this->_StartUpRequestLoaded = true;
 
@@ -581,7 +582,7 @@ class AppService
 
             ob_end_clean();
 
-            $output = Finder::Error($e->getCode());
+            $output = Response::SendException($e, false);
 
         }
 

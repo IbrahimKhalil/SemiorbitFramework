@@ -9,6 +9,9 @@
 namespace Semiorbit\Http;
 
 
+use Semiorbit\Config\CFG;
+use Semiorbit\Debug\AppException;
+use Semiorbit\Output\View;
 use Semiorbit\Output\ViewBase;
 
 class Response extends ResponseHeaders
@@ -19,7 +22,7 @@ class Response extends ResponseHeaders
     protected $_View;
 
 
-    public function Json($data, $options = JSON_UNESCAPED_UNICODE)
+    public function Json($data, $options = JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT)
     {
 
         $this->setContentType('application/json');
@@ -29,6 +32,99 @@ class Response extends ResponseHeaders
         return $this;
 
     }
+
+
+    protected function ErrorHandler($code, $msg = '', $debug_msg = '', $http_status_code = 0, \Exception $e = null)
+    {
+
+        if (! $http_status_code)
+
+            $http_status_code = $this->HasStatusCode($code) ? $code : 503;
+
+
+        $content = [
+
+            'status' => 'error',
+
+            'code' => $code,
+
+            'msg' => $msg ?: $this->DefaultStatusMessage($http_status_code),
+
+            'http_status_code' => $http_status_code
+
+        ];
+
+
+        if (CFG::$DebugMode) {
+
+            $content = array_merge($content, [
+
+                'debug_msg' => $debug_msg,
+
+                'file' => $e->getFile() ?? '',
+
+                'line' => $e->getLine() ?? '',
+
+                'trace' => (CFG::$ApiMode ? $e->getTraceAsString() : $e->getTrace()) ?? []
+
+            ]);
+
+        }
+
+        // Set http status
+
+        $this->setStatus($http_status_code, $content['msg']);
+
+
+        // Set response content
+
+        if (CFG::$ApiMode) {
+
+            $this->Json($content);
+
+        } else {
+
+            $this->setContent(
+
+                View::Load(['errors/' . $content['code'], 'errors/default'])->WithParams($content)
+
+            );
+
+        }
+
+        return $this;
+
+    }
+
+
+    public function Exception(\Exception $e)
+    {
+
+        if ($e instanceof AppException) {
+
+            $this->ErrorHandler($e->getCode(), $e->getMessage(), $e->getDebugMsg(), $e->getHttpStatusCode(), $e);
+
+        } else {
+
+            $this->ErrorHandler($e->getCode(), '', $e->getMessage(), 0, $e);
+
+        }
+        die($this->Send(false));
+
+        return $this;
+
+    }
+
+
+    public static function SendException(\Exception $e, $flush_output = true)
+    {
+
+        $response = new static;
+
+        return $response->Exception($e)->Send($flush_output);
+
+    }
+
 
     public function UseView(ViewBase $view)
     {

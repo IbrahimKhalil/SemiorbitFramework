@@ -1,0 +1,27 @@
+<?php
+foreach ($this->trace as $nom => $item) :
+    $highlight = (isset($item['class']) && !starts_with($item['class'], 'Semiorbit\\')) ? ' highlight ' : ' framework closed ';
+    ?>
+    <section class="trace-item <?= $highlight ?>">
+        <h5 onclick="toggleTraceItem(this)"><?= $nom ?> - <?= ($item['class'] ?? $item['file']) . ($item['type'] ?? ' ') . ($item['function'] ?? '') ?></h5>
+        <table>
+            <?php
+            foreach ($item as $key => $value) :
+                ?>
+                <tr>
+                    <td><?= trim($key, '[]') ?></td>
+                    <td><pre><?= is_array($value) ? print_r($value, true) : $value ?></pre></td>
+                </tr>
+            <?php
+            endforeach;
+            ?>
+        </table>
+    </section>
+<?php
+endforeach;
+?>
+<script type="text/javascript">
+    function toggleTraceItem(e) {
+        e.parentElement.classList.toggle('closed');
+    }
+</script>

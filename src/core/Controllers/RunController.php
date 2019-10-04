@@ -4,6 +4,7 @@ namespace Semiorbit\Controllers;
 
  
 use Semiorbit\Auth\Auth;
+use Semiorbit\Base\Application;
 use Semiorbit\Support\Path;
 
 class RunController extends \Semiorbit\Http\Controller
@@ -44,7 +45,7 @@ class RunController extends \Semiorbit\Http\Controller
 		
 		$path = $params['folder'] . $params['file']; //Finder::LookFor($params['file'],$params['folder'],true);
 
-		if ( empty($path) || ! file_exists($path) ) die('Not Found!');
+		if ( empty($path) || ! file_exists($path) ) Application::Abort(404);
 
         /** @noinspection PhpIncludeInspection */
         include_once $path;

@@ -40,9 +40,17 @@ class DefaultConfig
 	## eg. /myProject/index.php
 	static $IndexFilePath = "";
 
-	## -----------------------------------------------------------
-    ## LANG - PLEASE LIMIT THIS ARRAY TO YOUR AVAILABLE LANGS
-    ## DON'T LEAVE LANGS THAT ARE NOT REALY AVAILABLE.
+
+    ## -----------------------------------------------------------
+    ## Environment
+    ## -----------------------------------------------------------
+
+    static $Environment = CFG::ENV_PRODUCTION;
+
+    static $DebugMode = false;
+
+    ## -----------------------------------------------------------
+    ## LANG - PLEASE LIMIT THIS ARRAY TO YOUR AVAILABLE LANGs
     ##
     ## static $lang = array('en', 'de', 'ar', 'en_US'=>'us', 'en_GB'=>'uk');
     ## -----------------------------------------------------------
@@ -53,7 +61,7 @@ class DefaultConfig
 	
 
 	## PathInfo ##
-	static $LangPath = "lang";
+	static $LangPath = "src/lang";
 	
 	static $LangPathExt = ".inc";
 	## -----------------------------------------------------------
@@ -73,7 +81,7 @@ class DefaultConfig
 	## FW/controllers/main.class.php will be used as
 	## Main Controller. This in its turn will look for
 	## TPL/[index, home, main].[tpl_ext] as a home page view
-	## If not found it will render FW/views/main.tpl.inc as home.
+	## If not found it will Render FW/views/main.tpl.inc as home.
 	## -----------------------------------------------------------
 
 	static $MainPage = "Main";
@@ -88,14 +96,14 @@ class DefaultConfig
 	## App Class
 	## -----------------------------------------------------------
 	
-	static $AppClass = "";
+	static $AppClass = "App";
 	
 	## -----------------------------------------------------------
 	## Models 
 	## -----------------------------------------------------------
 
 	// PathInfo
-	static $Models = "models"; 
+	static $Models = "";
 	
 	// File Extension 
 	static $ModelsExt = ".php";
@@ -105,13 +113,13 @@ class DefaultConfig
 	## -----------------------------------------------------------
 
 	## PathInfo ##
-	static $Controllers = "controllers"; 
+	static $Controllers = "Http";
 	
 	## ClassName_Suffix ##
-	static $ControllerSuffix = "_CTR";
+	static $ControllerSuffix = "Ctrl";
 	
 	## File Extension ##
-	static $ControllersExt = ".class.php";
+	static $ControllersExt = ".php";
 
     ## -----------------------------------------------------------
     ## Api
@@ -126,11 +134,11 @@ class DefaultConfig
     # False: Api controllers should be located in
     #        Http/{$ApiControllers} sub directory. Version sub directory is needed in this case #
 
-    static $IsApi = false;
+    static $ApiMode = false;
 
 
     # This controller is used in case of request failure like [404 not found] #
-    # Only in case of IsApi = true #
+    # Only in case of ApiMode = true #
 
     static $HttpErrorController = "HttpError";
 	
@@ -140,7 +148,7 @@ class DefaultConfig
 
 	## PathInfo to template ##
 	
-	static $Views = "views"; 
+	static $Views = "src/views";
 	
 	## File Extension ##
 	
@@ -308,35 +316,12 @@ class DefaultConfig
 	## CLASS ALIAS LIST
 	## -----------------------------------------------------------
 	
-	static $ClassAlias = array(
-	
-		'Semiorbit\\Output\\Render' =>  array('Render'),
-	
-		'Semiorbit\\View\\Pagination' =>  array('Pagination'),
+	static $ClassAlias = [
 
-		'Semiorbit\\Field\\Field' =>  array('Field'),
-		
-		'Semiorbit\\Field\\DataType' =>  array('DataType'),
-		
-		'Semiorbit\\Field\\Control' =>  array('Control'),
-		
-		'Semiorbit\\Form\\Form' =>  array('Form'),
-		
-		'Semiorbit\\Http\\Request' =>  array('Request'),
-		
-		'Semiorbit\\Debug\\Log' =>  array('Log'),
-		
-		'Semiorbit\\Component\\Lang' =>  array('Lang'),
+	    ## Example
 
-        'Semiorbit\\Auth\\Auth' =>  array('Auth'),
-
-        'Semiorbit\\Config\\CFG' =>  array('CFG'),
-
-		'Semiorbit\\Field\\FieldView' =>  array('FieldView'),
-
-		'Semiorbit\\Db\\DB' =>  array('DB')
-		
-	);
+		## 'Semiorbit\\Field\\DataType' =>  array('DataType')
+	];
 	
 	# -----------------------------------------------------------
 	## APP CLASSES
@@ -372,18 +357,18 @@ class DefaultConfig
 	## DEFAULT FORM INPUT [[NAME FORMAT]] 
 	## -----------------------------------------------------------
 	
-	## Input name format string can be used to prefix or customize
+	## Input name Format string can be used to prefix or customize
 	## html input "name" or "id" [/id/ if not explicitly provided 
 	## in field props].
 	
-	## Default format = ":model_:name"
+	## Default Format = ":model_:name"
 	
 	## Keywords
 	## --------
 	## :model = Model/DataSet class name __CLASS__
 	## :name  = Field name 
 	
-	## EG. Html output for name format ":model_:name" 
+	## EG. Html output for name Format ":model_:name"
 	## will be as follows:
 	
 	## <input type="text" name="User_FirstName" />
@@ -394,11 +379,11 @@ class DefaultConfig
 	
 	## A. Format string should follow the pattern "/^[A-Za-z0-9_]+$/"
 	## in addition to keywords :model and :name. Otherwise the system
-	## will revert back to ":model_:name" format.
+	## will revert back to ":model_:name" Format.
 
-	## B. If keyword :name is not included in format string, it will be
-	## added to the end of the format string anyway. so if the format
-	## string assigned as empty string that means ":name" format will
+	## B. If keyword :name is not included in Format string, it will be
+	## added to the end of the Format string anyway. so if the Format
+	## string assigned as empty string that means ":name" Format will
 	## be used eventually.
 	
 	static $FormInputNameFormat = ":model_:name";

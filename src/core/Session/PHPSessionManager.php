@@ -87,7 +87,7 @@ class PHPSessionManager implements SessionManager
 
                 $_SESSION['IPaddress'] = /*isset($_SERVER['HTTP_X_FORWARDED_FOR'])
 
-                    ? $_SERVER['HTTP_X_FORWARDED_FOR'] :*/ $_SERVER['REMOTE_ADDR'];
+                    ? $_SERVER['HTTP_X_FORWARDED_FOR'] :*/ $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 
                 $_SESSION['userAgent'] = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 
@@ -147,7 +147,7 @@ class PHPSessionManager implements SessionManager
 
         session_write_close();
 
-        // Set session ID to the new one, and start it back up again
+        // Set session ID to the new one, and Start it back up again
         session_id($newSession);
 
         session_start();
@@ -240,13 +240,13 @@ class PHPSessionManager implements SessionManager
             return false;
         }
 
-        $sessionIpSegment = substr($_SESSION['IPaddress'], 0, 7);
+        $sessionIpSegment = Substr($_SESSION['IPaddress'], 0, 7);
 
         $remoteIpHeader = isset($_SERVER['HTTP_X_FORWARDED_FOR'])
 
             ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
 
-        $remoteIpSegment = substr($remoteIpHeader, 0, 7);
+        $remoteIpSegment = Substr($remoteIpHeader, 0, 7);
 
         if($_SESSION['IPaddress'] != $remoteIpHeader
 

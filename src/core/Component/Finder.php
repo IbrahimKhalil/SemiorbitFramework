@@ -51,15 +51,15 @@ class Finder
 
 		if ( $class == '' ) return false;
 
-        $dir = isset( CFG::$DefConfig[ $directory ] ) ? trim( CFG::$DefConfig[ $directory ], '/') : $directory;
+        $dir = CFG::$FrameworkConfig[ $directory ] ?? $directory;
 
-        if ( $dir == Finder::Controllers ) $dir = "core/Controllers";
+        $ext = isset( CFG::$FrameworkConfig[ $directory . 'Ext' ] ) ? '.' . CFG::$FrameworkConfig[ $directory . 'Ext' ] : '';
 
-        $ext = isset( CFG::$DefConfig[ $directory . 'Ext' ] ) ? '.' . trim( CFG::$DefConfig[ $directory . 'Ext' ], '.' ) : '';
+		$path = $class_as_file_name === true ?
 
-		$path = FW . $dir . '/' . strtolower( $class ) . $ext;
+            FW . $dir . '/' . $class :
 
-		if ( $class_as_file_name === true ) $path = FW . $dir . '/' . $class;
+            FW . $dir . '/' . strtolower( $class ) . $ext;
 
 
         return file_exists( $path ) ?  $path : false;
@@ -112,10 +112,10 @@ class Finder
 
                     if ($APP_FP) return new FinderResult( array('class' => $class_name, 'path' => $APP_FP, 'dir' => $dir, 'selector' => $my_class) );
 
-
                     if (!$project_only) :
 
                         $FW_FP = Finder::FW_FilePath($my_class, $dir, $class_as_file_name);
+
 
                         if ($FW_FP) return new FinderResult( array('class' => $class_name, 'path' => $FW_FP, 'dir' => $dir, 'selector' => $my_class) );
 
@@ -198,58 +198,6 @@ class Finder
         return false;
 
     }
-
-
-    /**
-     * abort
-     *
-     * prints custom err pages in he output when needed OR return
-     * a string containing the custom err page.
-     *
-     *
-     * @access   public
-     * @param    mixed  $err_nom  err_nom ex. 404, 405, etc ...
-     * @return   string
-     */
-
-    public static function Error($err_nom)
-    {
-
-        ## -----------------------------------------------------------
-        ## Check ERROR FILE in BASEPATH/err/ THEN >>>
-        ## Check ERROR FILE in FW/err/ "DEFAULT"
-        ## -----------------------------------------------------------
-
-        $err = null;
-
-        foreach (array(BASEPATH . CFG::$Views . 'errors/', FW . 'views/errors/') as $path) {
-
-            $err_file = $path . $err_nom . CFG::$ViewsExt;
-
-            if (!empty($err_file) && file_exists($err_file)) {
-
-                /** @noinspection PhpIncludeInspection */
-                $err = include "{$err_file}";
-
-            }
-
-        }
-
-        ## -----------------------------------------------------------
-        ## If error file not found just print error number
-        ## -----------------------------------------------------------
-
-        if (! $err) {
-            $err = "<h1>Error {$err_nom}!</h1>";
-        }
-
-        return $err;
-
-    }
-
-
-
-
 
 
 

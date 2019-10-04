@@ -153,5 +153,8 @@ interface ResponseStatus
         511 => 'Network Authentication Required',                             // RFC6585
     );
 
+    public function HasStatusCode($code);
+
+    public function DefaultStatusMessage($code);
 
 }

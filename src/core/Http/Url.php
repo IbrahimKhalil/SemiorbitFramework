@@ -71,7 +71,7 @@ class Url
         $directory = rtrim($directory, "/") . "/";
 
         /* Returns localhost OR mysite.com */
-        $host = $_SERVER['HTTP_HOST'];
+        $host = $_SERVER['HTTP_HOST'] ?? '';
 
         /*
          * Returns:

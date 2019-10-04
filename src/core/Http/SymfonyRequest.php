@@ -169,7 +169,7 @@ class SymfonyRequest
         }
         $pathInfo = substr($requestUri, strlen($baseUrl));
         if (null !== $baseUrl && (false === $pathInfo || '' === $pathInfo)) {
-            // If substr() returns false then PATH_INFO is set to an empty string
+            // If Substr() returns false then PATH_INFO is set to an empty string
             return '/';
         } elseif (null === $baseUrl) {
             return $requestUri;

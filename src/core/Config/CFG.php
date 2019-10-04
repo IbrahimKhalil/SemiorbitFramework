@@ -15,11 +15,23 @@ use Semiorbit\Support\Path;
 
 class CFG extends DefaultConfig
 {
+
+    const ENV_DEVELOPMENT = 'dev';
+
+    const ENV_PRODUCTION = 'production';
+
 	
 	public static $DefConfig = array();
 
+	public static $FrameworkConfig = array();
+
+
 	public static function LoadConfigFromClass($config_class='Config') 
 	{
+
+	    // Framework Config
+
+        self::$FrameworkConfig = include __DIR__ . '/framework.inc';
 		
 		// DEFAULT CONFIG 
 		$def_config = new \ReflectionClass('Semiorbit\\Config\\DefaultConfig');

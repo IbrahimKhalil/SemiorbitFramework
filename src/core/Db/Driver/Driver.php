@@ -76,5 +76,3 @@ interface Driver
     public function Rollback();
 	
 }
-
-?>

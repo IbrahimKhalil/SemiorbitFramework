@@ -105,7 +105,7 @@ class ResponseHeaders implements ResponseStatus
 
     public function DefaultStatusMessage($code)
     {
-        return ( array_key_exists($code, static::STATUS_MESSAGES) ) ? static::STATUS_MESSAGES[$code] : null;
+        return static::STATUS_MESSAGES[$code] ?? null;
     }
     
     public function StatusCode()
@@ -230,6 +230,11 @@ class ResponseHeaders implements ResponseStatus
     public function IsEmpty()
     {
         return in_array($this->_StatusCode, array(204, 304));
+    }
+
+    public function HasStatusCode($code)
+    {
+        return array_key_exists($code, static::STATUS_MESSAGES);
     }
 
 }

@@ -9,7 +9,7 @@
 namespace Semiorbit\Http;
 
 
-class RestfulScaffold extends ScaffoldingProvider
+class RestScaffold extends ScaffoldingProvider
 {
 
     protected $_Disabled = array("Index"=>false, "Edit"=>true, "Delete"=>true,

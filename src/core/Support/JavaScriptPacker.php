@@ -105,7 +105,7 @@ class JavaScriptPacker {
 		return $this->_pack($this->_script);
 	}
 	
-	// apply all parsing routines
+	// Apply all parsing routines
 	private function _pack($script) {
 		for ($i = 0; isset($this->_parsers[$i]); $i++) {
 			$script = call_user_func(array(&$this,$this->_parsers[$i]), $script);
@@ -138,7 +138,7 @@ class JavaScriptPacker {
 		// remove redundant semi-colons
 		$parser->add('/\\(;;\\)/', self::IGNORE); // protect for (;;) loops
 		$parser->add('/;+\\s*([};])/', '$2');
-		// apply the above
+		// Apply the above
 		$script = $parser->exec($script);
 
 		// remove white-space
@@ -172,7 +172,7 @@ class JavaScriptPacker {
 	}
 	
 	private function _encodeKeywords($script) {
-		// escape high-ascii values already in the script (i.e. in strings)
+		// Escape high-ascii values already in the script (i.e. in strings)
 		if ($this->_encoding > 62)
 			$script = $this->_escape95($script);
 		// create the parser
@@ -487,7 +487,7 @@ class JavaScriptPacker {
         $keywords = [function ($encoded) {return $decode[$encoded]}];
         // generic match
         $encode = function () {return \'\\\\w+\'};
-        // reset the loop counter -  we are now doing a global replace
+        // Reset the loop counter -  we are now doing a global replace
         $count = 1;
     }
 ';
@@ -500,7 +500,7 @@ class JavaScriptPacker {
         $keywords = [function ($encoded) {return $decode[$encoded]}];
         // generic match
         $encode = function () {return\'\\\\w+\'};
-        // reset the loop counter -  we are now doing a global replace
+        // Reset the loop counter -  we are now doing a global replace
         $count = 1;
     }';
 */
@@ -616,7 +616,7 @@ class ParseMaster {
 	}
 		
 	public function reset() {
-		// clear the patterns collection so that this object may be re-used
+		// Clear the patterns collection so that this object may be re-used
 		$this->_patterns = array();
 	}
 

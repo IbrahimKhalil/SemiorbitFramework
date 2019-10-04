@@ -8,6 +8,7 @@
 namespace Semiorbit\Base;
 
 
+use Semiorbit\Debug\AppException;
 use Semiorbit\Http\Request;
 use Semiorbit\Support\Path;
 
@@ -58,6 +59,17 @@ abstract class Application implements AppInterface
     final public static function Abort($code, $message = '')
     {
         throw new \RuntimeException($message, $code);
+    }
+
+    /**
+     * @param int $code
+     * @param string $message
+     * @throws AppException
+     */
+
+    final public static function Exception($code, $message = '')
+    {
+        throw new AppException($code);
     }
 
     /**
@@ -258,7 +270,7 @@ abstract class Application implements AppInterface
     }
 
     /**
-     * Triggered after running application, but <b>before</b> loading (start-up request) controller
+     * Triggered after running application, but <b>before</b> loading (Start-up request) controller
      */
 
     public static function onStart()
@@ -267,7 +279,7 @@ abstract class Application implements AppInterface
     }
 
     /**
-     * Triggered <b>after</b> loading (start-up request) controller but before firing action.
+     * Triggered <b>after</b> loading (Start-up request) controller but before firing action.
      *
      * @param Request $request
      */
@@ -279,7 +291,7 @@ abstract class Application implements AppInterface
 
     /**
      * Triggered after calling (any request), but <b>before</b> loading request controller.<br/>
-     * Same as <u>onStart</u> but fired on <b>both</b> (start-up request and HMVC sub-requests).
+     * Same as <u>onStart</u> but fired on <b>both</b> (Start-up request and HMVC sub-requests).
      *
      * @param $uri Request URI
      */
@@ -291,7 +303,7 @@ abstract class Application implements AppInterface
 
     /**
      * Triggered <b>after</b> loading (any request) controller, but before firing action.<br/>
-     * Same as <u>onLoad</u> but fired on <b>both</b> (start-up request and HMVC sub-requests).
+     * Same as <u>onLoad</u> but fired on <b>both</b> (Start-up request and HMVC sub-requests).
      *
      * @param Request $request
      */

@@ -948,7 +948,7 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
     }
 
     /**
-     * Find first row and fill model or clear it if no rows found
+     * Find first row and fill model or Clear it if no rows found
      * If no model is used it will return first row array or empty array
      *
      * @return Model|array

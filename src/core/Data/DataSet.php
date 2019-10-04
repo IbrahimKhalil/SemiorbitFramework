@@ -366,7 +366,7 @@ class DataSet extends Model
 
     /**
      * Read data row from <u>database</u> by "ID" field then fill model fields. <p><p>
-     * If selected "ID" <b>not found</b>, it will reset the model as a <b>NEW record</b><p><p>
+     * If selected "ID" <b>not found</b>, it will Reset the model as a <b>NEW record</b><p><p>
      * If "ID" is <b>NULL</b>, it will read <b>next</b> row in table <u>result</u>, if <b>no more rows</b> in <u>result</u> it will return <b>FALSE</b><p><p>
      *
      * NB: This will fire <b>onStart</b> event on load complete

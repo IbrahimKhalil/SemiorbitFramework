@@ -1,0 +1,120 @@
+<head>
+    <title>Semiorbit :: PHP Framework</title>
+    <link rel="shortcut icon" type="image/x-icon" href="<?= include __DIR__ . '/../../res/favicon.inc' ?>">
+
+    <style type="text/css">
+        body {
+            padding          : 50px 0;
+            margin           : 0;
+            background-color : #f0f0f0;
+            font-family      : Verdana, Arial, serif;
+            text-align       : center;
+        }
+
+        .container {
+            position        : relative;
+            display         : flex;
+            flex-direction  : column;
+            align-items     : center;
+            justify-content : center;
+            min-height      : calc(100vh - 100px);
+        }
+
+        .container > img {
+            margin-bottom : 55px;
+        }
+
+        h1 {
+            font-size        : 20px;
+            background-color : rgba(255, 0, 0, 0.2);
+            display          : inline-block;
+            vertical-align   : middle;
+        }
+
+        h1 > i {
+            display          : inline-block;
+            height           : 2em;
+            min-width        : 2em;
+            vertical-align   : middle;
+            line-height      : 2em;
+            color            : rgba(255, 255, 255, 0.5);
+            padding          : 5px 8px;
+            background-color : #79C5CC;
+            font-weight      : normal;
+        }
+
+        h1 > span {
+            display        : inline-block;
+            padding-left   : 10px;
+            padding-right  : 20px;
+            vertical-align : middle;
+            box-sizing     : border-box;
+        }
+
+        [dir="rtl"] h1 > span {
+            padding-left  : 20px;
+            padding-right : 10px;
+        }
+
+        section {
+            margin     : 20px auto;
+            width      : 95%;
+            max-width  : 1800px;
+            background : #ffffff;
+            text-align : start;
+        }
+
+        section:first-child {
+            margin : 110px auto 40px;
+        }
+
+        section > h5 {
+            background : #79C5CC;
+            padding    : 10px;
+            color      : #f0f0f0;
+            margin     : 0;
+        }
+
+        section > p {
+            padding : 15px;
+            margin  : 0;
+        }
+
+        section > table {
+            margin  : 0;
+            padding : 15px;
+        }
+
+        section > table tr > td {
+            padding        : 5px 15px;
+            vertical-align : top;
+        }
+
+        section > table tr > td:first-child {
+            text-transform : capitalize;
+        }
+
+        .lighter {
+            color     : darkgray;
+            font-size : 0.8em;
+        }
+
+        section.highlight > h5 {
+            background : #F3C0C0;
+        }
+
+        .container > div {
+            width : 100%;
+        }
+
+        .trace-item.closed > table {
+            display : none;
+        }
+
+        .trace h5 {
+            cursor      : pointer;
+            user-select : none;
+        }
+
+    </style>
+</head>

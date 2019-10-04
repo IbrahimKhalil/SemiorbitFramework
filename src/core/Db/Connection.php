@@ -11,9 +11,13 @@ namespace Semiorbit\Db;
 
 
 
+use mysql_xdevapi\Exception;
+use Semiorbit\Base\Application;
 use Semiorbit\Config\CFG;
 use Semiorbit\Db\Driver\Driver;
+use Semiorbit\Debug\AppException;
 use Semiorbit\Debug\Log;
+use Semiorbit\Http\Response;
 use Semiorbit\Support\AltaArray;
 
 
@@ -43,13 +47,10 @@ class Connection
         $myCon = CFG::Connections($connection_id);
 
 
-        if (empty($myCon)) {
+        if (empty($myCon))
 
-            Log::Inline()->TraceStartIndex(4)->Debug("Connection Failed!", $connection_id);
+            Application::Abort(503,  'Connection Failed!');
 
-            die("<h3>Connection Failed!</h3>");
-
-        }
 
         /******************************************
          *

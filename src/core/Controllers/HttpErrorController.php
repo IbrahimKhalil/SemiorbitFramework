@@ -3,9 +3,9 @@ namespace Semiorbit\Controllers;
 
 
 use Semiorbit\Http\ResponseStatus;
-use Semiorbit\Http\RestfulController;
+use Semiorbit\Http\RestController;
 
-class HttpErrorController extends RestfulController
+class HttpErrorController extends RestController
 {
 
     public function Index()

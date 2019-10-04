@@ -20,7 +20,7 @@ function run($uri = '', $flush_output = true)
 /**
  * abort
  *
- * prints custom err pages in he output when needed OR return
+ * prints custom err pages in the output when needed OR return
  * a string containing the custom err page.
  *
  *
@@ -102,6 +102,17 @@ function str_replace_first($search, $replace, $subject)
 function is_empty(&$var)
 {
     return is_string($var) ? trim($var) == '' : empty($var);
+}
+
+/**
+ * @param array $arr
+ * @return bool
+ * @see https://stackoverflow.com/questions/173400/how-to-check-if-php-array-is-associative-or-sequential
+ */
+
+function is_assoc(array $arr) {
+    if (array() === $arr) return false;
+    return array_keys($arr) !== range(0, count($arr) - 1);
 }
 
 function nl2li($str, $css_class = "none", $ordered = 0, $type = "1")

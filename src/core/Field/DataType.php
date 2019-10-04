@@ -41,6 +41,8 @@ class DataType
 	const TIMESTAMP = 'timestamp';
 	
 	const FILE = 'file';
+
+	const BINARY = 'binary';
 	
 	
 }

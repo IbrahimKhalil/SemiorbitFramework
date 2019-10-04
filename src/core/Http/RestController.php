@@ -20,11 +20,11 @@ use Semiorbit\Output\View;
  * @property Request $Request
  * @property View $View
  * @property Actions $Actions
- * @property RestfulScaffold $Scaffolding
+ * @property RestScaffold $Scaffolding
  * @property Response $Response
  * @property array $Params
  */
-abstract class RestfulController extends Controller
+abstract class RestController extends Controller
 {
 
     public $Response;
@@ -36,7 +36,7 @@ abstract class RestfulController extends Controller
 
         // SCAFFOLDING
 
-        $this->Scaffolding = new RestfulScaffold($this);
+        $this->Scaffolding = new RestScaffold($this);
 
 
     }

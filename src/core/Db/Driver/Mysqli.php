@@ -12,6 +12,8 @@ namespace Semiorbit\Db\Driver;
 
 
 
+use Semiorbit\Config\CFG;
+use Semiorbit\Http\Response;
 use Semiorbit\Support\AltaArray;
 use Semiorbit\Support\AltaArrayKeys;
 use Semiorbit\Debug\Log;
@@ -70,23 +72,19 @@ class Mysqli implements Driver
 
         if ($this->Persistent) $this->Host = 'p:' . $this->Host;
 
+        mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ALL);
+
+
+        $myCon = null;
+
         $myCon = new \mysqli($this->Host, $this->User, $this->Password, $this->Database, $this->Port, $this->Socket);
 
-
-        /* check connection */
-
-        if ($myCon->connect_errno) {
-
-            Log::Inline()->Trace(0)->Info("Connection Failed!", sprintf("Connection Failed: %s\n", $myCon->connect_error));
-
-            die ("<h3>Connection Failed!</h3>");
-
-        }
 
 
         $myCon->query("SET NAMES '{$this->CharSet}'");
 
         $myCon->query("SET CHARACTER SET {$this->CharSet}");
+
 
 
         $this->_Connector = $myCon;
@@ -111,8 +109,6 @@ class Mysqli implements Driver
         $stmt = isset($this->_Stmts[$sql_hash]) ? $this->_Stmts[$sql_hash] :
 
             $this->_Stmts[$sql_hash] = $this->Connector()->prepare($sql);
-
-        //print_r($this->stmt);
 
         $stmt->bind_param($params[0], $params[1]);
 

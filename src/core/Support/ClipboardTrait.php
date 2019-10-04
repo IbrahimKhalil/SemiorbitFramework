@@ -21,7 +21,7 @@ trait ClipboardTrait
      * @param mixed $value    if not NULL, function will set the value and then returns it.
      * @param int|null $clear if Clipboard::CLEAR it will unset the var from cache.<br/>
      *                        if Clipboard::SET_NULL it will set var value to null.<br/>
-     *                        if Clipboard::CLEAR_ALL it will clear cache.<br/>
+     *                        if Clipboard::CLEAR_ALL it will Clear cache.<br/>
      *                        if Clipboard::KEEP no action will be done.
      *
      * @return mixed returns value from cache array by var name as key, or NULL if not found.
