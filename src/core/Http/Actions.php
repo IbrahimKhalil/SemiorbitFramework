@@ -9,7 +9,7 @@ namespace Semiorbit\Http;
 
 
 use Semiorbit\Base\Application;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Support\AltaArray;
 use Semiorbit\Support\ClipboardTrait;
 use Semiorbit\Support\Str;
@@ -366,7 +366,7 @@ class Actions extends AltaArray
 
     public function Index()
     {
-        return $this->Action(CFG::$IndexAction ?: 'index');
+        return $this->Action(Config::IndexAction() ?: 'index');
     }
 
     /**

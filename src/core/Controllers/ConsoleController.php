@@ -5,7 +5,7 @@ namespace Semiorbit\Controllers;
 
 
 use Semiorbit\Base\Application;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Console\ConsoleRegistry;
 use Semiorbit\Http\Controller;
 
@@ -18,7 +18,7 @@ class ConsoleController extends Controller
 
         // Console is allowed only in development
 
-        if (CFG::$Environment === CFG::ENV_PRODUCTION)
+        if (Config::Environment() === Config::ENV_PRODUCTION)
 
             Application::Abort(403);
 

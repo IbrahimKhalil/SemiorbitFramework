@@ -8,7 +8,7 @@
 namespace Semiorbit\Support;
 
 
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 
 
 
@@ -154,7 +154,7 @@ class Str
 
         $lang = current(array_reverse(explode("_", $str)));
 
-        if (in_array($lang, CFG::$Lang)) {
+        if (in_array($lang, Config::Languages())) {
 
             $str = rtrim($str, "_" . $lang);
 
@@ -349,6 +349,64 @@ class Str
         // 7.0
 
         // bin2hex(random_bytes(32));
+
+    }
+
+
+    /**
+     * Replace only the first and last occurrence
+     *
+     * @param $string
+     * @param string $needle
+     * @return string
+     */
+
+    public static function TrimOnce($string, $needle = ' ')
+    {
+
+        $string = self::LTrimOnce($string, $needle);
+
+        $string = self::RTrimOnce($string, $needle);
+
+        return $string;
+
+    }
+
+    /**
+     * Replace only the first occurrence
+     *
+     * @param $string
+     * @param string $needle
+     * @return string
+     */
+
+    public static function LTrimOnce($string, $needle = ' ')
+    {
+
+        if (starts_with($string, $needle))
+
+            $string = substr($string, strlen($needle));
+
+        return $string;
+
+    }
+
+    /**
+     * Replace only the last occurrence
+     *
+     * @param $string
+     * @param string $needle
+     * @return string
+     */
+
+    public static function RTrimOnce($string, $needle = ' ')
+    {
+
+        if (ends_with($string, $needle))
+
+            $string = substr($string,0,strlen($string) - strlen($needle));
+
+        return $string;
 
     }
 

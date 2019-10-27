@@ -10,6 +10,7 @@
 
 use Semiorbit\Base\Application;
 use Semiorbit\Base\AppManager;
+use Semiorbit\Config\Config;
 
 
 function run($uri = '', $flush_output = true)
@@ -27,7 +28,6 @@ function run($uri = '', $flush_output = true)
  * @access   public
  * @param    int $code 404, 405, etc ...
  * @param string $message
- * @return string
  */
 
 function abort($code, $message = '')
@@ -35,7 +35,7 @@ function abort($code, $message = '')
     Application::Abort($code, $message);
 }
 
-function watch($var_value, $trace = 1)
+function watch($var_value, $trace = 0)
 {
     \Semiorbit\Debug\Log::JsConsole()->Trace($trace)->TraceStartIndex(3)->Debug("", $var_value);
 }
@@ -70,6 +70,30 @@ function find($query, $params = [], $field = 0, $con = null)
 function cmd($query, $params = [], $con = '')
 {
     return \Semiorbit\Db\DB::Connection($con)->Cmd($query, $params);
+}
+
+/**
+ * @param $config_key
+ * @param null $fallback
+ * @return mixed
+ */
+function config($config_key, $fallback = null)
+{
+    return Config::Of($config_key, $fallback);
+}
+
+/**
+ * Loads & populates <b>.env</b> file to <b>$_ENV</b> global-array, if it is not already populated.
+ *
+ * @param null $key
+ * @param null $fallback
+ * @return mixed|null if <b>key</b> not set it will return the whole .env list as array,
+ *                      <br>otherwise it will return the corresponding value from <b>$_ENV</b> global-array.
+ */
+
+function env($key = null, $fallback = null)
+{
+    return Application::Environment($key, $fallback);
 }
 
 ///STRING

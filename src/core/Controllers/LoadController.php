@@ -4,7 +4,7 @@
 namespace Semiorbit\Controllers;
 
 
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 
 class LoadController extends \Semiorbit\Http\Controller
 {
@@ -23,7 +23,7 @@ class LoadController extends \Semiorbit\Http\Controller
     public function Index()
     {
 
-        CFG::$SanitizeOutput = false;
+        Config::setValueOf(Config::GROUP__APP, Config::APP__SANITIZE_OUTPUT, false);
 
         $this->Request->PathInfoPattern = "/folder/file";
 
@@ -59,7 +59,7 @@ class LoadController extends \Semiorbit\Http\Controller
 
         }
 
-        $path = \Semiorbit\Component\Finder::LookFor($params['file'], array(CFG::$Theme . "/" . $params['folder'], $params['folder']), true);
+        $path = \Semiorbit\Component\Finder::LookFor($params['file'], array(Config::Theme() . "/" . $params['folder'], $params['folder']), true);
 
 
         if (!file_exists($path['path'])) die('Not Found!');

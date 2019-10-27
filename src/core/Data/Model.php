@@ -22,7 +22,7 @@ use Semiorbit\Support\Str;
 use Semiorbit\Db\DB;
 use Semiorbit\Db\Connection;
 use Semiorbit\Support\AltaArrayType;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Translation\Lang;
 
 /**
@@ -150,7 +150,7 @@ class Model
     public function UseDocuments($documents_path = null)
     {
 
-        if ( is_empty($documents_path) ) $documents_path = CFG::DocumentsPath(false);
+        if ( is_empty($documents_path) ) $documents_path = Config::DocumentsPath(false);
 
         $this->_DocumentsPath = Path::Normalize($documents_path);
 
@@ -199,7 +199,7 @@ class Model
 
     public function UseDocumentsURL($documents_url = null)
     {
-        if ( is_empty($documents_url) ) $documents_url = CFG::DocumentsURL();
+        if ( is_empty($documents_url) ) $documents_url = Config::DocumentsURL();
 
         $this->_DocumentsURL = $documents_url;
 
@@ -336,8 +336,11 @@ class Model
 
         $id_val = $this->ID->WhereClausePrepareValue($id);
 
+
         /** @noinspection SqlNoDataSourceInspection */
-        $sql = "SELECT {$this->ListSelectStmtFields()} FROM {$this->TableName()} WHERE {$this->ID->Name} = {$id_val}";
+        /** @noinspection SqlResolve */
+        $sql = "SELECT {$this->ListSelectStmtFields()} FROM {$this->TableName()} WHERE `{$this->ID->Name}` = {$id_val}";
+
 
         $myRow = $this->ActiveConnection()->Row( $sql );
 
@@ -403,10 +406,11 @@ class Model
             $remark = true;
         }
 
-        $id_val = isset( $this->ID->AutoIncrement ) && $this->ID->AutoIncrement == true ?  $id : "'{$id}'";
+        $id_val = $this->ID->WhereClausePrepareValue($id);
 
         /** @noinspection SqlNoDataSourceInspection */
-        $sql = "SELECT {$this->ID->Name} FROM {$this->TableName()} where {$this->ID->Name} = {$id_val}";
+        /** @noinspection SqlResolve */
+        $sql = "SELECT {$this->ID->Name} FROM {$this->TableName()} where `{$this->ID->Name}` = {$id_val}";
 
         $id_exists = $this->ActiveConnection()->Has($sql);
 
@@ -508,94 +512,41 @@ class Model
         if ( is_empty( $this->ID->Value ) )  $this->AutoID();
 
 
-        if ( ! $this->CheckRequiredValues() )     return Msg::FILL_ALL_REQUIRED;
-
-        if ( ! $this->ValidatePassword() )        return Msg::RETYPE_PASSWORD;
-
-        if ( ! $this->CheckUniqueValues() )       return Msg::DATA_EXISTS;
-
-        //Validate Values-------------------------------------------
-
-        $validate_res = $this->ValidateValues();
-
-        if ( $validate_res !== true  )            return $validate_res;
-
-        //--------------------------------------------------------
-
-        //Upload files-------------------------------------------
-
-        $upload_res = $this->UploadFiles();
-
-        if ( $upload_res != Msg::UPLOAD_OK )        return $upload_res;
-
-        //--------------------------------------------------------
+        if (($validation = $this->Validate()) !== true) return $validation;
 
 
-        if ( $checkpoint = $this->onBeforeSave() !== null)  return $checkpoint;
+        $field_name = [];
 
-        $paramsA = array();
+        $named_param = [];
 
-        $paramsB = array();
+        $param_value = [];
+
 
         foreach ($this->Fields() as $fld) :
+
+            /** @var Field $fld */
 
 
             if ( isset( $fld[Field::AUTO_INCREMENT] ) && $fld[Field::AUTO_INCREMENT] ) continue;
 
-            if ($fld[Field::READ_ONLY] || isset( $fld['ds'] )) continue;
+            if ($fld->ReadOnly) continue;
 
-            $id_val = $this->ID->WhereClausePrepareValue($this->ID->Value);
 
-            if ($fld->IsID) {
 
-                $paramsA[]="`".$fld['name']."`";
-                $paramsB[]=$id_val;
-                continue;
+            $field_name[] = "`{$fld->Name}`";
 
-            }
+            $named_param[] = $fld->WhereClausePrepareValue(":{$fld->Name}", true);
 
-            if (in_array($fld['type'], array('varchar', 'char', 'text', 'file')))
-            {
-                $paramsA[]="`".$fld['name']."`";
-                $paramsB[]="'".addslashes($fld['value'])."'";
-            }elseif (in_array($fld['type'], array('password'))){
-                $paramsA[]="`".$fld['name']."`";
-                $paramsB[]="md5('".$fld['value']."')";
-            }elseif (in_array( $fld['type'], array('Auto_Nom', 'autonom'))) {
-                if ($fld['value']=="") {
-                    $lastone=find("select ifnull(max( cast(" . $fld['name'] . " as decimal) ),0) as nn from " . $this->TableName(), array(), "nn");
-                    $lastone+=1;
-                    $fld['value']=$lastone;
-                }
-                $paramsA[]="`".$fld['name']."`";
-                is_numeric($fld['value']) ?
-                    $paramsB[]="'".$fld['value']."'" : $paramsB[]="'".addslashes($fld['value'])."'";
-            }elseif (in_array($fld['type'], array('date','datetime','timestamp'))){
-                $paramsA[]="`".$fld['name']."`";
-                if (in_array(trim($fld['value']), array('', null, false))) {
-                    $paramsB[]='null';
-                } else {
-                    $paramsB[]="'".$fld['value']."'";
-                }
-            }elseif (in_array($fld['type'], array('int','double','bool','float','decimal'))){
-                $paramsA[]="`".$fld['name']."`";
-                if (in_array(trim($fld['value']), array('', null))) {
-                    $paramsB[]='null';
-                } else {
-                    $paramsB[]="'".$fld['value']."'";
-                }
-            }else {
-                $paramsA[]="`".$fld['name']."`";
-                $paramsB[]="'".$fld['value']."'";
-            }
+            $param_value[$fld->Name] = [$fld->Value === '' ? null : $fld->Value, $fld->Type];
+
 
         endforeach;
 
         /** @noinspection SqlNoDataSourceInspection */
-        $sql = "INSERT INTO {$this->TableName()} (".join(", ",$paramsA).") VALUES (".join(", ",$paramsB).")";
+        $sql = "INSERT INTO {$this->TableName()} (".join(", ", $field_name).") VALUES (".join(", ",$named_param).")";
 
-        echo $sql;
-        $res = $this->ActiveConnection()->Cmd( $sql ) ? Msg::DBOK : Msg::DBERR;
+        // echo $sql;
+        $res = $this->ActiveConnection()->Cmd( $sql, $param_value ) ? Msg::DBOK : Msg::DBERR;
 
         if ( $res == Msg::DBOK ) {
 
@@ -627,35 +578,16 @@ class Model
         $this->onBeforeUpdate();
 
 
-        if ( ! $this->CheckRequiredValues() )     return Msg::FILL_ALL_REQUIRED;
-
-        if ( ! $this->ValidatePassword() )        return Msg::RETYPE_PASSWORD;
-
-        if ( ! $this->CheckUniqueValues() )       return Msg::DATA_EXISTS;
-
-        //Validate Values-------------------------------------------
-
-        $validate_res = $this->ValidateValues();
-
-        if ( $validate_res !== true  )             return $validate_res;
-
-        //--------------------------------------------------------
-
-        //Upload files-------------------------------------------
-
-        $upload_res = $this->UploadFiles();
-
-        if ( $upload_res != Msg::UPLOAD_OK )        return $upload_res;
-
-        //--------------------------------------------------------
+        if (($validation = $this->Validate()) !== true) return $validation;
 
 
-        if ( $checkpoint = $this->onBeforeSave() !== null)  return $checkpoint;
 
+        $params = [];
 
-        $params = array();
+        $param_value = [];
 
-        $id_val = $this->ID->WhereClausePrepareValue($this->ID->Value);
+        $id_placeholder = "";
+
 
         foreach ($this->Fields() as $fld) :
 
@@ -663,63 +595,32 @@ class Model
 
             if ( isset( $fld[Field::AUTO_INCREMENT] ) && $fld[Field::AUTO_INCREMENT] ) continue;
 
-            if ($fld['readonly'] || isset ( $fld['ds'] )) continue;
+            if ($fld->ReadOnly) continue;
 
 
-            if ($fld->IsID) {
 
-                $params[] = "`{$fld->Name}` = {$id_val}"; continue;
-
-            }
+            $named_placeholder = $fld->WhereClausePrepareValue(":{$fld->Name}", true);
 
 
-            if (in_array($fld['type'], array('varchar', 'char', 'text', 'file')))
-            {
-                $params[]="`".$fld['name']."`='".addslashes($fld['value'])."'";
-            }
+            if ($fld->IsID)
 
-            elseif ($fld['type']=='password') {
-                $params[]="`".$fld['name']."`=md5('".$fld['value']."')";
-            }
+                $id_placeholder = $named_placeholder;
 
-            elseif (in_array($fld['type'], array('date','datetime','timestamp'))){
-                if (in_array(trim($fld['value']), array('', null, false))) {
-                    $params[]="`".$fld['name']."`"."= null ";
-                } else {
-                    $params[]="`".$fld['name']."`"."='".$fld['value']."'";
-                }
-            }
 
-            elseif (in_array($fld['type'], array('int','double','bool','float', 'decimal'))){
-                if (in_array(trim($fld['value']), array('', null))) {
-                    $params[]="`".$fld['name']."`"."= null ";
-                } else {
-                    $params[]="`".$fld['name']."`"."='".$fld['value']."'";
-                }
-            }
+            $params[] = "`{$fld->Name}` = {$named_placeholder}";
 
-            elseif (in_array( $fld['type'], array('Auto_Nom', 'autonom'))) {
-                if ($fld['value']=="") {
-                    $lastone=find("select ifnull(max( cast(" . $fld['name'] . " as decimal) ),0) as nn from " . $this->TableName(), array(), "nn");
-                    $lastone+=1;
-                    $fld['value']=$lastone;
-                }
-                is_numeric($fld['value']) ?
-                    $params[]="`".$fld['name']."`"."='".$fld['value']."'" :
-                    $params[]="`".$fld['name']."`='".addslashes($fld['value'])."'";
-            }
 
-            else {
-                $params[]="`".$fld['name']."`"."='".$fld['value']."'";
-            }
+            $param_value[$fld->Name] = [$fld->Value === '' ? null : $fld->Value, $fld->Type];
+
 
         endforeach;
 
         /** @noinspection SqlNoDataSourceInspection */
-        $sql="UPDATE {$this->TableName()} SET ".join(",",$params)." WHERE `{$this->ID['name']}` = {$id_val}";
+        /** @noinspection SqlResolve */
+        $sql="UPDATE {$this->TableName()} SET ".join(", ", $params)." WHERE `{$this->ID['name']}` = {$id_placeholder}";
 
         //dd($sql);
-        $res = $this->ActiveConnection()->Cmd( $sql ) ? Msg::DBOK : Msg::DBERR;
+        $res = $this->ActiveConnection()->Cmd( $sql, $param_value ) ? Msg::DBOK : Msg::DBERR;
 
         $this->onSave($res);
 
@@ -754,6 +655,38 @@ class Model
 
     }
 
+
+    public function Validate()
+    {
+
+        if ( ! $this->CheckRequiredValues() )     return Msg::FILL_ALL_REQUIRED;
+
+        if ( ! $this->ValidatePassword() )        return Msg::RETYPE_PASSWORD;
+
+        if ( ! $this->CheckUniqueValues() )       return Msg::DATA_EXISTS;
+
+        //Validate Values-------------------------------------------
+
+        $validate_res = $this->ValidateValues();
+
+        if ( $validate_res !== true  )             return $validate_res;
+
+        //--------------------------------------------------------
+
+        //Upload files-------------------------------------------
+
+        $upload_res = $this->UploadFiles();
+
+        if ( $upload_res != Msg::UPLOAD_OK )        return $upload_res;
+
+        //--------------------------------------------------------
+
+
+        if ( $checkpoint = $this->onBeforeSave() !== null)  return $checkpoint;
+
+        return true;
+
+    }
 
     public function CheckRequiredValues()
     {

@@ -55,7 +55,7 @@ trait ModelEventsTrait {
         return $res;
     }
 
-    public function onUserInsertedRow($res, &$show_form, $show_err_report = false, $form_output)
+    public function onUserInsertedRow($res, &$show_form, $show_err_report = false, $form_output = null)
     {
 
         /** @var DataSet $this */
@@ -70,7 +70,7 @@ trait ModelEventsTrait {
 
     }
 
-    public function onUserUpdatedRow($res, &$show_form, $show_err_report = false, $form_output)
+    public function onUserUpdatedRow($res, &$show_form, $show_err_report = false, $form_output = null)
     {
 
         /** @var DataSet $this */

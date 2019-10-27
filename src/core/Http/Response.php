@@ -9,7 +9,7 @@
 namespace Semiorbit\Http;
 
 
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Debug\AppException;
 use Semiorbit\Output\View;
 use Semiorbit\Output\ViewBase;
@@ -55,7 +55,7 @@ class Response extends ResponseHeaders
         ];
 
 
-        if (CFG::$DebugMode) {
+        if (Config::DebugMode()) {
 
             $content = array_merge($content, [
 
@@ -65,7 +65,7 @@ class Response extends ResponseHeaders
 
                 'line' => $e->getLine() ?? '',
 
-                'trace' => (CFG::$ApiMode ? $e->getTraceAsString() : $e->getTrace()) ?? []
+                'trace' => (Config::ApiMode() ? $e->getTraceAsString() : $e->getTrace()) ?? []
 
             ]);
 
@@ -78,7 +78,7 @@ class Response extends ResponseHeaders
 
         // Set response content
 
-        if (CFG::$ApiMode) {
+        if (Config::ApiMode()) {
 
             $this->Json($content);
 
@@ -86,7 +86,7 @@ class Response extends ResponseHeaders
 
             $this->setContent(
 
-                View::Load(['errors/' . $content['code'], 'errors/default'])->WithParams($content)
+                View::Load(['errors/' . $content['code'], 'errors/default'])->NoLayout()->WithParams($content)
 
             );
 
@@ -109,7 +109,7 @@ class Response extends ResponseHeaders
             $this->ErrorHandler($e->getCode(), '', $e->getMessage(), 0, $e);
 
         }
-        die($this->Send(false));
+
 
         return $this;
 

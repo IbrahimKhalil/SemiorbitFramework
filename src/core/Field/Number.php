@@ -27,7 +27,7 @@ namespace Semiorbit\Field;
  * @method \Semiorbit\Field\Number  setTag($value)
  * @method \Semiorbit\Field\Number  setValue($value)
  * @method \Semiorbit\Field\Number  setType($value)
- * @method \Semiorbit\Field\Number  setRequired($value)
+ * @method \Semiorbit\Field\Number  setRequired($value = true)
  * @method \Semiorbit\Field\Number  setGroup($value)
  * @method \Semiorbit\Field\Number  setPermission($value)
  * @method \Semiorbit\Field\Number  setTemplate($value)
@@ -48,6 +48,7 @@ namespace Semiorbit\Field;
  * @method \Semiorbit\Field\Number  HideColumn()
  * @method \Semiorbit\Field\Number  ShowColumn()
  * @method \Semiorbit\Field\Number  setControlCssClass($value)
+ * @method \Semiorbit\Field\Number  setUnsigned($value = true)
  */
 
 class Number extends Field
@@ -62,6 +63,9 @@ class Number extends Field
     public $Max;
 
     public $Step;
+
+    public $MaxLength = 11;
+
 
     protected $_Decimals = 0;
 
@@ -164,6 +168,18 @@ class Number extends Field
         return $this;
     }
 
+
+    /**
+     * @param $value
+     * @return Number
+     */
+
+    public function setMaxLength($value)
+    {
+        $this->MaxLength = strval($value);
+
+        return $this;
+    }
 
 
 

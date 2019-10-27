@@ -49,6 +49,7 @@ namespace Semiorbit\Field;
  * @method Text  ShowColumn()
  * @method Text  setControlCssClass($value)
  * @method Text  setInputCssClass($value)
+ * @method Select  setUnsigned($value = true)
  */
 
 class Text extends Field
@@ -58,7 +59,7 @@ class Text extends Field
 
     public $Type = DataType::VARCHAR;
 
-    public $MaxLength;
+    public $MaxLength = 255;
 
     public $PlaceHolder;
 

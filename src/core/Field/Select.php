@@ -50,6 +50,8 @@ use Semiorbit\Support\Str;
  * @method Select  HideColumn()
  * @method Select  ShowColumn()
  * @method Select  setControlCssClass($value)
+ * @method Select  setMaxLength($value)
+ * @method Select  setUnsigned($value = true)
  */
 class Select extends Field
 {
@@ -57,6 +59,8 @@ class Select extends Field
     public $Control = Control::SELECT;
 
     public $Type = DataType::VARCHAR;
+
+    public $MaxLength = 255;
 
     protected $_Options = array();
 

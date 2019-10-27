@@ -1,7 +1,19 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Ibrahim Khalil
- * Date: 24/10/2016
- * Time: 01:07 ص
- */
+
+use Semiorbit\Config\Config;
+
+return [
+
+
+
+    /*
+    | ------------------------------------------------
+    | LANG
+    | ------------------------------------------------
+     */
+
+    Config::LANG__DIR => "src/lang",
+
+    Config::LANG__EXT => ".inc"
+
+];

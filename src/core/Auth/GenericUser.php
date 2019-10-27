@@ -14,7 +14,7 @@ use Semiorbit\Data\DataSet;
 use Semiorbit\Field\Field;
 use Semiorbit\Field\Password;
 use Semiorbit\Field\Text;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 
 
 class GenericUser extends DataSet
@@ -66,7 +66,7 @@ class GenericUser extends DataSet
 
     public function IsSuperAdmin()
     {
-        return $this->Role()->FilterValue() === CFG::$SuperAdminRoleId;
+        return $this->Role()->FilterValue() === Config::SuperAdminRoleId();
     }
 
 
@@ -139,7 +139,7 @@ class GenericUser extends DataSet
     public function MapIdentity(Field $identity = null)
     {
 
-        if (  ! $identity ) $identity = $this->{CFG::$UsersModelFields['Identity']};
+        if (  ! $identity ) $identity = $this->{Config::UsersModelFields('Identity')};
 
         $this->_Identity = $identity;
 
@@ -157,7 +157,7 @@ class GenericUser extends DataSet
     public function MapPassword(Field $password = null)
     {
 
-        if (  ! $password ) $password = $this->{CFG::$UsersModelFields['Password']};
+        if (  ! $password ) $password = $this->{Config::UsersModelFields('Password')};
 
         $this->_Password = $password;
 
@@ -177,7 +177,7 @@ class GenericUser extends DataSet
     public function MapRole(Field $role = null)
     {
 
-        if (  ! $role ) $role = $this->{CFG::$UsersModelFields['Role']};
+        if (  ! $role ) $role = $this->{Config::UsersModelFields('Role')};
 
         $this->_Role = $role;
 

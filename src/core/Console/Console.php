@@ -5,7 +5,6 @@ namespace Semiorbit\Console;
 
 
 use Semiorbit\Base\Application;
-use Semiorbit\Base\AppManager;
 
 class Console
 {
@@ -15,7 +14,7 @@ class Console
 
         global $argv;
 
-        $command_name = $argv[1];
+        $command_name = $argv[1] ?? Application::Abort(404, 'Please enter command');
 
 
         //$command

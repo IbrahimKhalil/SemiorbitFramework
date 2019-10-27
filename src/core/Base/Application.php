@@ -8,6 +8,8 @@
 namespace Semiorbit\Base;
 
 
+use Semiorbit\Config\Config;
+use Semiorbit\Config\Environment\DotEnv;
 use Semiorbit\Debug\AppException;
 use Semiorbit\Http\Request;
 use Semiorbit\Support\Path;
@@ -224,6 +226,20 @@ abstract class Application implements AppInterface
 
     }
 
+
+    /**
+     * Path to a file in storage folder
+     *
+     * @param string $path Relative to <b>Storage</b> folder
+     * @return string
+     */
+
+    final public static function StoragePath($path)
+    {
+        return static::Service()->StoragePath($path);
+    }
+
+
     /**
      * Path to a theme file in assets folder
      *
@@ -250,6 +266,29 @@ abstract class Application implements AppInterface
     {
         return static::Service()->Asset($path, $theme, $include_filemtime);
     }
+
+
+    /**
+     * Loads & populates <b>.env</b> file to <b>$_ENV</b> global-array, if it is not already populated.
+     *
+     * @param null $key
+     * @param null $fallback
+     * @return mixed|null if <b>key</b> not set it will return the whole .env list as array,
+     *                      <br>otherwise it will return the corresponding value from <b>$_ENV</b> global-array.
+     */
+
+    public static function Environment($key = null, $fallback = null)
+    {
+
+        if (! isset($_ENV[Config::FWK_ENV_LIST]))
+
+            DotEnv::Import(self::BasePath() . '.env');
+
+
+        return $key ? ($_ENV[$key] ?? $fallback) : $_ENV[Config::FWK_ENV_LIST];
+
+    }
+
 
     /**
      * Triggered before creating app

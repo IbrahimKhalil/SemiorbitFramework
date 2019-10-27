@@ -72,7 +72,7 @@ class TextArea extends Field
 
         if (is_empty($this->Type)) $this->Type = DataType::TEXT;
 
-        if (is_empty($this->MaxLength)) $this->MaxLength = ($this->Type == DataType::VARCHAR) ? 500 : 65535;
+        if (is_empty($this->MaxLength)) $this->MaxLength = ($this->Type == DataType::VARCHAR) ? 255 : 0;
 
     }
 

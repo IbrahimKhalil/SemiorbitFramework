@@ -47,6 +47,8 @@ namespace Semiorbit\Field;
  * @method Custom  HideColumn()
  * @method Custom  ShowColumn()
  * @method Custom  setControlCssClass($value)
+ * @method Custom  setMaxLength($value)
+ * @method Custom  setUnsigned($value = true)
  */
 
 class Custom extends Field

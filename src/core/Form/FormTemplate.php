@@ -12,7 +12,7 @@ namespace Semiorbit\Form;
 
 
 use Semiorbit\Component\Finder;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Field\File;
 use Semiorbit\Output\Render;
 use Semiorbit\Field\Field;
@@ -45,9 +45,9 @@ class FormTemplate
     {
         if (! $this->_SelectedTemplates) {
 
-            if ( $this->Name() != CFG::$DefaultFormTemplate ) $this->_SelectedTemplates[] = $this->Name();
+            if ( $this->Name() != Config::DefaultFormTemplate() ) $this->_SelectedTemplates[] = $this->Name();
 
-            if ( CFG::$DefaultFormTemplate != static::BASE_TEMPLATE ) $this->_SelectedTemplates[] = CFG::$DefaultFormTemplate;
+            if ( Config::DefaultFormTemplate() != static::BASE_TEMPLATE ) $this->_SelectedTemplates[] = Config::DefaultFormTemplate();
 
             $this->_SelectedTemplates[] = static::BASE_TEMPLATE;
 
@@ -240,11 +240,11 @@ class FormTemplate
 
         $template = $this->Name();
 
-        $settings_path = Render::CacheViewPath( CFG::$Views . '@Settings_' . $template) ?: call_user_func( function () use ( $template ) {
+        $settings_path = Render::CacheViewPath( Config::ViewsDir() . '@Settings_' . $template) ?: call_user_func( function () use ( $template ) {
 
             $path = Finder::LookFor($template . '/settings.inc', Finder::Views, true);
 
-            Render::CacheViewPath( CFG::$Views . '@Settings_' . $template, $path);
+            Render::CacheViewPath( Config::ViewsDir() . '@Settings_' . $template, $path);
 
             return $path;
 

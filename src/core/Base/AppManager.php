@@ -8,7 +8,7 @@
 namespace Semiorbit\Base;
 
 
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Http\Url;
 use Semiorbit\Support\Path;
 
@@ -121,7 +121,7 @@ class AppManager
 
         if (!function_exists('symlink')) return;
 
-        $theme = CFG::$Theme;
+        $theme = Config::Theme();
 
         $assets_dir = $app->AssetsDirectory();
 
@@ -137,16 +137,22 @@ class AppManager
 
         foreach ($links as $link => $target) {
 
+
             $link_path = $app->PublicPath($link);
 
-            if( file_exists($link_path) ) continue;
+            if (file_exists($link_path)) continue;
 
-            $link_dir_path = dirname($link_path);
+            if (file_exists($target)) {
 
-            if ( ! file_exists( $link_dir_path ) ) mkdir($link_dir_path, 0755, $link_dir_path);
+                $link_dir_path = dirname($link_path);
 
-            symlink($target, $link_path);
 
+                if (!file_exists($link_dir_path)) mkdir($link_dir_path, 0755, $link_dir_path);
+
+
+                symlink($target, $link_path);
+            }
+            
         }
     }
 
@@ -172,16 +178,10 @@ class AppManager
         define('PUBLIC_URL', $app->PublicUrl());
 
         ## START-UP THEME ##
-        define('THEME', PUBLIC_URL . $app->AssetsDirectory() . '/' . Path::Normalize( CFG::$Theme ) );
+        define('THEME', PUBLIC_URL . $app->AssetsDirectory() . '/' . Path::Normalize( Config::Theme() ) );
 
         ## EXT ##
-        define('EXT', PUBLIC_URL . Path::Normalize( CFG::$Ext ));
-
-        /*
- *---------------------------------------------------------------
- * Register Classes AutoLoader
- *---------------------------------------------------------------
- */
+        define('EXT', PUBLIC_URL . Path::Normalize( Config::JsExtDir() ));
 
 
 

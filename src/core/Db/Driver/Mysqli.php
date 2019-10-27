@@ -12,11 +12,12 @@ namespace Semiorbit\Db\Driver;
 
 
 
-use Semiorbit\Config\CFG;
-use Semiorbit\Http\Response;
+
+use Semiorbit\Base\Application;
+use Semiorbit\Field\DataType;
+use Semiorbit\Field\Field;
 use Semiorbit\Support\AltaArray;
 use Semiorbit\Support\AltaArrayKeys;
-use Semiorbit\Debug\Log;
 
 
 class Mysqli implements Driver
@@ -72,7 +73,7 @@ class Mysqli implements Driver
 
         if ($this->Persistent) $this->Host = 'p:' . $this->Host;
 
-        mysqli_report(MYSQLI_REPORT_STRICT | MYSQLI_REPORT_ALL);
+        mysqli_report(MYSQLI_REPORT_STRICT );
 
 
         $myCon = null;
@@ -104,13 +105,32 @@ class Mysqli implements Driver
     public function Prepare($sql, $params)
     {
 
+        if (! (!is_assoc($params) &&
+
+            isset($params[0]) && (!is_array($params[0])) &&
+
+            preg_match("#[sibd]{1,".(count($params)-1)."}#i", $params[0])))
+
+
+            [$sql, $params] = $this->ExtractParamsArray($sql, $params);
+
+
+        var_dump($sql);
+
+        var_dump($params);
+
+
         $sql_hash = md5($sql);
 
         $stmt = isset($this->_Stmts[$sql_hash]) ? $this->_Stmts[$sql_hash] :
 
             $this->_Stmts[$sql_hash] = $this->Connector()->prepare($sql);
 
-        $stmt->bind_param($params[0], $params[1]);
+        if (! $stmt)
+
+            Application::Abort(503, "Prepare sql statement failed: {$sql}");
+
+        $stmt->bind_param(...$params);
 
         return $stmt;
 
@@ -358,5 +378,118 @@ class Mysqli implements Driver
         return $this->Connector()->rollback();
     }
 
+
+    protected function ExtractParamsArray($sql, array $params)
+    {
+
+        $named_parameters = false;
+
+        $type_string = "";
+
+        $pms = [];
+
+        $types = [];
+
+
+        foreach ($params as $name => $value) {
+
+
+            // Is Named?
+
+            if (!is_numeric($name))
+
+                $named_parameters = true;
+
+
+
+            if (is_array($value)) {
+
+                // Typed
+
+                $types[$name] = isset($value[1]) ? $this->MapType($value[1]) : "s";
+
+                $pms[$name] = $value[0] ?? null;
+
+
+            } elseif ($value instanceof Field) {
+
+                // Typed from Field object
+
+                $types[$name] = $this->MapType($value->Type) ?: "s";
+
+                $pms[$name] = $value->Value;
+
+            } else {
+
+                // Simple
+
+                $types[$name] = "s";
+
+                $pms[$name] = $value;
+
+            }
+
+        }
+
+        if ($named_parameters)
+
+            [$sql, $pms, $types] = $this->PrepareNamedParameters($sql, $pms, $types);
+
+
+        $type_string = implode('', $types);
+
+        array_unshift($pms, $type_string);
+
+
+        return [$sql, $pms];
+
+    }
+
+
+    protected function PrepareNamedParameters($sql, array $params, array $types)
+    {
+
+        $pms = [];
+
+        $ordered_types = [];
+
+        $sql = preg_replace_callback("#:(\w+)#ui", function ($matches) use ($params, $types, &$pms, &$ordered_types) {
+
+
+            if ( isset($matches[1]) && array_key_exists($matches[1], $params) ) {
+
+                $pms[] = $params[$matches[1]];
+
+                $ordered_types[] = $types[$matches[1]];
+
+                return '?';
+
+            }
+
+            return $matches[0];
+
+        }, $sql);
+
+        return [$sql, $pms, $ordered_types];
+
+    }
+
+
+    public function MapType($data_type)
+    {
+
+        if (in_array($data_type, ["i", "s", "d", "b"])) return $data_type;
+
+        if (in_array($data_type, [DataType::INT, DataType::BOOL])) return "i";
+
+        elseif (in_array($data_type, [DataType::FLOAT, DataType::DOUBLE])) return "d";
+
+        elseif (in_array($data_type, [DataType::BINARY])) return "b";
+
+        else return "s";
+
+
+
+    }
 
 }

@@ -13,7 +13,7 @@ use Semiorbit\Field\File;
 use Semiorbit\Http\Url;
 use Semiorbit\Support\ClipboardTrait;
 use Semiorbit\Field\Field;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Data\DataSet;
 use Semiorbit\Support\Str;
 
@@ -487,7 +487,7 @@ HEREHTML;
 
         if ( ! isset( $form_options[ Form::HONEYPOTS_MAX ] ) )
 
-            static::setHoneypotsMax( CFG::$HoneypotsMax );
+            static::setHoneypotsMax( Config::HoneypotsMax() );
 
 
 		$html_output .= static::Open($flush_output, $form_options);
@@ -891,7 +891,7 @@ HEREHTML;
 	
 	public static function setHoneypotsMax($value = null) {
 		
-		if ( ! is_int( CFG::$HoneypotsMax ) )  CFG::$HoneypotsMax = 3;
+		if ( ! is_int( Config::HoneypotsMax() ) )  Config::setValueOf(Config::FORMS__HONEYPOTS_MAX, 3);
 	
 		if ( ! static::IsOpen() )
 			
@@ -907,9 +907,9 @@ HEREHTML;
 	
 	public static function setHoneypotsLabels($value = array()) {
 		
-		if ( ! is_array( CFG::$HoneypotsLabels ) )  CFG::$HoneypotsLabels = array();
+		if ( ! is_array( Config::HoneypotsLabels() ) )  Config::setValueOf(Config::FORMS__HONEYPOTS_LABELS, []);
 
-		static::$_HoneypotsLabels = (  is_empty( $value ) || is_array( $value ) ) ? CFG::$HoneypotsLabels : $value;
+		static::$_HoneypotsLabels = (  is_empty( $value ) || is_array( $value ) ) ? Config::HoneypotsLabels() : $value;
 	
 		return static::FormInstance();
 	
@@ -958,7 +958,7 @@ HEREHTML;
 
     public static function setDefaultTemplate($value = null) {
 
-        static::$_DefaultTemplate = (  is_empty( $value ) ) ? CFG::FormTemplate() : $value;
+        static::$_DefaultTemplate = (  is_empty( $value ) ) ? Config::FormTemplate() : $value;
 
         return static::FormInstance();
 

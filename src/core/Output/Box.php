@@ -9,7 +9,7 @@ namespace Semiorbit\Output;
 
 
 use Semiorbit\Component\Finder;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 
 
 class Box extends ViewBase
@@ -34,13 +34,13 @@ class Box extends ViewBase
     public static function FindPath($box)
     {
 
-        $view_path = Render::CacheViewPath( CFG::$Views . '@Box_' . $box ) ?: call_user_func ( function () use ( $box ) {
+        $view_path = Render::CacheViewPath( Config::ViewsDir() . '@Box_' . $box ) ?: call_user_func ( function () use ( $box ) {
 
-            $box_ext = '.' . trim( CFG::$BoxExt, '.' );
+            $box_ext = '.' . trim( Config::BoxExt(), '.' );
 
             $box_path = Finder::LookFor( $box . $box_ext, Finder::Views, true );
 
-            Render::CacheViewPath( CFG::$Views . '@Box_' . $box );
+            Render::CacheViewPath( Config::ViewsDir() . '@Box_' . $box );
 
             return $box_path;
 

@@ -11,7 +11,7 @@ use Semiorbit\Db\DB;
  * @property DataSet $FKeyDataSet
  * @property Field $FKeyValueField
  * @property Field $FKeyTextField
- * @package Semiorbit\field
+ * @package Semiorbit\Field
  */
 trait ForeignKey
 {
@@ -59,12 +59,18 @@ trait ForeignKey
 
         $this->setFKeyTextFieldName($text_field);
 
+
+        $this->Type = DataType::INT;
+
+        $this->MaxLength = 20;
+
         return $this;
 
     }
 
     public function setForeignKeyBy($data_set, $value_field_id = null, $text_field_id = null)
     {
+
 
         $data_set = $data_set instanceof DataSet ? $data_set : new $data_set;
 
@@ -77,6 +83,13 @@ trait ForeignKey
         $this->setFKeyValueFieldName($value_field->Name);
 
         $this->setFKeyTextFieldName($text_field->Name);
+
+
+        $this->Type = $value_field->Type;
+
+        $this->MaxLength = $value_field->MaxLength;
+
+        $this->Unsigned = $value_field->Unsigned;
 
         return $this;
 
@@ -96,6 +109,13 @@ trait ForeignKey
         $this->setFKeyValueFieldName($this->FKeyValueField->Name);
 
         $this->setFKeyTextFieldName($this->FKeyTextField->Name);
+
+
+        $this->Type = $this->FKeyValueField->Type;
+
+        $this->MaxLength = $this->FKeyValueField->MaxLength;
+
+        $this->Unsigned = $this->FKeyValueField->Unsigned;
 
         return $this;
 

@@ -8,7 +8,7 @@
 namespace Semiorbit\Http;
 
 
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Output\Render;
 use Semiorbit\Support\Path;
 
@@ -39,7 +39,7 @@ class Url
 
 
         /* returns /myproject/index.php */
-        $path = CFG::$IndexFilePath != '' ? CFG::$IndexFilePath : $_SERVER['SCRIPT_NAME'];
+        $path = Config::IndexFilePath() != '' ? Config::IndexFilePath() : $_SERVER['SCRIPT_NAME'];
 
         if ( $path ) {
 
@@ -145,7 +145,7 @@ class Url
     public static function HomePage()
     {
 
-        $main_controller = CFG::MainPage();
+        $main_controller = Config::MainPage();
 
         $home_page = Controller::Name($main_controller['class']);
 
@@ -196,7 +196,7 @@ class Url
 
         }
 
-        return $_SESSION['semiorbit_previous_page'] = str_ireplace(CFG::LayoutParamName() . "=none", "",
+        return $_SESSION['semiorbit_previous_page'] = str_ireplace(Config::LayoutParamName() . "=none", "",
 
             $_SESSION['semiorbit_previous_page']);
 

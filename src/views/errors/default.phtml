@@ -1,6 +1,6 @@
 <?php
 
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Output\Render;
 
 ?>
@@ -21,7 +21,7 @@ use Semiorbit\Output\Render;
         </h1>
     </div>
 
-    <?php if (CFG::$DebugMode) :?>
+    <?php if (Config::DebugMode()) :?>
 
     <section>
         <h5>Exception <?= $this->code ?></h5>

@@ -27,7 +27,7 @@ namespace Semiorbit\Field;
  * @method DateTime  setTag($value)
  * @method DateTime  setValue($value)
  * @method DateTime  setType($value)
- * @method DateTime  setRequired($value)
+ * @method DateTime  setRequired($value = true)
  * @method DateTime  setGroup($value)
  * @method DateTime  setPermission($value)
  * @method DateTime  setTemplate($value)

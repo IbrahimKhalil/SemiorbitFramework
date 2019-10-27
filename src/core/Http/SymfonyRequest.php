@@ -7,7 +7,7 @@
 *
 */
 
-namespace Semicolon\Http;
+namespace Semiorbit\Http;
 
 
 class SymfonyRequest

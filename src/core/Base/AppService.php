@@ -9,7 +9,7 @@ namespace Semiorbit\Base;
 
 
 use Semiorbit\Component\Finder;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Http\Request;
 use Semiorbit\Http\Response;
 use Semiorbit\Http\Url;
@@ -136,7 +136,7 @@ class AppService
 
         if ( $application )
 
-            AppManager::MarkAsActive( CFG::$AppNamespace, $application, $this );
+            AppManager::MarkAsActive( Config::AppNamespace(), $application, $this );
 
 
         //Fire onCreate Event
@@ -254,7 +254,7 @@ class AppService
     public function UseControllersPath($path = '')
     {
 
-        if ( ! $path ) $path = CFG::$Controllers;
+        if ( ! $path ) $path = Config::ControllersDir();
 
         $this->_ControllersPath = Path::Normalize( realpath( $this->AppPath($path) ) );
 
@@ -279,7 +279,7 @@ class AppService
     public function UseModelsPath($path = '')
     {
 
-        if ( ! $path ) $path = CFG::$Models;
+        if ( ! $path ) $path = Config::ModelsDir();
 
         $this->_ModelsPath = Path::Normalize( realpath( $this->AppPath($path) ) );
 
@@ -317,11 +317,22 @@ class AppService
     public function ThemePath($theme = null)
     {
 
-        if ($theme === null) $theme = CFG::$Theme;
+        if ($theme === null) $theme = Config::Theme();
 
         if (! isset($this->_ThemePath[$theme])) $this->_ThemePath[$theme] = Path::Normalize( $this->AssetsPath($theme) );
 
         return $this->_ThemePath[$theme];
+
+    }
+
+    public function StoragePath($path = null)
+    {
+
+        return ($this->_StoragePath ?:
+
+            $this->_StoragePath = $this->BasePath('storage'))
+
+             . ( $path ? Path::Normalize($path, true, null) : '' );
 
     }
 
@@ -366,7 +377,7 @@ class AppService
     public function ThemeUrl($theme = null)
     {
 
-        if ($theme === null) $theme = CFG::$Theme;
+        if ($theme === null) $theme = Config::Theme();
 
         if (! isset($this->_ThemeUrl[$theme]))
 
@@ -391,10 +402,7 @@ class AppService
         $this->_ConfigPath = Path::Normalize( realpath($config_path) );
 
 
-        /** @noinspection PhpIncludeInspection */
-        require_once $this->ConfigPath('Config.php') ;
-
-        CFG::LoadConfigFromClass();
+        Config::Load();
 
         return $this;
 
@@ -496,7 +504,7 @@ class AppService
 
                         . Path::NormalizeNamespace( $controller_name, true, false )
 
-                        . ( $add_suffix ? CFG::$ControllerSuffix : '' );
+                        . ( $add_suffix ? Config::ControllerSuffix() : '' );
     }
 
     public function ModelFullyQualifiedName($model_name)
@@ -587,7 +595,7 @@ class AppService
         }
 
 
-        if ( CFG::$SanitizeOutput ) $output = Output::Sanitize($output);
+        if ( Config::SanitizeOutput() ) $output = Output::Sanitize($output);
 
         if ($flush_output) echo $output;
 

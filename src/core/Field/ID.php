@@ -28,7 +28,7 @@ use Semiorbit\Output\TableViewCol;
  * @method ID  setTag($value)
  * @method ID  setValue($value)
  * @method ID  setType($value)
- * @method ID  setRequired($value)
+ * @method ID  setRequired($value = true)
  * @method ID  setGroup($value)
  * @method ID  setPermission($value)
  * @method ID  setTemplate($value)
@@ -49,6 +49,8 @@ use Semiorbit\Output\TableViewCol;
  * @method ID  HideColumn()
  * @method ID  ShowColumn()
  * @method ID  setControlCssClass($value)
+ * @method ID  setMaxLength($value)
+ * @method ID  setUnsigned($value = true)
  */
 
 class ID extends Field
@@ -63,6 +65,10 @@ class ID extends Field
     public $Required = true;
 
     public $DriverUniqueId = false;
+
+    public $MaxLength = 32;
+
+    public $Type = DataType::VARCHAR;
 	
 	
 	public function PreRender()
@@ -103,7 +109,13 @@ class ID extends Field
 
         $this->AutoIncrement	 =  ( $value );
 
-        if ( $this->AutoIncrement ) $this->Type = DataType::INT;
+        if ( $this->AutoIncrement ) {
+            
+            $this->Type = DataType::INT;
+            
+            $this->MaxLength = 11;
+            
+        }
 
         return $this;
 
@@ -122,6 +134,24 @@ class ID extends Field
         $this->DriverUniqueId = $value;
 
         return $this;
+    }
+
+    /**
+     * This works only for MySql
+     */
+    public function IsUUID_SHORT()
+    {
+
+        $this->setDriverUniqueId('UUID_SHORT()');
+
+        $this->Type = DataType::INT;
+
+        $this->Unsigned = true;
+
+        $this->MaxLength = 20;
+
+        return $this;
+
     }
 
 }

@@ -1,20 +1,20 @@
 <?php
 return [
 
-    'Models' => 'models',
+    'models' => 'models',
 
-    'ModelsExt' => 'php',
+    'models_ext' => 'php',
 
-    'Views' => 'views',
+    'views' => 'views',
 
-    'ViewsExt' => 'phtml',
+    'views_ext' => 'phtml',
 
-    'Controllers' => 'core/Controllers',
+    'controllers' => 'core/Controllers',
 
-    'ControllersExt' => 'php',
+    'controllers_ext' => 'php',
 
-    'LangPath' => 'lang',
+    'lang' => 'lang',
 
-    'LangPathExt' => 'inc'
+    'lang_ext' => 'inc'
 
 ];

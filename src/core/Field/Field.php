@@ -11,10 +11,11 @@ namespace Semiorbit\Field;
 
 
 
+use Semiorbit\Db\DB;
 use Semiorbit\Output\TableViewCol;
 use Semiorbit\Support\AltaArray;
 use Semiorbit\Data\DataSet;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Form\Form;
 use Semiorbit\Form\FormTemplate;
 use Semiorbit\Support\Uploader;
@@ -76,6 +77,10 @@ class Field extends AltaArray implements FieldProps
     public $Err = array();
 
     public $InputID;
+
+    public $MaxLength;
+
+    public $Unsigned = false;
 
 
     protected $_FormTemplate;
@@ -193,7 +198,7 @@ class Field extends AltaArray implements FieldProps
 
         } else {
 
-            $def_temp = Form::ActiveTemplate() ?: CFG::FormTemplate();
+            $def_temp = Form::ActiveTemplate() ?: Config::FormTemplate();
 
         }
 
@@ -469,7 +474,7 @@ class Field extends AltaArray implements FieldProps
 
         if (is_empty($this->_InputNameFormat))
 
-            $this->_InputNameFormat = $this->ValidateInputNameFormat(CFG::$FormInputNameFormat);
+            $this->_InputNameFormat = $this->ValidateInputNameFormat(Config::FormInputNameFormat());
 
         return $this->_InputNameFormat;
     }
@@ -747,7 +752,7 @@ class Field extends AltaArray implements FieldProps
 
     public function DefaultHtmlBuilder()
     {
-        return strval($this->Value);
+        return $this->Value;
     }
 
     public function ActiveHtmlBuilder()
@@ -802,7 +807,7 @@ class Field extends AltaArray implements FieldProps
 
     public function __toString()
     {
-        return $this->Html();
+        return strval($this->Html());
     }
 
 
@@ -1042,22 +1047,27 @@ class Field extends AltaArray implements FieldProps
         return $this;
     }
 
-    public function WhereClausePrepareValue($value)
+    public function WhereClausePrepareValue($value, $is_param = false)
     {
 
-        if ($this->_WhereClauseHelperFunc) {
+        $value = $is_param ? $value :
 
-            return call_user_func($this->_WhereClauseHelperFunc, $value);
+            (( in_array($this->Type, array(DataType::INT, DataType::DECIMAL,
 
-        } else {
+                DataType::DOUBLE, DataType::FLOAT, DataType::BOOL) ) ) ?
 
-            return ( in_array($this->Type, array(DataType::INT, DataType::DECIMAL,
+                filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT) :
 
-                                                 DataType::DECIMAL, DataType::FLOAT, DataType::BOOL) ) ) ?
+                "'" . DB::Escape(filter_var($value, FILTER_SANITIZE_STRING)) . "'");
 
-                $value : "'{$value}'";
 
-        }
+        if ($this->_WhereClauseHelperFunc)
+
+            return call_user_func($this->_WhereClauseHelperFunc, $value, $is_param);
+
+
+        return $value;
+
     }
 
     public function WhereClauseHelper(callable $callable)
@@ -1078,6 +1088,26 @@ class Field extends AltaArray implements FieldProps
 
         return $this;
     }
+
+    /**
+     * @param $value
+     * @return static
+     */
+
+    public function setMaxLength($value)
+    {
+        $this->MaxLength = $value;
+
+        return $this;
+    }
+
+    public function setUnsigned($value = true)
+    {
+        $this->Unsigned = $value;
+
+        return $this;
+    }
+
 
 
 }

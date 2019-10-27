@@ -13,7 +13,7 @@ namespace Semiorbit\Db;
 
 use mysql_xdevapi\Exception;
 use Semiorbit\Base\Application;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Db\Driver\Driver;
 use Semiorbit\Debug\AppException;
 use Semiorbit\Debug\Log;
@@ -44,7 +44,7 @@ class Connection
      */
     public function Connect($connection_id)
     {
-        $myCon = CFG::Connections($connection_id);
+        $myCon = Config::Connections($connection_id);
 
 
         if (empty($myCon))
@@ -74,7 +74,7 @@ class Connection
 
         if (is_empty($driver_class)) {
 
-            $class_name = isset($myCon['pdo_driver']) ? 'PDO' : ucfirst($myCon['driver']);
+            $class_name = ucfirst($myCon['driver'] ?? 'Pdo');
 
             $driver_class = 'Semiorbit\\Db\\Driver\\' . $class_name;
 
@@ -104,7 +104,7 @@ class Connection
 
         $this->_Connector = $driver->Connector();
 
-        $this->_Config = new \ArrayObject(!empty(CFG::$Connections[$connection_id]) && is_string($connection_id) ? CFG::$Connections[$connection_id] : array());
+        $this->_Config = new \ArrayObject(!empty(Config::DbConnections()[$connection_id]) && is_string($connection_id) ? Config::DbConnections()[$connection_id] : array());
 
     }
 
@@ -248,6 +248,9 @@ class Connection
     {
         return $this->Driver()->Escape($value);
     }
+
+
+
 
 	
 	

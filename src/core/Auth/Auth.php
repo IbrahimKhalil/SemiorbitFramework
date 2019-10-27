@@ -9,7 +9,7 @@
 namespace Semiorbit\Auth;
 
 use Semiorbit\Base\AppManager;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Http\Url;
 use Semiorbit\Session\Session;
 
@@ -61,7 +61,9 @@ class Auth
 
             /**@var GenericUser $user */
 
-            $user = new CFG::$UsersModel;
+            $class_name = Config::UsersModel();
+
+            $user = new $class_name;
 
             $user->Role()->Value = null;
 
@@ -95,7 +97,9 @@ class Auth
 
         /**@var GenericUser $user */
 
-        $user = new CFG::$UsersModel;
+        $class_name = Config::UsersModel();
+
+        $user = new $class_name;
 
         $user->Read($uid);
 
@@ -129,7 +133,9 @@ class Auth
     {
         /**@var GenericUser $user */
 
-        $user = new CFG::$UsersModel;
+        $class_name = Config::UsersModel();
+
+        $user = new $class_name;
 
         $user->Read( Session::Read(Auth::UID) );
 

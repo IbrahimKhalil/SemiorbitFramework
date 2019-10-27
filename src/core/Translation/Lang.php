@@ -11,7 +11,7 @@ namespace Semiorbit\Translation;
 
 
 use Semiorbit\Support\Str;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Component\Finder;
 
 class Lang
@@ -47,7 +47,7 @@ class Lang
 	public static function UseLang($lang)
 	{
 		
-		if ( ! in_array($lang, CFG::$Lang )) $lang = CFG::DefaultLang();
+		if ( ! in_array($lang, Config::Languages() )) $lang = Config::DefaultLang();
 		
 		self::$_Lang = $lang;
 		
@@ -71,7 +71,7 @@ class Lang
 		
 		if ( is_empty($lang) ) $lang = self::ActiveLang();
 				
-		$key = array_search($lang, CFG::$Lang);
+		$key = array_search($lang, Config::Languages());
 		
 		if ($key == 'default') $key = $lang;
 		
@@ -207,7 +207,7 @@ class Lang
 		
 		$file_key_count = count( $file_key );
 		
-		$key_parts['file'] = $file_key_count > 1 ? trim($file_key[0]) : trim(CFG::$AppClass);
+		$key_parts['file'] = $file_key_count > 1 ? trim($file_key[0]) : trim(Config::AppClass());
 			
 		$key_parts['keyword'] = $file_key_count > 1 ? trim($file_key[1]) : trim($file_key[0]);
 			
@@ -227,7 +227,7 @@ class Lang
 		
 		$language = self::Language();
 		
-		$ext = CFG::$LangPathExt;
+		$ext = Config::LangExt();
 
 
 		/**SEMIORBIT**/
@@ -266,7 +266,7 @@ class Lang
 		
 		if ( ! $app_lang_path )
 		{	
-			$path = Finder::LookFor( CFG::$Controllers. '_'.$lang.'.inc', Finder::Lang, true);
+			$path = Finder::LookFor( Config::ControllersDir(). '_'.$lang.'.inc', Finder::Lang, true);
 			if ($path) /** @noinspection PhpIncludeInspection */
 				include_once $path['path'];
 		}
@@ -282,7 +282,7 @@ class Lang
 		
 		$language = self::Language();
 		
-		$ext = CFG::$LangPathExt;
+		$ext = Config::LangExt();
 		
 		$package_path = is_empty( $package ) ? '' : $package . '/';
 		

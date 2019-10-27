@@ -531,6 +531,15 @@ abstract class Command
     }
 
 
+    public function CliCommand()
+    {
+        return $this->_CliCommand;
+    }
+
+    public function CliFile()
+    {
+        return $this->_CliFile;
+    }
 
 
 

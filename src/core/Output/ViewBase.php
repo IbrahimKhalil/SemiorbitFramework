@@ -9,7 +9,7 @@ namespace Semiorbit\Output;
 
 
 use Semiorbit\Component\Finder;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Support\AltaArray;
 
 
@@ -205,7 +205,7 @@ class ViewBase extends AltaArray
     public static function FindPath( $view )
     {
 
-        $view_path = Render::CacheViewPath( CFG::$Views . '@View_' . $view ) ?: call_user_func( function () use ( $view ) {
+        $view_path = Render::CacheViewPath( Config::ViewsDir() . '@View_' . $view ) ?: call_user_func( function () use ( $view ) {
 
             $view_parts = static::ViewNameParts($view);
 
@@ -216,14 +216,14 @@ class ViewBase extends AltaArray
 
             $view_sub = $view_parts[1];
 
-            $view_ext = '.' . trim( CFG::$ViewsExt, '.' );
+            $view_ext = '.' . trim( Config::ViewsExt(), '.' );
 
 
             if ( empty ( $view_sub ) ) {
 
                 $view_files = array($view_root . $view_ext, $view_root . "/" . $view_root . $view_ext);
 
-            } else if ( strtolower( $view_sub ) == strtolower( CFG::$IndexAction ) ) {
+            } else if ( strtolower( $view_sub ) == strtolower( Config::IndexAction() ) ) {
 
                 $view_files = array($view_root . $view_ext, $view_root . "/" . $view_root . $view_ext, $view_root . "/" . $view_sub . $view_ext, $view_root . "." . $view_sub . $view_ext);
 
@@ -235,7 +235,7 @@ class ViewBase extends AltaArray
 
             $view_path = Finder::LookFor($view_files, Finder::Views, true);
 
-            Render::CacheViewPath( CFG::$Views . '@View_' . $view . $view_ext, $view_path );
+            Render::CacheViewPath( Config::ViewsDir() . '@View_' . $view . $view_ext, $view_path );
 
             return $view_path;
 

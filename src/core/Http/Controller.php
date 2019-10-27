@@ -14,7 +14,7 @@ use Semiorbit\Output\View;
 use Semiorbit\Support\Path;
 use Semiorbit\Support\Str;
 use Semiorbit\Support\ClipboardTrait;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Data\DataSet;
 use Semiorbit\Translation\Lang;
 use Semiorbit\Component\Finder;
@@ -61,6 +61,8 @@ abstract class Controller
     public $ModelPath = '';
 
 
+    const DataSet = null;
+
 
     use ClipboardTrait {
         Clipboard as protected;
@@ -70,9 +72,9 @@ abstract class Controller
     final function __construct(Request $request = null, DataSet $ds = null)
     {
 
-        $this->Actions = new Actions($this, CFG::Actions());
+        $this->Actions = new Actions($this, Config::Actions());
 
-        $this->Actions->setMode(CFG::$ActionsMode)->Deny(CFG::$ActionsDenied);
+        $this->Actions->setMode(Config::ActionsMode())->Deny(Config::ActionsDenied());
 
 
         $this->Request = $request;
@@ -95,6 +97,14 @@ abstract class Controller
         if ( $ds instanceof DataSet ) {
 
             $this->DataSet = $ds;
+
+            $this->DataSet->UseController($this);
+
+        } elseif ( static::DataSet ) {
+
+            $dataset_name = static::DataSet;
+
+            $this->DataSet = new $dataset_name();
 
             $this->DataSet->UseController($this);
 
@@ -202,7 +212,7 @@ abstract class Controller
 
         $short_name = Path::ClassShortName($class_name);
 
-        $suffix_offset = strrpos($short_name, CFG::$ControllerSuffix);
+        $suffix_offset = strrpos($short_name, Config::ControllerSuffix());
 
         if ( $suffix_offset ) {
 

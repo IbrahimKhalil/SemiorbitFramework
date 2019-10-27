@@ -10,7 +10,7 @@ namespace Semiorbit\Http;
 
 
 use Semiorbit\Base\Application;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Component\Finder;
 use Semiorbit\Support\Str;
 use Semiorbit\Translation\Lang;
@@ -77,7 +77,8 @@ class Request {
 	
 	public function Load($Uri = '', $extra_path_info_pattern = '/id')
 	{
-		$this->PathInfoPattern = $extra_path_info_pattern;
+
+	    $this->PathInfoPattern = $extra_path_info_pattern;
 		
 		if ( is_empty( $Uri ) )
 		{ 
@@ -133,11 +134,11 @@ class Request {
 		$this->Lang = $this->DetectLang();
 
 		Lang::UseLang( $this->Lang );
-		
+
 		// DETECT CONTROLLER
 		
-		$this->Controller = CFG::$ApiMode ? $this->DetectApiController() : $this->DetectController();
-		
+		$this->Controller = Config::ApiMode() ? $this->DetectApiController() : $this->DetectController();
+
 		$this->LoadController();
 		
 		// DETECT ACTION
@@ -157,7 +158,7 @@ class Request {
 		$this->Params = array_merge($this->Params, $path_arr);
 	
 	
-		$this->ID = isset( $this->Params[ CFG::IDParamName() ] ) ? $this->Params[ CFG::IDParamName() ] : null; 
+		$this->ID = isset( $this->Params[ Config::IDParamName() ] ) ? $this->Params[ Config::IDParamName() ] : null;
 	}
 	
 	
@@ -165,19 +166,15 @@ class Request {
 	{
 		// LANG will be read in order from : PATH_INFO > QueryString > $_REQUEST > CONFIG
 
-		$lang = Lang::ActiveLang() ? Lang::ActiveLang() :  CFG::DefaultLang();
+		$lang = Lang::ActiveLang() ? Lang::ActiveLang() :  Config::DefaultLang();
 		
 		// GET LANG FROM - IN ORDER - : QueryString then $_REQUEST  
 		
-		if ( isset( $this->ServerVars[ CFG::LangParamName() ] ) && in_array($this->ServerVars[ CFG::LangParamName() ], CFG::$Lang)) {
+		if ( isset( $this->ServerVars[ Config::LangParamName() ] ) && in_array($this->ServerVars[ Config::LangParamName() ], Config::Languages())) {
 			
-			$q_lang = strtolower( $this->ServerVars[ CFG::LangParamName() ] );
+			$lang = strtolower( $this->ServerVars[ Config::LangParamName() ] );
 			
-			unset($this->ServerVars[ CFG::LangParamName() ]);
-			
-		} else {
-			
-			$q_lang = $lang;
+			unset($this->ServerVars[ Config::LangParamName() ]);
 			
 		}
 		
@@ -191,13 +188,8 @@ class Request {
 
         if ( isset($pms[0]) )
 		
-		if ( ! in_array( strtolower($pms[0]), CFG::$Lang)) {
-			
-			// NOT EXPLICIT!
-			
-			$lang = $q_lang;	
-			
-		} else {
+		if ( in_array( strtolower($pms[0]), Config::Languages())) {
+
 			
 			// FOUND ! THANKS :)
 			
@@ -238,7 +230,7 @@ class Request {
 
             // Check if request is an API call
 
-            if ( $segment_0 == CFG::$ApiControllers ) {
+            if ( $segment_0 == Config::ApiControllersDir() ) {
 
                 if ( isset($pms[1]) && isset($pms[2])) {
 
@@ -315,9 +307,8 @@ class Request {
             $this->PathInfo = implode("/", $pms);
 
         }
-		
 
-		return $controller ?: CFG::MainPage();
+        return $controller ?: Config::MainPage();
 		
 	}
 
@@ -365,7 +356,7 @@ class Request {
         }
 
 
-		return $controller ?: CFG::HttpError();
+		return $controller ?: Config::HttpError();
 
 	}
 
@@ -374,11 +365,11 @@ class Request {
 		
 		$class_name = $this->Controller->Class;
 
-        if ( ! class_exists($class_name) ) Application::Abort(404);
+        if ( ! class_exists($class_name) ) Application::Abort(404, "Controller ({$class_name}) was not found!");
 
 		$this->Class = new $class_name($this, $this->Controller->Model ? new $this->Controller->Model->Class : null);
 
-        if ( ! $this->Class instanceof Controller ) Application::Abort(404);
+        if ( ! $this->Class instanceof Controller ) Application::Abort(404, "Object ({$class_name}) is not a controller!");
 		
 	}
 	
@@ -391,11 +382,11 @@ class Request {
 		
 		// GET ACTION FROM - IN ORDER - : QueryString then $_REQUEST  
 		
-		if (isset($this->ServerVars[ CFG::ActionParamName() ])) {
+		if (isset($this->ServerVars[ Config::ActionParamName() ])) {
 			
-			$q_action = Actions::NormalizeAlias( Str::Sanitize($this->ServerVars[ CFG::ActionParamName() ]) );
+			$q_action = Actions::NormalizeAlias( Str::Sanitize($this->ServerVars[ Config::ActionParamName() ]) );
 			
-			unset($this->ServerVars[ CFG::ActionParamName() ]);
+			unset($this->ServerVars[ Config::ActionParamName() ]);
 			
 		} 
 		
@@ -532,11 +523,13 @@ class Request {
 
 		$this->PathInfo = Request::PathInfo();
 
+
 		// Get QUERY_STRING - Checking two ways for retrieving QUERY_STRING.
 		
 		$query_sting =  (isset($_SERVER['QUERY_STRING'])) ? $_SERVER['QUERY_STRING'] : @getenv('QUERY_STRING');
 		
 		$this->QueryString = $query_sting;
+
 
         return $this;
 		

@@ -8,7 +8,7 @@
 
 namespace Semiorbit\Db;
 
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 
 
 
@@ -214,7 +214,7 @@ class QueryBuilder
 
         $this->_Offset = null;
 
-        if ( $this->_Limit === null ) $this->_Limit = CFG::$RowsPerPage;
+        if ( $this->_Limit === null ) $this->_Limit = Config::RowsPerPage();
 
         $this->CFlag()->_Page = $page;
 

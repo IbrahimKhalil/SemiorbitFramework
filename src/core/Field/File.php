@@ -9,7 +9,7 @@
 namespace Semiorbit\Field;
 
 
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Data\Msg;
 use Semiorbit\Output\TableViewCol;
 use Semiorbit\Session\Session;
@@ -216,7 +216,7 @@ class File extends Field
 
                 ( $real_path ? $this->ActiveDataSet()->DocumentsRealPath() : $this->ActiveDataSet()->DocumentsPath() )
 
-                : ( CFG::DocumentsPath($real_path) );
+                : ( Config::DocumentsPath($real_path) );
 
         $path .= $this->DirName();
 
@@ -299,7 +299,7 @@ class File extends Field
     public function URL($thumbnail = null, $add_file_time = true)
     {
 
-        $documents_url = $this->ActiveDataSet() ? $this->ActiveDataSet()->DocumentsURL() : CFG::DocumentsURL();
+        $documents_url = $this->ActiveDataSet() ? $this->ActiveDataSet()->DocumentsURL() : Config::DocumentsURL();
 
         $relative_dir_path = $this->DirName($thumbnail);
 

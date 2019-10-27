@@ -6,7 +6,8 @@
 */
 
 namespace Semiorbit\Controllers;
-use Semiorbit\Config\CFG;
+use Semiorbit\Base\Application;
+use Semiorbit\Config\Config;
 
 
 /**
@@ -24,9 +25,15 @@ class DefaultController extends \Semiorbit\Http\Controller
 
 	public function Index()
 	{
-		//NOTHING TO DO? >> GOTO URLController
-		run( CFG::$URLController . '/' . $this->Request->PathInfo);
-		
+
+	    if (Config::ApiMode())
+
+	        Application::Abort(404);
+
+	    else
+
+	        run(Config::MainPage());
+
 	}
 
 } 

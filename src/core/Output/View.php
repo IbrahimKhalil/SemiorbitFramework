@@ -9,7 +9,7 @@ namespace Semiorbit\Output;
 
 
 use Semiorbit\Base\AppManager;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Http\Controller;
 use Semiorbit\Http\Request;
 use Semiorbit\Support\Str;
@@ -179,11 +179,11 @@ class View extends ViewBase
 
         if ( $display_project_title ) {
 
-            $title = str_ireplace($default_project_title . CFG::$PageTitleSeparator, "", $title);
+            $title = str_ireplace($default_project_title . Config::PageTitleSeparator(), "", $title);
 
             is_empty( $title ) || $title == $default_project_title ? $title = $default_project_title :
 
-                $title = $default_project_title . CFG::$PageTitleSeparator . $title;
+                $title = $default_project_title . Config::PageTitleSeparator() . $title;
 
         }
 
@@ -314,15 +314,15 @@ class View extends ViewBase
 
         if ( $this->_RequestLayoutList ) {
 
-            if ( isset( $_REQUEST[ CFG::LayoutParamName() ] )
+            if ( isset( $_REQUEST[ Config::LayoutParamName() ] )
 
-                && in_array( $_REQUEST[ CFG::LayoutParamName() ], $this->_RequestLayoutList ) )
+                && in_array( $_REQUEST[ Config::LayoutParamName() ], $this->_RequestLayoutList ) )
 
-                $this->_Layout = $_REQUEST[ CFG::LayoutParamName() ];
+                $this->_Layout = $_REQUEST[ Config::LayoutParamName() ];
 
         } else {
 
-            $this->_Layout = CFG::$DefaultLayout;
+            $this->_Layout = Config::DefaultLayout();
         }
 
         return $this;

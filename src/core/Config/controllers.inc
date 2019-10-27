@@ -1,7 +1,45 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Ibrahim Khalil
- * Date: 24/10/2016
- * Time: 01:08 ص
- */
+
+use Semiorbit\Config\Config;
+
+return [
+
+
+    /*
+    | -----------------------------------------------------------
+    | CONTROLLERS
+    | -----------------------------------------------------------
+    */
+
+	## Path ##
+	Config::CONTROLLERS_DIR => "Http",
+
+	## ClassName_Suffix ##
+	Config::CONTROLLERS_SUFFIX => "Ctrl",
+
+	## File Extension ##
+	Config::CONTROLLERS_EXT => ".php",
+
+
+    /*
+    | -----------------------------------------------------------
+    | CUSTOMIZE BASIC URI PARAMETERS NAMING
+    | -----------------------------------------------------------
+    */
+
+    Config::CONTROLLERS__BASIC_PARAM_CUSTOM_NAMING => [
+
+        'lang' => "lang",
+
+        'class' => "class",
+
+        'action' => "action",
+
+        'id' => "id",
+
+        'layout' => 'layout'
+
+    ]
+
+
+];

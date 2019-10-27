@@ -27,7 +27,7 @@ namespace Semiorbit\Field;
  * @method Checkbox  setTag($value)
  * @method Checkbox  setValue($value)
  * @method Checkbox  setType($value)
- * @method Checkbox  setRequired($value)
+ * @method Checkbox  setRequired($value = true)
  * @method Checkbox  setGroup($value)
  * @method Checkbox  setPermission($value)
  * @method Checkbox  setTemplate($value)

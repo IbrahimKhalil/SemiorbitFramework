@@ -12,7 +12,7 @@ namespace Semiorbit\Data;
 
 use Semiorbit\Form\Form;
 use Semiorbit\Db\DB;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Db\Table;
 use Semiorbit\Field\Control;
 use Semiorbit\Http\Controller;
@@ -67,7 +67,7 @@ class DataSet extends Model
 
                     $res = $ds->InsertRow();
 
-                    $ds->onUserInsertedRow($res, $show_form, CFG::$ShowErrReport, $output);
+                    $ds->onUserInsertedRow($res, $show_form, Config::ShowErrReport(), $output);
 
                 }
 
@@ -77,7 +77,7 @@ class DataSet extends Model
 
                     $res = $ds->UpdateRow();
 
-                    $ds->onUserUpdatedRow($res, $show_form, CFG::$ShowErrReport, $output);
+                    $ds->onUserUpdatedRow($res, $show_form, Config::ShowErrReport(), $output);
 
                 }
 

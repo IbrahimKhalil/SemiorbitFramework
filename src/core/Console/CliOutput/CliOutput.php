@@ -33,11 +33,14 @@ class CliOutput
      *
      * @param string|iterable $messages The message as an iterable of strings or a single string
      * @param int $options A bitmask of options (one of the OUTPUT or VERBOSITY constants), 0 is considered the same as self::OUTPUT_NORMAL | self::VERBOSITY_NORMAL
+     * @return static
      */
 
     public function Writeln($messages, int $options = ConsoleOutput::OUTPUT_NORMAL)
     {
         $this->Output()->Writeln($messages, $options);
+
+        return $this;
     }
 
 
@@ -52,6 +55,8 @@ class CliOutput
     public function Write($messages, bool $newline = false, int $options = ConsoleOutput::OUTPUT_NORMAL)
     {
         $this->Output()->Write($messages, $options);
+
+        return $this;
     }
 
     public function Table()

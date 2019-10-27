@@ -12,18 +12,19 @@ namespace Semiorbit\Component;
 
 
 use Semiorbit\Base\AppManager;
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 
 
 class Finder
 {
-	const Controllers = 'Controllers';
 
-	const Views = 'Views';
+    const Controllers = 'controllers';
 
-	const Models = 'Models';
+	const Views = 'views';
 
-	const Lang = 'LangPath';
+	const Models = 'models';
+
+	const Lang = 'lang';
 
 
 
@@ -32,9 +33,9 @@ class Finder
 
 		if ( $class == '' ) return false;
 
-        $dir = isset( CFG::${$directory} ) ? trim( CFG::${$directory}, '/' ) : $directory;
+        $dir = Config::StructureDirectory($directory, $directory);
 
-        $ext = isset( CFG::${$directory.'Ext'} ) ? 	'.' . trim( CFG::${$directory . 'Ext'}, '.' ) : '';
+        $ext = Config::StructureExtension($directory, Config::FrameworkConfig()[$directory . '_ext']);
 
 		$path = BASEPATH . $dir . '/' . $class . $ext;
 			
@@ -51,9 +52,9 @@ class Finder
 
 		if ( $class == '' ) return false;
 
-        $dir = CFG::$FrameworkConfig[ $directory ] ?? $directory;
+        $dir = Config::FrameworkConfig()[ $directory ] ?? $directory;
 
-        $ext = isset( CFG::$FrameworkConfig[ $directory . 'Ext' ] ) ? '.' . CFG::$FrameworkConfig[ $directory . 'Ext' ] : '';
+        $ext = isset( Config::FrameworkConfig()[ $directory . '_ext' ] ) ? '.' . Config::FrameworkConfig()[ $directory . '_ext' ] : '';
 
 		$path = $class_as_file_name === true ?
 

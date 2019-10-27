@@ -9,7 +9,7 @@ namespace Semiorbit\Output;
 
 
 
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Db\Table;
 use Semiorbit\Http\Url;
 
@@ -70,7 +70,7 @@ class Pagination
 
         if (is_empty($this->_PaginationWidget))
 
-            $this->_PaginationWidget = (is_empty(CFG::$PaginationWidget)) ? "Pagination" : CFG::$PaginationWidget;
+            $this->_PaginationWidget = (is_empty(Config::PaginationWidget())) ? "Pagination" : Config::PaginationWidget();
 
         return $this->_PaginationWidget;
 
@@ -115,7 +115,7 @@ class Pagination
 
     public function PageParam()
     {
-        if (empty($this->_PageParam)) $this->_PageParam = empty(CFG::$PageParam) ? "page" : CFG::$PageParam;
+        if (empty($this->_PageParam)) $this->_PageParam = empty(Config::PageParam()) ? "page" : Config::PageParam();
 
         return $this->_PageParam;
     }

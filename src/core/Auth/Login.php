@@ -9,7 +9,7 @@ namespace Semiorbit\Auth;
 
 
 
-use Semiorbit\Config\CFG;
+use Semiorbit\Config\Config;
 use Semiorbit\Db\DB;
 use Semiorbit\Form\Form;
 use Semiorbit\Http\Controller;
@@ -56,9 +56,9 @@ class Login extends Controller
         Url::setPreviousPage($this->_PrevPage);
 
 
-        $user_id = Auth::User()->ValidateIdentity( Form::Input(CFG::$LoginIdentityInput)  );
+        $user_id = Auth::User()->ValidateIdentity( Form::Input(Config::LoginIdentityInput())  );
 
-		$user_password = Form::Input(CFG::$LoginPasswordInput);
+		$user_password = Form::Input(Config::LoginPasswordInput());
 
 		static::setLoginResult( $user_id ? Auth::Login($user_id, $user_password) : false );
 
