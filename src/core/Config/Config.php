@@ -155,7 +155,7 @@ final class Config extends DefaultConfig
 
     public static function StructureExtension($group, $fallback = null)
     {
-        return '.' . trim(static::ValueOf($group, "ext", $fallback), '.');
+        return static::ValueOf($group, "ext", $fallback);
     }
 
     public static function ActivateSanitizeOutput($activate = true)

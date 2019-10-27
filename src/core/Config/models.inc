@@ -15,6 +15,7 @@ return [
 	Config::MODELS__DIR => "",
 
 	## File Extension ##
+    ## Read only: don't change ##
 
 	Config::MODELS__EXT => ".php",
 

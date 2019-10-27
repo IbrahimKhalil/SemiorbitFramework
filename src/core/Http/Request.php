@@ -48,10 +48,6 @@ class Request {
 	
 	public $ServerVars = array();
 	
-	public $ScriptName = "";
-	
-	public $ScriptFileName = "";
-	
 	public $PathInfoPattern = "/id";
 	
 	public $ReadServerVars = true;

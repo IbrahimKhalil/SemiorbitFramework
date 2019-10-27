@@ -18,7 +18,9 @@ return [
 	Config::CONTROLLERS_SUFFIX => "Ctrl",
 
 	## File Extension ##
-	Config::CONTROLLERS_EXT => ".php",
+    ## Read only: don't change ##
+
+    Config::CONTROLLERS_EXT => ".php",
 
 
     /*
