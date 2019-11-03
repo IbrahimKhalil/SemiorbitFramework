@@ -33,10 +33,6 @@ return [
 
         'lang' => "lang",
 
-        'class' => "class",
-
-        'action' => "action",
-
         'id' => "id",
 
         'layout' => 'layout'

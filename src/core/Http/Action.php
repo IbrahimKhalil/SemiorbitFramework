@@ -34,6 +34,8 @@ class Action extends AltaArray
 
     public $onCall;
 
+    public $Verb;
+
     /**
      * Action constructor.
      * @param $alias
@@ -88,6 +90,13 @@ class Action extends AltaArray
     public function setTitle($value)
     {
         $this->Title = $value;
+
+        return $this;
+    }
+
+    public function setVerb($value)
+    {
+        $this->Verb = $value;
 
         return $this;
     }
@@ -186,6 +195,8 @@ class Action extends AltaArray
 
         $this->setPms( isset($action_props['pms']) ? $action_props['pms'] : '');
 
+        $this->setVerb( isset($action_props['verb']) ? $action_props['verb'] : '');
+
         $this->onCall( isset($action_props['oncall']) ? $action_props['oncall'] : null );
 
 
@@ -204,6 +215,11 @@ class Action extends AltaArray
 
         return $myAction;
 
+    }
+
+    public function IsVerbAccepted($verb)
+    {
+        return !$this->Verb || $verb == $this->Verb;
     }
 
 

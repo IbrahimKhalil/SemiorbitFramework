@@ -1,6 +1,7 @@
 <?php
 
 use Semiorbit\Config\Config;
+use Semiorbit\Http\Request;
 
 return [
 
@@ -60,6 +61,24 @@ return [
     ],
 
 
+    Config::REST_ACTIONS => [
+
+
+        'index' => ['method' => 'Index', 'verb' => Request::VERB_GET],
+
+        'view' => ['method' => 'Show', 'view' => 'card', 'pms' => ':id', 'verb' => Request::VERB_GET],
+
+        'update' => ['method' => 'Update', 'view' => 'update', 'pms' => ':id', 'verb' => Request::VERB_PUT, 'allow' => SUPER_ADMIN],
+
+        'store' => ['method' => 'Store', 'view' => 'form', 'pms' => ':id', 'verb' => Request::VERB_POST, 'allow' => SUPER_ADMIN],
+
+        'create' => ['method' => 'Store', 'view' => 'form', 'verb' => Request::VERB_POST, 'allow' => SUPER_ADMIN],
+
+        'delete' => ['method' => 'Delete', 'view' => 'delete', 'pms' => ':id', 'verb' => Request::VERB_DELETE, 'allow' => SUPER_ADMIN]
+
+    ],
+
+
     /*
     | 'AUTO' => Detect 'Actions Aliases' in $this->Actions >>
     |  then 'Allowed Public Methods' (by Name).
@@ -80,7 +99,45 @@ return [
     | Index Action
     */
 
-    Config::ACTIONS__INDEX => 'index'
+    Config::ACTIONS__INDEX => 'index',
+
+
+    /*
+    | List of Default Actions By Verb
+    | Each item should follow this pattern
+    | [verb, action alias, number of parameters (0 for unlimited)]
+    */
+
+    Config::ACTIONS__DEFAULT_BY_VERB => [
+
+        [Request::VERB_GET, 'index', 0],
+
+        [Request::VERB_GET, 'view', 1]
+
+    ],
+
+
+    /*
+    | List of Default Actions By Verb [For RestControllers]
+    | Each item should follow this pattern
+    | [verb, action alias, number of parameters (0 for unlimited)]
+    */
+
+    Config::ACTIONS__DEFAULT_REST_BY_VERB => [
+
+        [Request::VERB_GET, 'index', 0],
+
+        [Request::VERB_GET, 'view', 1],
+
+        [Request::VERB_POST, 'create', 0],
+
+        [Request::VERB_POST, 'store', 1],
+
+        [Request::VERB_PUT, 'update', 1],
+
+        [Request::VERB_DELETE, 'delete', 1]
+
+    ]
 
 ];
  

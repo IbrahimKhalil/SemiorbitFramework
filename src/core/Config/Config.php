@@ -18,7 +18,7 @@ final class Config extends DefaultConfig
 {
 
 
-	private static $__DefConfig = [];
+    private static $__DefConfig = [];
 
 	private static $__Config = [];
 
@@ -173,16 +173,7 @@ final class Config extends DefaultConfig
 	{
         return Config::BasicParamCustomNaming('lang') ?: 'lang';
     }
-	
-	public static function ControllerParamName() 
-	{
-	    return Config::BasicParamCustomNaming('controller') ?: 'controller';
-    }
-	
-	public static function ActionParamName() 
-	{
-	    return Config::BasicParamCustomNaming('action') ?: 'action';
-	}
+
 	
 	public static function IDParamName() 
 	{

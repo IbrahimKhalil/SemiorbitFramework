@@ -569,7 +569,11 @@ class AppService
 
             $output = null;
 
-            $output = $request->Class->Actions->Call($request->Action, $request->Params);
+            $output = $request->Callable ?
+
+                call_user_func_array($request->Callable, $request->Params)
+
+            : $request->Class->Actions->Call($request->Action, $request->Params);
 
 
             Request::LastRun($request);

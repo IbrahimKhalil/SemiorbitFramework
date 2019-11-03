@@ -36,7 +36,7 @@ class Box extends ViewBase
 
         $view_path = Render::CacheViewPath( Config::ViewsDir() . '@Box_' . $box ) ?: call_user_func ( function () use ( $box ) {
 
-            $box_ext = '.' . trim( Config::BoxExt(), '.' );
+            $box_ext = Config::BoxExt();
 
             $box_path = Finder::LookFor( $box . $box_ext, Finder::Views, true );
 
@@ -144,7 +144,7 @@ class Box extends ViewBase
 
         $this->Open = false;
 
-        return true;
+        return $this;
     }
 
 

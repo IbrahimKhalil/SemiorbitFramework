@@ -12,6 +12,8 @@ namespace Semiorbit\Http;
 use Semiorbit\Base\Application;
 use Semiorbit\Config\Config;
 use Semiorbit\Component\Finder;
+use Semiorbit\Config\Routes\Route;
+use Semiorbit\Config\Routes\Router;
 use Semiorbit\Support\Str;
 use Semiorbit\Translation\Lang;
 
@@ -27,6 +29,20 @@ use Semiorbit\Translation\Lang;
  */
 
 class Request {
+
+    #region "VERBS"
+
+    const VERB_GET = 'GET';
+
+    const VERB_POST = 'POST';
+
+    const VERB_DELETE = 'DELETE';
+
+    const VERB_PUT = 'PUT';
+
+    const VERB_PATCH = 'PATCH';
+
+    #endregion
 
 	public $Uri = "";
 	
@@ -52,6 +68,10 @@ class Request {
 	
 	public $ReadServerVars = true;
 
+	public $Verb;
+
+	public $Callable;
+
     protected $_Path;
 
 	protected static $_Url;
@@ -60,10 +80,15 @@ class Request {
 	
 	protected static $_LastRunRequest;
 
+
+
 	
 	function __construct($Uri = '', $extra_path_info_pattern = '/id')
 	{
-		if ( ! is_empty( $Uri ) ) {
+
+        $this->Verb = $_SERVER['REQUEST_METHOD'];
+
+        if ( ! is_empty( $Uri ) ) {
 
 			$this->Load($Uri, $extra_path_info_pattern);
 
@@ -73,6 +98,8 @@ class Request {
 	
 	public function Load($Uri = '', $extra_path_info_pattern = '/id')
 	{
+
+	    $time = microtime(true);
 
 	    $this->PathInfoPattern = $extra_path_info_pattern;
 		
@@ -131,16 +158,34 @@ class Request {
 
 		Lang::UseLang( $this->Lang );
 
-		// DETECT CONTROLLER
-		
-		$this->Controller = Config::ApiMode() ? $this->DetectApiController() : $this->DetectController();
 
-		$this->LoadController();
-		
-		// DETECT ACTION
-		
-		$this->Action = $this->DetectAction();
-		
+		// DETECT ROUTES
+
+        [$controller, $action, $this->PathInfo, $route_params, $callable] = Router::Find($this->PathInfo, $this->Verb);
+
+
+
+
+        if ($callable) {
+
+            $this->Callable = $callable;
+
+        } else {
+
+
+            // DETECT CONTROLLER
+
+            $this->Controller = $controller ?:
+
+                (Config::ApiMode() ? $this->DetectApiController() : $this->DetectController());
+
+            $this->LoadController();
+
+            // DETECT ACTION
+
+            $this->Action = $this->DetectAction($action);
+
+        }
 
 		// PARSE PATH
 
@@ -149,12 +194,15 @@ class Request {
 		
 		## NB. This will override the server pms when they have same keys.
 		
-		$path_arr = $this->ParsePath();
+		$path_arr = $route_params ?: $this->ParsePath();
 		
 		$this->Params = array_merge($this->Params, $path_arr);
 	
 	
 		$this->ID = isset( $this->Params[ Config::IDParamName() ] ) ? $this->Params[ Config::IDParamName() ] : null;
+
+		dd(microtime(true) - $time);
+
 	}
 	
 	
@@ -176,7 +224,7 @@ class Request {
 		
 		// TRY TO EXTRACT "LANG" FROM PATH_INFO
 
-		$pms = $this->Path2Array($this->PathInfo);
+		$pms = static::Path2Array($this->PathInfo);
 	
 		// NOT SET GO TO DEFAULT LANG
 		
@@ -216,7 +264,7 @@ class Request {
 
         $path_info_controller = '';
 
-        $pms = $this->Path2Array( $this->PathInfo );
+        $pms = static::Path2Array( $this->PathInfo );
 
 
         if ( isset( $pms[0] ) ) {
@@ -318,7 +366,7 @@ class Request {
 
         $path_info_controller = '';
 
-        $pms = $this->Path2Array( $this->PathInfo );
+        $pms = static::Path2Array( $this->PathInfo );
 
 
         if ( isset( $pms[0] ) ) {
@@ -369,26 +417,21 @@ class Request {
 		
 	}
 	
-	public function DetectAction()
+	public function DetectAction($action = null)
 	{
+
+	    if ($action) return $this->Class->Actions->Action($action);
+
+	    // TODO: ACTIONS CACHE!
 
         // Action will be read in order from : PATH_INFO > QueryString > $_REQUEST > CONFIG
 		
 		$action = null;
-		
-		// GET ACTION FROM - IN ORDER - : QueryString then $_REQUEST  
-		
-		if (isset($this->ServerVars[ Config::ActionParamName() ])) {
-			
-			$q_action = Actions::NormalizeAlias( Str::Sanitize($this->ServerVars[ Config::ActionParamName() ]) );
-			
-			unset($this->ServerVars[ Config::ActionParamName() ]);
-			
-		} 
+
 		
 		// TRY TO EXTRACT "ACTION" FROM PATH_INFO
 		
-		$pms = $this->Path2Array($this->PathInfo);
+		$pms = static::Path2Array($this->PathInfo);
 		
 		$actions = $this->Class->Actions->All();
 
@@ -400,37 +443,47 @@ class Request {
 			
 			if ( isset( $actions[ $pms[0] ] ) ) {
 
+
                 $action = $actions[$pms[0]];
 
 
-                // RESET PATH_INFO EXCLUDING LANG
+                /** @var $action Action */
 
-                unset($pms[0]);
+                if ($action->IsVerbAccepted($this->Verb)) {
 
-                $this->PathInfo = implode("/", $pms);
+
+                    // RESET PATH_INFO EXCLUDING LANG
+
+                    unset($pms[0]);
+
+                    $this->PathInfo = implode("/", $pms);
+
+                }
 
             }
 			
 			 
-		} elseif ( isset( $q_action ) ) {
-
-		    if (isset( $actions[ $q_action ] ) )
-
-		        $action = $actions[ $q_action ];
-			
 		}
 
-		if ( ! $action ) {
 
-            $index_action = $this->Class->Actions->Index();
+		if (!$action) {
 
-            $index_alias = $index_action['alias'];
 
-            $action = isset( $actions[ $index_alias ] ) ? $actions[ $index_alias ] : $index_action;
+		    if ($action_alias = $this->Class->Actions->DefaultByVerb($this->Verb, count($pms)))
 
-		}
+		        $action = $actions[$action_alias] ?? null;
+
+
+		    if (!$action) $action = $this->Class->Actions->Index();
+
+		    if (!$action->IsVerbAccepted($action)) $action = null;
+
+        }
 		
-		if (!empty($action['pms'])) $this->PathInfoPattern = $action['pms'];
+
+		if ($action) $this->PathInfoPattern = $action->Pms;
+
+		else Application::Abort(404, "Action not found for verb {$this->Verb}!");
 
 
 		return $action;
@@ -438,15 +491,11 @@ class Request {
 		
 	}
 	
-	public function Path2Array($path)
+	public static function Path2Array($path)
 	{
-		//TRIM SLASHES
-		
-		$path = trim ($path, "/");
-		
 		//CONVERT PATH TO ARRAY
 		
-		$pms = explode("/", $path);
+		$pms = $path ? explode("/", trim ($path, "/")) : [];
 		
 		return $pms;
 	}

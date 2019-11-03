@@ -30,6 +30,8 @@ class Actions extends AltaArray
 
     protected $_CallEvent;
 
+    protected $_DefaultByVerb = [];
+
 
     protected $_Controller;
 
@@ -422,13 +424,13 @@ class Actions extends AltaArray
 
         if ($call_event_result !== false) {
 
-            if ( ! method_exists($this->ActiveController(), $action->Method) ) Application::Abort(404);
+            if ( ! method_exists($this->ActiveController(), $action->Method) ) Application::Abort(404, "{$action->Method} Method not found.");
 
             return call_user_func_array(array($this->ActiveController(), $action->Method), $params );
 
         }
 
-        return Application::Abort(401);
+        return Application::Abort(401, "Unable to call action.");
 
     }
 
@@ -457,6 +459,16 @@ class Actions extends AltaArray
 
         return $prepared_actions;
 
+    }
+
+    public function DefaultByVerb($verb, $params_count = 0)
+    {
+        return $this->_DefaultByVerb[$verb][$params_count] ?? $this->_DefaultByVerb[$verb][0] ?? null;
+    }
+
+    public function setDefaultByVerb($action, $verb, $params_count = 0)
+    {
+        return $this->_DefaultByVerb[$verb][$params_count] = $action;
     }
 
 

@@ -28,7 +28,7 @@ class Widget extends ViewBase
 
         $view_path = Render::CacheViewPath( Config::ViewsDir() . '@Widget_' . $widget) ?: call_user_func( function () use ( $widget ) {
 
-            $view_ext =  '.' . trim( Config::WidgetExt(), '.' );
+            $view_ext =  Config::WidgetExt();
 
             $view_path = Finder::LookFor($widget . $view_ext, Finder::Views, true);
 

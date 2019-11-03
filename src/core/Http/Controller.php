@@ -76,6 +76,10 @@ abstract class Controller
 
         $this->Actions->setMode(Config::ActionsMode())->Deny(Config::ActionsDenied());
 
+        $this->Actions->setDefaultByVerb('index', Request::VERB_GET);
+
+        $this->Actions->setDefaultByVerb('view', Request::VERB_GET, 1);
+
 
         $this->Request = $request;
 

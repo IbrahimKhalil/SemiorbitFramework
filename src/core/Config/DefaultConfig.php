@@ -583,6 +583,18 @@ abstract class DefaultConfig
     }
 
 
+    const REST_ACTIONS = "rest_actions";
+
+    public static function RestActions()
+    {
+        return Actions::PrepareActions(
+
+            static::ValueOf(self::GROUP__ACTIONS, self::REST_ACTIONS)
+
+        );
+    }
+
+
 
     ## 'AUTO' => Detect 'Actions Aliases' in $this->Actions >>
     // then 'Allowed Public Methods' (by Name).
@@ -618,6 +630,24 @@ abstract class DefaultConfig
     {
         return static::ValueOf(self::GROUP__ACTIONS, self::ACTIONS__INDEX);
     }
+
+
+
+    const ACTIONS__DEFAULT_BY_VERB = 'def_action_by_verb';
+
+    public static function DefaultActionByVerb()
+    {
+        return static::ValueOf(self::GROUP__ACTIONS, self::ACTIONS__DEFAULT_BY_VERB);
+    }
+
+
+    const ACTIONS__DEFAULT_REST_BY_VERB = 'def_rest_action_by_verb';
+
+    public static function DefaultRestActionByVerb()
+    {
+        return static::ValueOf(self::GROUP__ACTIONS, self::ACTIONS__DEFAULT_REST_BY_VERB);
+    }
+
 
     #endregion
 
