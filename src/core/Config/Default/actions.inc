@@ -64,17 +64,17 @@ return [
     Config::REST_ACTIONS => [
 
 
-        'index' => ['method' => 'Index', 'verb' => Request::VERB_GET],
+        'index' =>   ['method' => 'Index',   'verb' => Request::VERB_GET],
 
-        'view' => ['method' => 'Show', 'view' => 'card', 'pms' => ':id', 'verb' => Request::VERB_GET],
+        'view' =>     ['method' => 'Show',    'verb' => Request::VERB_GET, 'view' => 'card',  'pms' => ':id'],
 
-        'update' => ['method' => 'Update', 'view' => 'update', 'pms' => ':id', 'verb' => Request::VERB_PUT, 'allow' => SUPER_ADMIN],
+        'update' =>   ['method' => 'Update',  'verb' => Request::VERB_PUT, 'view' => 'update', 'pms' => ':id', 'allow' => SUPER_ADMIN],
 
-        'store' => ['method' => 'Store', 'view' => 'form', 'pms' => ':id', 'verb' => Request::VERB_POST, 'allow' => SUPER_ADMIN],
+        'store' =>    ['method' => 'Store',   'verb' => Request::VERB_POST, 'view' => 'form',   'pms' => ':id', 'allow' => SUPER_ADMIN],
 
-        'create' => ['method' => 'Store', 'view' => 'form', 'verb' => Request::VERB_POST, 'allow' => SUPER_ADMIN],
+        'create' =>   ['method' => 'Store',   'verb' => Request::VERB_POST, 'view' => 'form',                     'allow' => SUPER_ADMIN],
 
-        'delete' => ['method' => 'Delete', 'view' => 'delete', 'pms' => ':id', 'verb' => Request::VERB_DELETE, 'allow' => SUPER_ADMIN]
+        'delete' =>   ['method' => 'Delete',  'verb' => Request::VERB_DELETE, 'view' => 'delete', 'pms' => ':id', 'allow' => SUPER_ADMIN]
 
     ],
 

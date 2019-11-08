@@ -64,11 +64,9 @@ class ActionRoute extends Route
     public function Match($uri)
     {
 
+        if ($uri === $this->RegPattern()) return [''];
+
         $uri = rtrim($uri, '/') . '/';
-
-        dd($this->Value());
-
-        dd($this->Constraints());
 
         if (preg_match("#^{$this->RegPattern()}$#ui", $uri, $params)) {
 
@@ -77,6 +75,8 @@ class ActionRoute extends Route
             return $params;
 
         }
+
+
 
         return false;
 

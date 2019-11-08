@@ -4,9 +4,9 @@ use Semiorbit\Translation\Lang;
 
 Render::OpenBox('', 'cp');
 
-if ( trim($extra_pms) != "" ) :
+if ( trim($this->extra_pms) != "" ) :
 
-    if ( ! starts_with( $extra_pms, "?" ) ) $extra_pms = "?" . $extra_pms;
+    if ( ! starts_with( $this->extra_pms, "?" ) ) $extra_pms = "?" . $this->extra_pms;
 
 endif;
 

@@ -56,7 +56,7 @@ class View extends ViewBase
                      ( ( isset ( $request->Action['method'] ) ) ? Str::ParamCase( $request->Action['method'] ) : null );
 
 
-        $view_name = $view_sub ? $view_root . '.' . $view_sub : $view_root;
+        $view_name = $view_sub ? $request->Class->PackagePrefix . $view_root . '.' . $view_sub : $pkg . $view_root;
 
         $this->UseView( $view_name );
 

@@ -10,6 +10,7 @@ namespace Semiorbit\Http;
 
 
 use Semiorbit\Base\Application;
+use Semiorbit\Component\Services;
 use Semiorbit\Output\View;
 use Semiorbit\Support\Path;
 use Semiorbit\Support\Str;
@@ -29,7 +30,7 @@ use Semiorbit\Component\Finder;
  * @property Request $Request
  * @property View $View
  * @property Actions $Actions
- * @property DefaultScaffold $Scaffolding
+ * @property ScaffoldBase $Scaffolding
  * @property Response $Response
  * @property array $Params
  */
@@ -50,6 +51,10 @@ abstract class Controller
 
     public $Params;
 
+    public $Package;
+
+    public $PackagePrefix;
+
 
 
     public $ControllerName = '';
@@ -69,16 +74,12 @@ abstract class Controller
     }
 
 
-    final function __construct(Request $request = null, DataSet $ds = null)
+    function __construct(Request $request = null)
     {
 
-        $this->Actions = new Actions($this, Config::Actions());
-
-        $this->Actions->setMode(Config::ActionsMode())->Deny(Config::ActionsDenied());
+        $this->Actions = new Actions($this, []);
 
         $this->Actions->setDefaultByVerb('index', Request::VERB_GET);
-
-        $this->Actions->setDefaultByVerb('view', Request::VERB_GET, 1);
 
 
         $this->Request = $request;
@@ -86,9 +87,15 @@ abstract class Controller
         $this->Params = &$this->Request->Params;
 
 
+        $this->Package = static::Package();
+
+        $this->PackagePrefix = ($pkg = $this->Package) ? $pkg . '::' : '';
+
+
+
         $this->View = new View();
 
-        $this->View->UseRequest( $this->Request )->UseDefaultLayout();
+        $this->View->UseRequest( $this->Request );
 
         // PREPARE DEFAULT DATASET [MODEL] //////////////////////////////
 
@@ -98,13 +105,8 @@ abstract class Controller
 
         $this->ControllerPath = Url::BaseUrl() . $this->Request->Lang . "/" . Str::ParamCase( $this->ControllerName ) . "/";
 
-        if ( $ds instanceof DataSet ) {
 
-            $this->DataSet = $ds;
-
-            $this->DataSet->UseController($this);
-
-        } elseif ( static::DataSet ) {
+        if ( static::DataSet ) {
 
             $dataset_name = static::DataSet;
 
@@ -114,17 +116,11 @@ abstract class Controller
 
         } else {
 
-            $this->ModelPath = Finder::LookFor($this->ControllerName, Finder::Models);
+            if ($this->ModelPath = Finder::LookForModel($this->ControllerName, $this->Package)) {
 
-            if ($this->ModelPath) {
+                $this->DataSet = new $this->ModelPath->Class;
 
-                if (class_exists($this->ModelPath->Class)) {
-
-                    $this->DataSet = new $this->ModelPath->Class;
-
-                    $this->DataSet->UseController($this);
-
-                }
+                $this->DataSet->UseController($this);
 
             }
 
@@ -143,13 +139,7 @@ abstract class Controller
 
     protected function Initialize()
     {
-
         $this->Response->UseView($this->View);
-
-        // SCAFFOLDING
-
-        $this->Scaffolding = new DefaultScaffold($this);
-
     }
 
 
@@ -161,48 +151,7 @@ abstract class Controller
 
 
 
-    public function Index()
-    {
-        if ($this->Scaffolding && $this->Scaffolding->IsEnabled('Index')) $this->Scaffolding->Index();
-
-        else Application::Abort(404);
-    }
-
-    public function Show()
-    {
-        if ($this->Scaffolding && $this->Scaffolding->IsEnabled('Show')) $this->Scaffolding->Show();
-
-        else Application::Abort(404);
-    }
-
-    public function Edit()
-    {
-        if ($this->Scaffolding && $this->Scaffolding->IsEnabled('Edit')) $this->Scaffolding->Edit();
-
-        else Application::Abort(404);
-    }
-
-    public function Delete()
-    {
-        if ($this->Scaffolding && $this->Scaffolding->IsEnabled('Delete')) $this->Scaffolding->Delete();
-
-        else Application::Abort(404);
-    }
-
-    public function ListView()
-    {
-        if ($this->Scaffolding && $this->Scaffolding->IsEnabled('ListView')) $this->Scaffolding->ListView();
-
-        else Application::Abort(404);
-    }
-
-    public function TableView()
-    {
-        if ($this->Scaffolding && $this->Scaffolding->IsEnabled('TableView')) $this->Scaffolding->TableView();
-
-        else Application::Abort(404);
-    }
-    
+    abstract public function Index();
 
 
 
@@ -237,6 +186,16 @@ abstract class Controller
     }
 
 
+    public static function Namespace($class_name = null)
+    {
+        return Path::ClassNamespace($class_name ?: static::class);
+    }
+
+    public static function Package($class_name = null)
+    {
+        return Services::FindPackageByControllerNs(static::Namespace($class_name));
+    }
+
     public static function IndexTitle($class_name = null, $use_cache = true)
     {
 
@@ -244,7 +203,7 @@ abstract class Controller
 
         $name = static::Name( $class_name );
 
-        return static::Clipboard( "index_title_" . $class_name, trans( Str::ParamCase( $name )  . ".__index" ) );
+        return static::Clipboard( "index_title_" . $class_name, trans( (static::Package() ? static::Package() . '::' : '') . Str::ParamCase( $name )  . ".__index" ) );
 
     }
 

@@ -17,7 +17,7 @@ use Semiorbit\Output\View;
 use Semiorbit\Support\Str;
 use Semiorbit\Translation\Lang;
 
-class DefaultScaffold extends ScaffoldingProvider
+class ScaffoldBase extends ScaffoldBaseProvider
 {
 
     public function Index()
@@ -56,11 +56,11 @@ class DefaultScaffold extends ScaffoldingProvider
 
         if ($this->ActiveController()->DataSet->IsNew()) {
 
-            $ttl =  $this->ActiveController()->Request->Action['title'] ?: Lang::Trans("{$this->ActiveController()->ControllerName}.__create");
+            $ttl =  $this->ActiveController()->Request->Action['title'] ?: Lang::Trans("{$this->ActiveController()->PackagePrefix}{$this->ActiveController()->ControllerName}.__create");
 
         } else {
 
-            $ttl = $this->ActiveController()->Request->Action['title'] ?: Lang::Trans("{$this->ActiveController()->ControllerName}.__edit");
+            $ttl = $this->ActiveController()->Request->Action['title'] ?: Lang::Trans("{$this->ActiveController()->PackagePrefix}{$this->ActiveController()->ControllerName}.__edit");
 
         }
 
@@ -100,7 +100,7 @@ class DefaultScaffold extends ScaffoldingProvider
 
         if ($this->ActiveController()->DataSet->IsNew()) { Url::GotoHomePage('?msg=DELETE_ERR_NO_ITEM'); return; }
 
-        $ttl = $this->ActiveController()->Request->Action['title'] ?: Lang::Trans(Str::ParamCase($this->ActiveController()->ControllerName) . ".__delete" . $this->ActiveController()->ControllerName);
+        $ttl = $this->ActiveController()->Request->Action['title'] ?: Lang::Trans($this->ActiveController()->PackagePrefix . Str::ParamCase($this->ActiveController()->ControllerName) . ".__delete" . $this->ActiveController()->ControllerName);
 
         if ( $this->ActiveController()->DataSet->Policy()->DeniesDelete() ) Application::Abort(401);
 
@@ -318,7 +318,7 @@ class DefaultScaffold extends ScaffoldingProvider
 
         $pms['CTR_PATH'] = $this->ActiveController()->ControllerPath;
 
-        $pms['CTR_NAME'] = $this->ActiveController()->ControllerName;
+        $pms['CTR_NAME'] = $this->ActiveController()->PackagePrefix . Str::ParamCase($this->ActiveController()->ControllerName);
 
         $pms['CTR_TITLE'] = $this->ActiveController()->ControllerTitle;
 
@@ -338,5 +338,6 @@ class DefaultScaffold extends ScaffoldingProvider
         return $cp_output;
 
     }
+
 
 }

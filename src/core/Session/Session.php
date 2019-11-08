@@ -8,7 +8,9 @@
 namespace Semiorbit\Session;
 
 
-class Session
+use Semiorbit\Support\RegistryManagerInterface;
+
+class Session implements RegistryManagerInterface
 {
 
     protected static $_SessionInstance;

@@ -9,6 +9,8 @@ namespace Semiorbit\Session;
 
 
 
+use Semiorbit\Support\RegistryManagerInterface;
+
 interface SessionManager
 {
 

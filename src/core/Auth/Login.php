@@ -12,11 +12,12 @@ namespace Semiorbit\Auth;
 use Semiorbit\Config\Config;
 use Semiorbit\Db\DB;
 use Semiorbit\Form\Form;
+use Semiorbit\Http\BaseController;
 use Semiorbit\Http\Controller;
 use Semiorbit\Http\Url;
 
 
-class Login extends Controller
+class Login extends BaseController
 {
 
     protected $_PrevPage;

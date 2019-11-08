@@ -717,9 +717,9 @@ class Field extends AltaArray implements FieldProps
     public function Trans($key)
     {
 
-        $class = $this->ActiveDataSet() && !(stristr($key, '.') || stristr($key, '::')) ?
+        $class = $this->ActiveDataSet() && !(strpos($key, '.') || strpos($key, '::')) ?
 
-            Str::ParamCase($this->ActiveDataSet()->Name()) . '.' : '';
+            $this->ActiveDataSet()->PackagePrefix() . Str::ParamCase($this->ActiveDataSet()->Name()) . '.' : '';
 
         return Lang::Trans($class . $key);
 

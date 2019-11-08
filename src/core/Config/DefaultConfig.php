@@ -45,6 +45,8 @@ abstract class DefaultConfig
 
     const GROUP__VIEWS = "views";
 
+    const GROUP_SERVICES = "services";
+
     #endregion
 
 

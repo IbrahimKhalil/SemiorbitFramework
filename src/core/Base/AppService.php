@@ -9,6 +9,7 @@ namespace Semiorbit\Base;
 
 
 use Semiorbit\Component\Finder;
+use Semiorbit\Component\Services;
 use Semiorbit\Config\Config;
 use Semiorbit\Http\Request;
 use Semiorbit\Http\Response;
@@ -138,6 +139,8 @@ class AppService
 
             AppManager::MarkAsActive( Config::AppNamespace(), $application, $this );
 
+
+        Services::Register($this);
 
         //Fire onCreate Event
         AppManager::Call( $application, 'onCreate' );
@@ -388,7 +391,7 @@ class AppService
     }
 
     /**
-     * Load and set application configurations
+     * Select and set application configurations
      *
      * @param string $config_path
      * @return $this

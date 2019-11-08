@@ -10,6 +10,7 @@ namespace Semiorbit\Data;
 
 
 
+use Semiorbit\Component\Services;
 use Semiorbit\Form\Form;
 use Semiorbit\Db\DB;
 use Semiorbit\Config\Config;
@@ -39,6 +40,11 @@ class DataSet extends Model
     protected $_TableView;
 
     protected $_Name;
+
+    protected $_Package;
+
+    protected $_PackagePrefix;
+
 
     protected static $_DefaultController;
 
@@ -170,7 +176,7 @@ class DataSet extends Model
     }
 
     /**
-     * Load rows by defined order
+     * Select rows by defined order
      *
      * @param null $order_by
      * @return $this
@@ -647,7 +653,32 @@ class DataSet extends Model
 
     public function Name()
     {
-        return $this->_Name ?: $this->_Name = Path::ClassShortName($this);
+        return $this->_Name ?: $this->_Name = Path::ClassShortName(static::class);
+    }
+
+
+    public function Namespace()
+    {
+        return Path::ClassNamespace(static::class);
+    }
+
+    public function Package()
+    {
+        // TODO: Package from cache
+
+        return $this->_Package ?: $this->_Package = Services::FindPackageByModelNs($this->Namespace());
+    }
+
+    public function PackagePrefix()
+    {
+        return $this->_PackagePrefix ?: $this->_PackagePrefix = (($pkg = $this->Package()) ? $pkg . '::' : '');
+    }
+
+    public function setPackage($pkg)
+    {
+        $this->_Package = $pkg;
+
+        return $this;
     }
 
     /**

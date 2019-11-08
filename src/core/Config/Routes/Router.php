@@ -1,11 +1,15 @@
-<?php
+<?php /** @noinspection PhpIncludeInspection */
 
 
 namespace Semiorbit\Config\Routes;
 
 
 use Semiorbit\Base\Application;
+use Semiorbit\Cache\FrameworkCache;
 use Semiorbit\Component\FinderResult;
+use Semiorbit\Component\Package;
+use Semiorbit\Component\Services;
+use Semiorbit\Config\Config;
 use Semiorbit\Http\Request;
 
 class Router
@@ -36,12 +40,15 @@ class Router
 
         $pattern = trim($pattern, '/');
 
-        $index = trim(substr($pattern, 0, strpos($pattern, '/')));
+        $index = ($pos = strpos($pattern, '/')) ?
 
-        if (fnmatch("{*}", $index))
+            trim(substr($pattern, 0, $pos)) : $pattern;
+
+        if (! $index) $index = '/';
+
+        elseif (fnmatch("{*}", $index))
 
             $index = self::DEFAULT_REG_INDEX;
-
 
         $constraints = [];
 
@@ -67,7 +74,6 @@ class Router
             Application::Abort(403, "Invalid Route: {$scope}.{$pattern}");
 
 
-
         static::$_Reg[$scope][$index][$verb][] =
 
             ActionRoute::Build($pattern,
@@ -75,6 +81,7 @@ class Router
                 $controller, $action, $callable,
 
                 $reg_pattern, $constraints, $params);
+
 
 
         return new ActionRoute($scope, $index, $verb, count(static::$_Reg[$scope][$index][$verb]) - 1);
@@ -119,12 +126,14 @@ class Router
 
         $path = Request::Path2Array($uri);
 
+        $index = $path[0] ?? '/';
 
-        if ($actions = (static::$_Reg[0][$path[0]][$verb]) ?? null) {
+
+        if ($actions = (static::$_Reg[0][$index][$verb] ?? null) ) {
 
             foreach ($actions as $order => $val) {
 
-                $actionRoute = new ActionRoute(0, $path[0], $verb, $order);
+                $actionRoute = new ActionRoute(0, $index, $verb, $order);
 
                 if ($params = $actionRoute->Match($uri)) {
 
@@ -134,7 +143,7 @@ class Router
 
                     $callable = $actionRoute->Callable();
 
-                    unset($path[0]);
+                    if (isset($path[0])) unset($path[0]);
 
                     break;
 
@@ -145,13 +154,19 @@ class Router
         }
 
 
-        if (!$controller && $class = (static::$_Reg[0][$path[0]][Route::TYPE_CONTROLLER]) ?? null) {
+        if (!$controller && $class = (static::$_Reg[0][$index][Route::TYPE_CONTROLLER] ?? null)) {
 
-            $controller = new FinderResult(['Class' => $class, 'Selector' => $path[0]]);
+            $controller = new FinderResult(['Class' => $class, 'Selector' => $index]);
 
-            unset($path[0]);
+            if (isset($path[0])) unset($path[0]);
 
         }
+
+
+//
+//        if (!$controller && $index == '/')
+//
+//            $controller = Config::MainPage();
 
 
         return [$controller, $action, implode('/', $path), $params, $callable];
@@ -162,4 +177,68 @@ class Router
     {
         static::$_Reg[$route->Scope()][$route->Index()][$route->Verb()][$route->Order()] = $route->Value();
     }
+
+
+    public static function ImportGroup($group)
+    {
+
+        if (strpos($group, '::')) {
+
+            [$pkg, $grp] = explode($group, '::', 2);
+
+            $path = Package::Select($pkg)->ConfigPath() . "routes/{$grp}.php";
+
+        } else {
+
+            $path = Application::Service()->ConfigPath("routes/{$group}.php");
+
+        }
+
+        require $path;
+
+    }
+
+
+    public static function LoadRoutes($reload = false)
+    {
+
+        $is_api = Config::ApiMode();
+
+        $mode = $is_api ? 'api' : 'web';
+
+        if (!$reload &&  $cache = FrameworkCache::ReadVar("{$mode}-routes")) {
+
+            static::$_Reg = $cache['reg'];
+
+            static::$_RegByName = $cache['reg-by-name'];
+
+        } else {
+
+            if (file_exists($fn = Application::Service()->ConfigPath("routes/{$mode}.php"))) require $fn;
+
+            foreach (Services::List() as $service_id => $service) {
+
+                if (isset($service[Package::PKG_CONFIG]) &&
+
+                    file_exists($fn = $service[Package::PKG_CONFIG] . "routes/{$mode}.php")) require $fn;
+
+            }
+
+
+            if (empty(static::$_Callable)) {
+
+                $cache = [];
+
+                $cache['reg'] = static::$_Reg;
+
+                $cache['reg-by-name'] = static::$_RegByName;
+
+                FrameworkCache::StoreVar("{$mode}-routes", $cache);
+
+            }
+
+        }
+
+    }
+
 }

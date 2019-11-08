@@ -56,7 +56,7 @@ class ViewBase extends AltaArray
     }
 
     /**
-     * Load view by view name<p><p>
+     * Select view by view name<p><p>
      *
      *
      * @param $view string|array Examples: <p><p>'<b>posts.post_card</b>' or '<b>users.profile</b>' <p>
@@ -221,15 +221,31 @@ class ViewBase extends AltaArray
 
             if ( empty ( $view_sub ) ) {
 
-                $view_files = array($view_root . $view_ext, $view_root . "/" . $view_root . $view_ext);
+                $view_files = [
+
+                    $view_root . $view_ext,
+
+                    $view_root . "/" . $view_root . $view_ext ];
 
             } else if ( strtolower( $view_sub ) == strtolower( Config::IndexAction() ) ) {
 
-                $view_files = array($view_root . $view_ext, $view_root . "/" . $view_root . $view_ext, $view_root . "/" . $view_sub . $view_ext, $view_root . "." . $view_sub . $view_ext);
+                $view_files = [
+
+                    $view_root . "/" . $view_sub . $view_ext,
+
+                    $view_root . $view_ext,
+
+                    $view_root . "." . $view_sub . $view_ext,
+
+                    $view_root . "/" . $view_root . $view_ext ];
 
             } else {
 
-                $view_files = array($view_root . "/" . $view_sub . $view_ext, $view_root . "." . $view_sub . $view_ext );
+                $view_files = [
+
+                    $view_root . "/" . $view_sub . $view_ext,
+
+                    $view_root . "." . $view_sub . $view_ext ];
 
             }
 

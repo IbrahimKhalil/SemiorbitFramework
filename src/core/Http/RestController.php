@@ -7,6 +7,7 @@
 
 
 namespace Semiorbit\Http;
+use Semiorbit\Config\Config;
 use Semiorbit\Data\DataSet;
 use Semiorbit\Output\View;
 
@@ -20,7 +21,7 @@ use Semiorbit\Output\View;
  * @property Request $Request
  * @property View $View
  * @property Actions $Actions
- * @property RestScaffold $Scaffolding
+ * @property ScaffoldRest $Scaffolding
  * @property Response $Response
  * @property array $Params
  */
@@ -32,13 +33,40 @@ abstract class RestController extends Controller
     protected function Initialize()
     {
 
+        $this->Actions->UseArray(Config::RestActions());
+
+        $this->Actions->setDefaultByVerb('view', Request::VERB_GET, 1);
+
         $this->View->NoLayout();
 
         // SCAFFOLDING
 
-        $this->Scaffolding = new RestScaffold($this);
+        $this->Scaffolding = new ScaffoldRest($this);
 
 
     }
+
+
+
+    public function Show()
+    {
+
+    }
+
+    public function Store()
+    {
+
+    }
+
+    public function Update()
+    {
+
+    }
+
+    public function Delete()
+    {
+
+    }
+
 
 }

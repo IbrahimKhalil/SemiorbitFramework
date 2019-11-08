@@ -99,7 +99,7 @@ class Request {
 	public function Load($Uri = '', $extra_path_info_pattern = '/id')
 	{
 
-	    $time = microtime(true);
+	    //$time = microtime(true);
 
 	    $this->PathInfoPattern = $extra_path_info_pattern;
 		
@@ -134,7 +134,7 @@ class Request {
 		
 			//Merge QUERY-STRING and REQUEST ARRAY
 		
-			// First Load REQUEST Vars into $_REQUEST 
+			// First Select REQUEST Vars into $_REQUEST
 			## NB. These vars will be overridden by PATH_INFO and  QUERY_STRING Later
 			
 			$this->ServerVars = array_merge($this->ServerVars, $_REQUEST);
@@ -160,6 +160,10 @@ class Request {
 
 
 		// DETECT ROUTES
+
+        // TODO: DETECT API CALL
+
+        Router::LoadRoutes();
 
         [$controller, $action, $this->PathInfo, $route_params, $callable] = Router::Find($this->PathInfo, $this->Verb);
 
@@ -201,7 +205,7 @@ class Request {
 	
 		$this->ID = isset( $this->Params[ Config::IDParamName() ] ) ? $this->Params[ Config::IDParamName() ] : null;
 
-		dd(microtime(true) - $time);
+		//dd(microtime(true) - $time);
 
 	}
 	
@@ -307,35 +311,6 @@ class Request {
             $controller = Finder::LookForController( array($path_info_controller) );
 
 
-
-            // FIND CONTROLLER BY MODEL NAME USING DATASET DEFAULT CONTROLLER ==========================================
-
-            if ( ! $controller ) {
-
-                $model = Finder::LookForModel( array($path_info_controller) );
-
-                if ( $model ) {
-
-                    $default_controller = call_user_func( array($model->Class, 'DefaultController') );
-
-                    if ( $default_controller ) {
-
-                        $controller = Finder::LookForController($default_controller);
-
-                        if ( $controller ) {
-
-                            $controller->Model = $model;
-
-                            $controller->Selector = $model->Selector;
-
-                        }
-
-                    }
-
-                }
-
-            }
-
             //==========================================================================================================
 
         }
@@ -411,7 +386,7 @@ class Request {
 
         if ( ! class_exists($class_name) ) Application::Abort(404, "Controller ({$class_name}) was not found!");
 
-		$this->Class = new $class_name($this, $this->Controller->Model ? new $this->Controller->Model->Class : null);
+		$this->Class = new $class_name($this);
 
         if ( ! $this->Class instanceof Controller ) Application::Abort(404, "Object ({$class_name}) is not a controller!");
 		

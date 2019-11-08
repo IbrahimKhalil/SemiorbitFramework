@@ -35,11 +35,31 @@ class Finder
 
         $dir = Config::StructureDirectory($directory, $directory);
 
-        $ext = Config::StructureExtension($directory, Config::FrameworkConfig()[$directory . '_ext']);
+        $ext = $class_as_file_name ? '' : Config::StructureExtension($directory, Config::FrameworkConfig()[$directory . '_ext']);
 
-		$path = BASEPATH . $dir . '/' . $class . $ext;
-			
-		if ($class_as_file_name === true) $path = BASEPATH . $dir . '/' . $class;
+
+
+       if (strpos($class, '::')) {
+
+            [$pkg, $fn] = explode('::', $class,2);
+
+
+            $pkg_views_path = ($directory == self::Lang ?
+
+                ($pkg == 'semiorbit' ? BASEPATH . $dir . '/' : Package::Select($pkg)->LangPath())
+
+                : Package::Select($pkg)->ViewsPath());
+
+            // $fn = str_replace($pkg . '::', '', $fn);
+
+            $path = $pkg_views_path . $fn . $ext;
+
+        } else {
+
+            $path = BASEPATH . $dir . '/' . $class . $ext;
+
+        }
+
 
 
         return file_exists( $path ) ?  $path : false;
@@ -55,6 +75,11 @@ class Finder
         $dir = Config::FrameworkConfig()[ $directory ] ?? $directory;
 
         $ext = isset( Config::FrameworkConfig()[ $directory . '_ext' ] ) ? '.' . Config::FrameworkConfig()[ $directory . '_ext' ] : '';
+
+        if ($directory == self::Lang)
+
+            $class = str_replace_first('::', '/', $class);
+
 
 		$path = $class_as_file_name === true ?
 
@@ -114,6 +139,7 @@ class Finder
                     if ($APP_FP) return new FinderResult( array('class' => $class_name, 'path' => $APP_FP, 'dir' => $dir, 'selector' => $my_class) );
 
                     if (!$project_only) :
+
 
                         $FW_FP = Finder::FW_FilePath($my_class, $dir, $class_as_file_name);
 
@@ -176,15 +202,20 @@ class Finder
 
     /**
      * @param $selector
+     * @param null $package
      * @return bool|FinderResult
      */
 
-    public static function LookForModel($selector)
+    public static function LookForModel($selector, $package = null)
     {
 
         foreach ( (array) $selector as $model_name ) {
 
-            $class_name = AppManager::MainApp()->ModelFullyQualifiedName($model_name);
+            $class_name = $package ?
+
+                Package::Select($package)->ModelNamespace() . "\\{$selector}"
+
+                : AppManager::MainApp()->ModelFullyQualifiedName($model_name);
 
             if ( class_exists( $class_name ) ) {
 

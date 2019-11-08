@@ -50,7 +50,7 @@ final class Config extends DefaultConfig
 	final public static function LoadDefaultGroup($config_group)
     {
         /** @noinspection PhpIncludeInspection */
-        return include FW . "core/Config/{$config_group}.inc";
+        return include FW . "core/Config/Default/{$config_group}.inc";
     }
     
     
@@ -370,6 +370,12 @@ final class Config extends DefaultConfig
 
 	}
 
+	public static function Services()
+    {
+        return static::$__Config[self::GROUP_SERVICES] ?? [];
+    }
+
 	#endregion
-	
+
+
 }

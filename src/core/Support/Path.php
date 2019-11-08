@@ -258,9 +258,28 @@ class Path
 
             return static::Clipboard('csn@' . $argument) ?: static::Clipboard('csn@' . $argument,
 
-                (new \ReflectionClass($argument))->getShortName() );
+                (substr(strrchr($argument, '\\'), 1) ?: $argument) );
 
         else return (new \ReflectionClass($argument))->getShortName();
+    }
+
+
+    /**
+     * Returns class short name
+     *
+     * @param  string $argument Class fully qualified name or an object
+     * @return string
+     */
+
+    public static function ClassNamespace($argument)
+    {
+        if ( is_string($argument) )
+
+            return static::Clipboard('cns@' . $argument) ?: static::Clipboard('cns@' . $argument,
+
+                ( substr($argument, 0,  strrpos($argument, '\\')) ?: $argument ));
+
+        else return (new \ReflectionClass($argument))->getNamespaceName();
     }
 
     /**

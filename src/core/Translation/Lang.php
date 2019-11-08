@@ -10,6 +10,7 @@ namespace Semiorbit\Translation;
 
 
 
+use Semiorbit\Component\Package;
 use Semiorbit\Support\Str;
 use Semiorbit\Config\Config;
 use Semiorbit\Component\Finder;
@@ -104,66 +105,64 @@ class Lang
 	public static function Trans($key, $pms = [], $count = 0, $default = ':key')
 	{
 		
-		if ( ! is_empty ( self::$_DictIndex[ $key ] ) )  return self::ProcessValue( self::$_DictIndex[ $key ], $pms, $count );
+		if ( isset( self::$_DictIndex[ $key ] ) )
+
+		    return self::ProcessValue( self::$_DictIndex[ $key ], $pms, $count );
+
+
 		
-		$key_parts = self::ParseKey($key);
+		[$pkg, $file, $keyword] = self::ParseKey($key);
 		
-		$dict_key = self::DictHas($key_parts);
+		$dict_key = self::DictHas($pkg, $file, $keyword);
 		
 		
-		if ( $dict_key !== null ) self::$_DictIndex[ $key ] = &$dict_key;
+		if ( $dict_key !== null ) {
+
+		    self::$_DictIndex[ $key ] = &$dict_key;
+
+            return ( is_empty( $dict_key ) ) ? self::ProcessEmptyValue($keyword, $default)
+
+                : self::ProcessValue( $dict_key, $pms, $count );
+        }
 		
-		if ( $dict_key !== null && ! is_empty( $dict_key ) ) return self::ProcessValue( $dict_key, $pms, $count );
+
 		
-		if ( $dict_key !== null && is_empty( $dict_key ) ) return self::ProcessEmptyValue( $key_parts['keyword'], $default );
+		$dict_keys = self::Import($file, $pkg);
+		
+
+		
+		if ( ! is_empty( $dict_keys['locale'][ $keyword ] ) ) {
 			
-		
-		
-		$dict_keys = self::Import($key_parts['file'], $key_parts['package']);
-		
-		
-		
-		if ( ! is_empty( $dict_keys['locale'][ $key_parts['keyword'] ] ) ) {
+			self::$_DictIndex[ $key ] = &$dict_keys['locale'][ $keyword ];
 			
-			self::$_DictIndex[ $key ] = &$dict_keys['locale'][ $key_parts['keyword'] ];
-			
-			return self::ProcessValue( $dict_keys['locale'][ $key_parts['keyword'] ], $pms, $count );
+			return self::ProcessValue( $dict_keys['locale'][ $keyword ], $pms, $count );
 		}
 		
-		if ( ! is_empty( $dict_keys['language'][ $key_parts['keyword'] ] ) ) {
+		if ( ! is_empty( $dict_keys['language'][ $keyword ] ) ) {
 			
-			self::$_DictIndex[ $key ] = &$dict_keys['locale'][ $key_parts['keyword'] ];
+			self::$_DictIndex[ $key ] = &$dict_keys['language'][ $keyword ];
 			
-			return self::ProcessValue( $dict_keys['language'][ $key_parts['keyword'] ], $pms, $count );
+			return self::ProcessValue( $dict_keys['language'][ $keyword ], $pms, $count );
 		}
 		
-		return self::ProcessEmptyValue($key_parts['keyword'], $default);		
+		return self::ProcessEmptyValue($keyword, $default);
 		
 	}
 	
-	private static function DictHas($key_parts)
+	private static function DictHas($pkg, $file, $keyword)
 	{
 		
 		$lang = self::ActiveLang();
 		
 		$language = self::Language();
 		
-		if (  $language != $lang ) :
+
+		$res = (  $language != $lang ) ?
+
+            self::$_Dictionary[ $lang ][ $pkg ][ $file ][ $keyword ] ?? null : null;
 		
-			if ( ! is_empty( self::$_Dictionary[ $lang ][ $key_parts['package'] ][ $key_parts['file'] ][ $key_parts['keyword'] ] ) )
-		
-			return self::$_Dictionary[ $lang ][ $key_parts['package'] ][ $key_parts['file'] ][ $key_parts['keyword'] ];
-		
-		endif;
-		
-				
-		if ( isset( self::$_Dictionary[ $language ][ $key_parts['package'] ][ $key_parts['file'] ][ $key_parts['keyword'] ] ) )
-		
-			return self::$_Dictionary[ $language ][ $key_parts['package'] ][ $key_parts['file'] ][ $key_parts['keyword'] ];
-		
-		else 
-			
-			return null;
+
+		return $res ?: self::$_Dictionary[ $language ][ $pkg ][ $file ][ $keyword ] ?? null;
 
 	}
 	
@@ -178,9 +177,7 @@ class Lang
 	
 	private static function ProcessEmptyValue($keyword, $default = ':key')
 	{
-		if ( $default == ':key' ) return $keyword;
-			
-		else return $default;
+		return ( $default == ':key' ) ? $keyword : $default;
 	}
 	
 	public static function setTrans($key, $value)
@@ -191,27 +188,11 @@ class Lang
 	public static function ParseKey($key)
 	{
 		
-		$key_parts = array('package'=>null, 'file'=>null, 'keyword'=>null);
+		[$pkg, $path] = strpos($key, '::') ? explode("::", $key, 2) : [null, $key];
 		
-		if ( is_empty( $key ) ) return $key_parts;
-		
-		$package_key = explode("::", $key);
-		
-		$package_key_count = count( $package_key );
-		
-		$key_parts['package'] = $package_key_count > 1 ? trim($package_key[0]) : 0;
-		
-		$file_keyword = $package_key_count > 1 ? $package_key[1] : $package_key[0];
-		
-		$file_key = explode(".", $file_keyword);
-		
-		$file_key_count = count( $file_key );
-		
-		$key_parts['file'] = $file_key_count > 1 ? trim($file_key[0]) : trim(Config::AppClass());
+		[$file, $keyword] = strpos($path, '.') ? explode(".", $path) : [null, $path];
 			
-		$key_parts['keyword'] = $file_key_count > 1 ? trim($file_key[1]) : trim($file_key[0]);
-			
-		return $key_parts;
+		return [$pkg, $file, $keyword];
 		
 	} 
 	
@@ -232,17 +213,21 @@ class Lang
 
 		/**SEMIORBIT**/
 		
-		$path = Finder::LookFor( array(
+		$path = Finder::LookFor([
 				  
-								'semiorbit/' . $language . '/' . $language . $ext  ,
-								'semiorbit/' . $language . $ext,
-								'semiorbit/' . $language . '/' . $language . '.inc',
-								'semiorbit/' . $language . '.inc',
+		    'semiorbit/' . $language . '/' . $language . $ext,
+
+            'semiorbit/' . $language . $ext,
+
+            'semiorbit/' . $language . '/' . $language . '.inc',
+
+            'semiorbit/' . $language . '.inc',
 				
-								'semiorbit/en/en.inc',
-								'semiorbit/en.inc'
+            'semiorbit/en/en.inc',
+
+            'semiorbit/en.inc'
 				
-						), Finder::Lang, true);
+        ], Finder::Lang, true);
 		
 		if ( $path ) include_once "{$path['path']}";
 		
@@ -257,19 +242,7 @@ class Lang
 		$app_lang_path = Finder::LookFor( array(  $language . '/' . $language . $ext, $language . $ext ), Finder::Lang, true, true);
 		
 		if ( $app_lang_path ) include_once "{$app_lang_path['path']}";
-		
-		
-		
-		/*DEPRECATED*/
-		
-		$GLOBALS['lang'] = $lang;
-		
-		if ( ! $app_lang_path )
-		{	
-			$path = Finder::LookFor( Config::ControllersDir(). '_'.$lang.'.inc', Finder::Lang, true);
-			if ($path) /** @noinspection PhpIncludeInspection */
-				include_once $path['path'];
-		}
+
 		
 	}
 	
@@ -284,12 +257,10 @@ class Lang
 		
 		$ext = Config::LangExt();
 		
-		$package_path = is_empty( $package ) ? '' : $package . '/';
+		$package_path = $package ? $package . '::' : '';
 		
-		$package_id = is_empty( $package ) ? 0 : $package;
+		$package_id = $package ?: 0;
 
-
-		$file = trim($file);
 		
 		$dict_keys = array('language'=>null, 'locale'=>null);
 		
@@ -306,41 +277,51 @@ class Lang
 			return   $dict_keys;
 		}
 		
-		$path = Finder::LookFor(array(
+		$path = Finder::LookFor([
 								
-								$package_path . $language . '/' . $file . '.' . $language . $ext,
-								$package_path . $file . '.' . $language . $ext,
+		    $package_path . $language . '/' . $file . '.' . $language . $ext,
 
-                                $package_path . $language . '/' . Str::ParamCase( $file ) . '.' . $language . $ext,
-                                $package_path . Str::ParamCase( $file ) . '.' . $language . $ext
+            $package_path . $file . '.' . $language . $ext,
+
+            $package_path . $language . '/' . Str::ParamCase( $file ) . '.' . $language . $ext,
+
+            $package_path . Str::ParamCase( $file ) . '.' . $language . $ext
 								
-								), Finder::Lang, true, $package_id == 'semiorbit' ? false : true);
+        ], Finder::Lang, true, $package_id !== 'semiorbit');
 			
-		if ( $path ) /** @noinspection PhpIncludeInspection */
+		if ( $path )
+
+		    /** @noinspection PhpIncludeInspection */
+
 			self::$_Dictionary[ $language ][ $package_id ][ $file ] = include "{$path['path']}";
 				
-				else self::$_Dictionary[ $language ][ $package_id ][ $file ] = array();
+			else self::$_Dictionary[ $language ][ $package_id ][ $file ] = array();
 
 			
 		
-		if ( $lang != $language ) :
-			
-		$locale = Finder::LookFor(array(
-				
-								$package_path . $language . '/' . $file . '.' . $lang . $ext,
-								$package_path . $file . '.' . $lang . $ext,
+		if ( $lang != $language ) {
 
-                                $package_path . $language . '/' . Str::ParamCase( $file ) . '.' . $lang . $ext,
-								$package_path . Str::ParamCase( $file ) . '.' . $lang . $ext
-		
-								), Finder::Lang, true, $package_id == 'semiorbit' ? false : true);
-		
-		if ( $locale ) /** @noinspection PhpIncludeInspection */
-			self::$_Dictionary[ $lang ][ $package_id ][ $file ] = include "{$locale['path']}";
-		
-				  else self::$_Dictionary[ $lang ][ $package_id ][ $file ] = array();
+            $locale = Finder::LookFor([
 
-		endif;
+                $package_path . $language . '/' . $file . '.' . $lang . $ext,
+
+                $package_path . $file . '.' . $lang . $ext,
+
+                $package_path . $language . '/' . Str::ParamCase($file) . '.' . $lang . $ext,
+
+                $package_path . Str::ParamCase($file) . '.' . $lang . $ext
+
+            ], Finder::Lang, true, $package_id !== 'semiorbit');
+
+            if ($locale)
+
+                /** @noinspection PhpIncludeInspection */
+
+                self::$_Dictionary[$lang][$package_id][$file] = include "{$locale['path']}";
+
+                else self::$_Dictionary[$lang][$package_id][$file] = array();
+
+        }
 		
 			
 		$dict_keys['language'] = &self::$_Dictionary[ $language ][ $package_id ][ $file ];
