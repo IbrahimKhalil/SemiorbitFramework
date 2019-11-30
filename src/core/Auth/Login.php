@@ -12,12 +12,11 @@ namespace Semiorbit\Auth;
 use Semiorbit\Config\Config;
 use Semiorbit\Db\DB;
 use Semiorbit\Form\Form;
-use Semiorbit\Http\BaseController;
 use Semiorbit\Http\Controller;
 use Semiorbit\Http\Url;
 
 
-class Login extends BaseController
+class Login extends Controller
 {
 
     protected $_PrevPage;
@@ -107,7 +106,7 @@ class Login extends BaseController
 
             //$salt = uniqid(mt_rand(1, mt_getrandmax()));
 
-			$salt = uniqid();
+			$salt = $_GET['salt'] ?? uniqid();
 
             // Create salted password
             $hashed_password = hash('sha512', $password . hash('sha512', $salt));

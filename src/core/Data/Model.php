@@ -11,6 +11,7 @@ namespace Semiorbit\Data;
 
 
 use Semiorbit\Auth\Auth;
+use Semiorbit\Component\Services;
 use Semiorbit\Field\DataType;
 use Semiorbit\Field\Field;
 use Semiorbit\Field\File;
@@ -71,6 +72,11 @@ class Model
     private $_Fields = array();
 
     private $_GroupsProps = array();
+
+
+    protected $_Package;
+
+    protected $_PackagePrefix;
 
 
 
@@ -620,6 +626,9 @@ class Model
         $sql="UPDATE {$this->TableName()} SET ".join(", ", $params)." WHERE `{$this->ID['name']}` = {$id_placeholder}";
 
         //dd($sql);
+
+        //dd($param_value);
+
         $res = $this->ActiveConnection()->Cmd( $sql, $param_value ) ? Msg::DBOK : Msg::DBERR;
 
         $this->onSave($res);
@@ -1343,7 +1352,7 @@ class Model
 
                 if ( ! isset( $groups[ $group ] ['caption'] ) ) {
 
-                    $groups[ $group ] ['caption'] = defined($group) ? constant($group) : Lang::Trans( Str::ParamCase( static::ModelName() ) . '.' . $group );
+                    $groups[ $group ] ['caption'] = defined($group) ? constant($group) : Lang::Trans( $this->PackagePrefix() . Str::ParamCase( static::ModelName() ) . '.' . $group );
 
                 }
 
@@ -1444,6 +1453,18 @@ class Model
     public static function ModelName()
     {
         return Path::ClassShortName(static::class);
+    }
+
+    public function Package()
+    {
+        // TODO: Package from cache
+
+        return $this->_Package ?: $this->_Package = Services::FindPackageByModelNs($this->Namespace());
+    }
+
+    public function PackagePrefix()
+    {
+        return $this->_PackagePrefix ?: $this->_PackagePrefix = (($pkg = $this->Package()) ? $pkg . '::' : '');
     }
 
 

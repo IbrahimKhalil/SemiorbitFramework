@@ -115,11 +115,6 @@ class Mysqli implements Driver
             [$sql, $params] = $this->ExtractParamsArray($sql, $params);
 
 
-        var_dump($sql);
-
-        var_dump($params);
-
-
         $sql_hash = md5($sql);
 
         $stmt = isset($this->_Stmts[$sql_hash]) ? $this->_Stmts[$sql_hash] :
@@ -158,7 +153,7 @@ class Mysqli implements Driver
 
             $result = $stmt->execute();
 
-            $result_set = $stmt->get_result(); //TODO: BIND FOR NON MYSQLND
+             $result_set = $stmt->get_result();
 
             if ($result_set) {
 

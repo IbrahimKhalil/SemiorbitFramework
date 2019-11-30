@@ -31,6 +31,8 @@ class AppService
 
     protected $_ConfigPath;
 
+    protected $_RoutesPath;
+
     protected $_AppPath;
 
     protected $_PublicPath;
@@ -133,7 +135,7 @@ class AppService
 
         $this->_PublicPath = $public_path;
 
-        $this->LoadConfig($config_path);
+        $this->LoadConfig($config_path)->UseRoutesPath();
 
         if ( $application )
 
@@ -184,6 +186,28 @@ class AppService
     {
         return $this->_ConfigPath . ( $path ? Path::Normalize($path, false, null) : '' );
     }
+
+
+
+    /**
+     * Get the fully qualified path to application routes folder
+     *
+     * @param string $path
+     * @return string
+     */
+
+    public function RoutesPath($path = '')
+    {
+        return $this->_RoutesPath . ( $path ? Path::Normalize($path, false, null) : '' );
+    }
+
+    public function UseRoutesPath($routes_path = null)
+    {
+        $this->_RoutesPath = $routes_path ?: $this->BasePath('routes');
+
+        return $this;
+    }
+
 
     /**
      * Get the fully qualified path to application public folder

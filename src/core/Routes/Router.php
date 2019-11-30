@@ -1,7 +1,7 @@
 <?php /** @noinspection PhpIncludeInspection */
 
 
-namespace Semiorbit\Config\Routes;
+namespace Semiorbit\Routes;
 
 
 use Semiorbit\Base\Application;
@@ -186,11 +186,11 @@ class Router
 
             [$pkg, $grp] = explode($group, '::', 2);
 
-            $path = Package::Select($pkg)->ConfigPath() . "routes/{$grp}.php";
+            $path = Package::Select($pkg)->RoutesPath() . "{$grp}.php";
 
         } else {
 
-            $path = Application::Service()->ConfigPath("routes/{$group}.php");
+            $path = Application::Service()->RoutesPath("{$group}.php");
 
         }
 
@@ -214,13 +214,13 @@ class Router
 
         } else {
 
-            if (file_exists($fn = Application::Service()->ConfigPath("routes/{$mode}.php"))) require $fn;
+            if (file_exists($fn = Application::Service()->RoutesPath("{$mode}.php"))) require $fn;
 
             foreach (Services::List() as $service_id => $service) {
 
-                if (isset($service[Package::PKG_CONFIG]) &&
+                if (isset($service[Package::PKG_ROUTES]) &&
 
-                    file_exists($fn = $service[Package::PKG_CONFIG] . "routes/{$mode}.php")) require $fn;
+                    file_exists($fn = $service[Package::PKG_ROUTES] . "{$mode}.php")) require $fn;
 
             }
 

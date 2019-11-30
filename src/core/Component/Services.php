@@ -4,7 +4,9 @@
 namespace Semiorbit\Component;
 
 
+use Semiorbit\Base\Application;
 use Semiorbit\Base\AppService;
+use Semiorbit\Cache\FrameworkCache;
 use Semiorbit\Config\Config;
 use Semiorbit\Support\RegistryManagerInterface;
 
@@ -85,13 +87,23 @@ final class Services implements RegistryManagerInterface
 
         $packages = Config::Services();
 
+        // TODO CACHE --------------
+
         foreach ($packages as $package) {
+            
+            
+            if (class_exists($package)) {
 
-            /** @var ServiceProviderInterface $pkg */
+                /** @var ServiceProviderInterface $pkg */
 
-            $pkg = new $package($appService);
+                $pkg = new $package($appService);
 
-            $pkg->Register();
+                $pkg->Register();
+
+            } else
+
+                Application::Abort(404, "Unable to register service ({$package})");
+
 
         }
 

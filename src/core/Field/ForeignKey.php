@@ -60,9 +60,14 @@ trait ForeignKey
         $this->setFKeyTextFieldName($text_field);
 
 
-        $this->Type = DataType::INT;
+        if (!$this->_TypeDefined) {
 
-        $this->MaxLength = 20;
+            $this->Type = DataType::INT;
+
+            $this->MaxLength = 20;
+
+        }
+
 
         return $this;
 

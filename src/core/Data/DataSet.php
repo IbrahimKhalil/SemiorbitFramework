@@ -41,9 +41,6 @@ class DataSet extends Model
 
     protected $_Name;
 
-    protected $_Package;
-
-    protected $_PackagePrefix;
 
 
     protected static $_DefaultController;
@@ -662,17 +659,6 @@ class DataSet extends Model
         return Path::ClassNamespace(static::class);
     }
 
-    public function Package()
-    {
-        // TODO: Package from cache
-
-        return $this->_Package ?: $this->_Package = Services::FindPackageByModelNs($this->Namespace());
-    }
-
-    public function PackagePrefix()
-    {
-        return $this->_PackagePrefix ?: $this->_PackagePrefix = (($pkg = $this->Package()) ? $pkg . '::' : '');
-    }
 
     public function setPackage($pkg)
     {

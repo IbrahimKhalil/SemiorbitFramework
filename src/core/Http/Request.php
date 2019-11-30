@@ -12,8 +12,8 @@ namespace Semiorbit\Http;
 use Semiorbit\Base\Application;
 use Semiorbit\Config\Config;
 use Semiorbit\Component\Finder;
-use Semiorbit\Config\Routes\Route;
-use Semiorbit\Config\Routes\Router;
+use Semiorbit\Routes\Route;
+use Semiorbit\Routes\Router;
 use Semiorbit\Support\Str;
 use Semiorbit\Translation\Lang;
 
@@ -203,7 +203,7 @@ class Request {
 		$this->Params = array_merge($this->Params, $path_arr);
 	
 	
-		$this->ID = isset( $this->Params[ Config::IDParamName() ] ) ? $this->Params[ Config::IDParamName() ] : null;
+		$this->ID = isset( $this->Params[ Config::IDParamName() ] ) ? $this->Params[ Config::IDParamName() ] : "";
 
 		//dd(microtime(true) - $time);
 
@@ -441,7 +441,7 @@ class Request {
 		}
 
 
-		if (!$action) {
+        if (!$action) {
 
 
 		    if ($action_alias = $this->Class->Actions->DefaultByVerb($this->Verb, count($pms)))
@@ -451,7 +451,7 @@ class Request {
 
 		    if (!$action) $action = $this->Class->Actions->Index();
 
-		    if (!$action->IsVerbAccepted($action)) $action = null;
+		    if (!$action->IsVerbAccepted($this->Verb)) $action = null;
 
         }
 		
@@ -566,7 +566,7 @@ class Request {
 			
 			$this->Action = isset( $this->Params[$BasicParamCustomNaming ['action']] ) ? $this->Params[$BasicParamCustomNaming ['action']] : null;
 			
-			$this->ID = isset( $this->Params[$BasicParamCustomNaming ['id']] ) ? $this->Params[$BasicParamCustomNaming ['id']] : null;
+			$this->ID = isset( $this->Params[$BasicParamCustomNaming ['id']] ) ? $this->Params[$BasicParamCustomNaming ['id']] : "";
 		}
 		
 	}
@@ -599,8 +599,8 @@ class Request {
 	{
 	
 		if ( ! is_empty( self::$_Url ) ) return self::$_Url; 
-		
-		$protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"], 0, 5)) == 'https://' ? 'https://' : 'http://';
+
+		$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 'https://' : 'http://';
 	
 		return self::$_Url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];	
 	

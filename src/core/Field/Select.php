@@ -26,7 +26,6 @@ use Semiorbit\Support\Str;
  * @method Select  setControl($value)
  * @method Select  setTag($value)
  * @method Select  setValue($value)
- * @method Select  setType($value)
  * @method Select  setRequired($value = true)
  * @method Select  setGroup($value)
  * @method Select  setPermission($value)
@@ -79,6 +78,8 @@ class Select extends Field
     protected $_SelectedValues = array();
 
     protected $_OptionTextBuilder;
+
+    protected $_TypeDefined = false;
 
     use ForeignKey;
 
@@ -430,6 +431,14 @@ class Select extends Field
         $this->SelectedFormat = strval($value);
 
         return $this;
+    }
+
+
+    public function setType($value)
+    {
+        $this->_TypeDefined = true;
+
+        return parent::setType($value);
     }
 
 }

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Semiorbit\Config\Routes;
+namespace Semiorbit\Routes;
 
 
 use Semiorbit\Base\Application;

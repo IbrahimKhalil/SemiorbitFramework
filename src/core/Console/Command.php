@@ -200,7 +200,7 @@ abstract class Command
 
                 if ( strpos($name,'=') )
 
-                    list($name, $value) = explode('=', $name,2);
+                    [$name, $value] = explode('=', $name,2);
 
 
 

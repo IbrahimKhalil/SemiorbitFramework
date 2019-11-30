@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Semiorbit\Config\Routes;
+namespace Semiorbit\Routes;
 
 
 final class ScopeProvider

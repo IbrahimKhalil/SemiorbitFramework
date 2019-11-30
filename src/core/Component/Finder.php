@@ -213,7 +213,7 @@ class Finder
 
             $class_name = $package ?
 
-                Package::Select($package)->ModelNamespace() . "\\{$selector}"
+                Package::Select($package)->ModelsNamespace() . "\\{$selector}"
 
                 : AppManager::MainApp()->ModelFullyQualifiedName($model_name);
 

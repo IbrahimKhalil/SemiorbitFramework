@@ -177,7 +177,7 @@ class Url
 
         $url = Request::Url();
 
-        if ( ! empty($set_params) ) {
+        if ( $set_params || $exclude_params ) {
 
             $url = substr( $url, 0, strpos( $url, '?' ) ) . '?' . Url::Params( $exclude_params, $set_params );
 

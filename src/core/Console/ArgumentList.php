@@ -476,7 +476,7 @@ class ArgumentList implements ArrayAccess, Countable, IteratorAggregate
 
                 if (strpos($arg, '=')) {
 
-                    list($name, $default) = explode('=', $arg);
+                    [$name, $default] = explode('=', $arg);
 
                     if ($type !== Argument::TYPE_OPTION) $default = null;
 

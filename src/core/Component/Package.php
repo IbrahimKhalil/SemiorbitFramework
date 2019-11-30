@@ -21,6 +21,13 @@ class Package
 
     const PKG_VIEWS = 5;
 
+    const PKG_ROUTES = 6;
+
+    const PKG_MODELS = 7;
+
+    const PKG_CONTROLLERS = 8;
+
+
     private $_ServiceID;
 
 
@@ -63,9 +70,30 @@ class Package
         return $this;
     }
 
+    public function setRoutesPath($path)
+    {
+        $this->Registry()[self::PKG_ROUTES] = Path::Normalize($path);
+
+        return $this;
+    }
+
     public function setLangPath($path)
     {
         $this->Registry()[self::PKG_LANG] = Path::Normalize($path);
+
+        return $this;
+    }
+
+    public function setModelsPath($path)
+    {
+        $this->Registry()[self::PKG_MODELS] = Path::Normalize($path);
+
+        return $this;
+    }
+
+    public function setControllersPath($path)
+    {
+        $this->Registry()[self::PKG_CONTROLLERS] = Path::Normalize($path);
 
         return $this;
     }
@@ -102,12 +130,12 @@ class Package
         return $this->Registry()[self::PKG_PATH];
     }
 
-    public function ControllerNamespace()
+    public function ControllersNamespace()
     {
         return $this->Registry()[self::PKG_CONTROLLERS_NS];
     }
 
-    public function ModelNamespace()
+    public function ModelsNamespace()
     {
         return $this->Registry()[self::PKG_MODELS_NS];
     }
@@ -128,5 +156,19 @@ class Package
         return $this->Registry()[self::PKG_CONFIG];
     }
 
+    public function RoutesPath()
+    {
+        return $this->Registry()[self::PKG_ROUTES];
+    }
+
+    public function ModelsPath()
+    {
+        return $this->Registry()[self::PKG_MODELS];
+    }
+
+    public function ControllersPath()
+    {
+        return $this->Registry()[self::PKG_CONTROLLERS];
+    }
 
 }
