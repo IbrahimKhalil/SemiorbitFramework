@@ -17,6 +17,9 @@ abstract class PackageServiceProvider implements ServiceProviderInterface
      */
     public $App;
 
+    /**
+     * @var Package $Package
+     */
     public $Package;
 
     final public function __construct(AppService $app)

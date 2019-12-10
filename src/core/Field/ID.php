@@ -38,7 +38,7 @@ use Semiorbit\Output\TableViewCol;
  * @method ID  setUnique($value)
  * @method ID  setDefaultValue($value)
  * @method ID  setNote($value)
- * @method ID  setIsTitle($value)
+ * @method ID  setIsTitle($value = true)
  * @method ID  setIsID($value)
  * @method ID  setReadOnly($value = true)
  * @method ID  setView($value)

@@ -35,11 +35,11 @@ return [
 
     /*
     | ----------------------------------------------------------
-    | Api Sub Directory (If ApiMode = false)
+    | Api Sub Directory eg. "Api"
     | -----------------------------------------------------------
     */
 
-    Config::API__CONTROLLERS_DIR => "Api"
+    Config::API__CONTROLLERS_DIR => ""
 
 
 ];

@@ -27,6 +27,8 @@ class Package
 
     const PKG_CONTROLLERS = 8;
 
+    const PKG_API_CONTROLLERS_DIR = 9;
+
 
     private $_ServiceID;
 
@@ -94,6 +96,13 @@ class Package
     public function setControllersPath($path)
     {
         $this->Registry()[self::PKG_CONTROLLERS] = Path::Normalize($path);
+
+        return $this;
+    }
+
+    public function setApiControllersDir($dir)
+    {
+        $this->Registry()[self::PKG_API_CONTROLLERS_DIR] = Path::Normalize($dir);
 
         return $this;
     }
@@ -169,6 +178,11 @@ class Package
     public function ControllersPath()
     {
         return $this->Registry()[self::PKG_CONTROLLERS];
+    }
+
+    public function ApiControllersDir()
+    {
+        return $this->Registry()[self::PKG_API_CONTROLLERS_DIR];
     }
 
 }

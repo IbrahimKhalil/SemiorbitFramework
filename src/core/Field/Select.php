@@ -341,7 +341,7 @@ class Select extends Field
 
     /**
      * @param array $options_array
-     * @return Select
+     * @return \Semiorbit\Field\Select
      */
 
     public function setOptions(array $options_array)

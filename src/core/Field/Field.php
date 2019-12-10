@@ -804,6 +804,11 @@ class Field extends AltaArray implements FieldProps
     {
         return new TableViewCol($this);
     }
+    
+    public function ToString()
+    {
+        return $this->Html();
+    }
 
     public function __toString()
     {

@@ -265,9 +265,9 @@ class BasicTemplate
 
         $formatted = $this->RemoveIndention($this->Template());
 
-        $formatted = $this->FormatIf($formatted, $this->Params());
-
         $formatted = $this->FormatLoops($formatted, $this->Params());
+
+        $formatted = $this->FormatIf($formatted, $this->Params());
 
         $formatted = $this->FormatString($formatted, $this->Params());
 
@@ -303,9 +303,16 @@ class BasicTemplate
 
             if (! is_array($params[$found[1]])) return strval($params[$found[1]]);
 
-            foreach ($params[$found[1]] as $k => $datum)
 
-                $list[] = Str::LTrimOnce((str_ireplace(['{$$k}', '{$$n}'], [$k, count($list) + 1], $this->FormatString($found[4], $datum))), PHP_EOL);
+            foreach ($params[$found[1]] as $k => $datum) {
+
+                $line_pms = array_merge($params->ToArray(), $datum);
+
+                $formatted_line = $this->FormatIf($found[4], $line_pms);
+
+                $list[] = Str::LTrimOnce((str_ireplace(['{$$k}', '{$$n}'], [$k, count($list) + 1], $this->FormatString($formatted_line, $line_pms))), PHP_EOL);
+
+            }
 
             return Str::RTrimOnce(implode($found[3], $list), PHP_EOL);
 
