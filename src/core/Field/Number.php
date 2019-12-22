@@ -37,7 +37,7 @@ namespace Semiorbit\Field;
  * @method \Semiorbit\Field\Number  setUnique($value)
  * @method \Semiorbit\Field\Number  setDefaultValue($value)
  * @method \Semiorbit\Field\Number  setNote($value)
- * @method \Semiorbit\Field\Number  setIsTitle($value)
+ * @method \Semiorbit\Field\Number  setIsTitle($value = true)
  * @method \Semiorbit\Field\Number  setIsID($value)
  * @method \Semiorbit\Field\Number  setReadOnly($value = true)
  * @method \Semiorbit\Field\Number  setView($value)

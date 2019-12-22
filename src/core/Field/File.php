@@ -31,7 +31,7 @@ use Semiorbit\Support\Uploader;
  * @method File  setTag($value)
  * @method File  setValue($value)
  * @method File  setType($value)
- * @method File  setRequired($value)
+ * @method File  setRequired($value = true)
  * @method File  setGroup($value)
  * @method File  setPermission($value)
  * @method File  setTemplate($value)

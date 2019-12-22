@@ -182,7 +182,7 @@ class Package
 
     public function ApiControllersDir()
     {
-        return $this->Registry()[self::PKG_API_CONTROLLERS_DIR];
+        return ($this->Registry()[self::PKG_API_CONTROLLERS_DIR]) ?? '';
     }
 
 }
