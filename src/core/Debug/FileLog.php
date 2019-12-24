@@ -29,16 +29,20 @@ class FileLog
 
 
 
-    public function __construct($log_id = null)
+    public function __construct($log_id = null, $append = false)
     {
         $this->_LogID = $log_id ?: uniqid(null, true);
 
-        $this->Log(static::INFO, '', '', '--- Logging Started ---');
+        if (! $append && file_exists($this->Path()))
+
+            unlink($this->Path());
+
+        $this->Log(static::INFO, '', 'START', '--- Logging Started ---');
     }
 
-    public static function Start($log_id = null)
+    public static function Start($log_id = null, $append = false)
     {
-        return new static($log_id);
+        return new static($log_id, $append);
     }
 
     public static function End()
@@ -60,6 +64,11 @@ class FileLog
 
         return $dp;
 
+    }
+
+    public function Stats()
+    {
+        return $this->_Stats;
     }
 
     public function Path()
@@ -86,7 +95,7 @@ class FileLog
 
     public function LogStats()
     {
-        return $this->Log(static::INFO, '', '[END]', ' --- ' . json_encode($this->_Stats));
+        return $this->Log(static::INFO, '', 'END', ' --- ' . json_encode($this->_Stats));
     }
 
 
