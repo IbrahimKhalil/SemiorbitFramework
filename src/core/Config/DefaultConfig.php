@@ -481,7 +481,7 @@ abstract class DefaultConfig
         return static::ValueOf(self::GROUP__VIEWS, self::VIEWS__EXT);
     }
 
-    ## Container File Name ##
+    ## Container File FullName ##
 
     const VIEWS__DEFAULT_LAYOUT = "default_layout";
 
@@ -599,7 +599,7 @@ abstract class DefaultConfig
 
 
     ## 'AUTO' => Detect 'Actions Aliases' in $this->Actions >>
-    // then 'Allowed Public Methods' (by Name).
+    // then 'Allowed Public Methods' (by FullName).
     ##	'EXPLICIT' =>  Restrict to $this->Actions explicitly defined array only.
 
     const ACTIONS__MODE = 'mode';

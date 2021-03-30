@@ -709,7 +709,6 @@ class Field extends AltaArray implements FieldProps
 
         if (defined($this->Caption)) return constant($this->Caption);
 
-
         return $this->Trans($this->Caption);
 
     }
@@ -804,10 +803,22 @@ class Field extends AltaArray implements FieldProps
     {
         return new TableViewCol($this);
     }
-    
-    public function ToString()
+
+    /**
+     * Alias of Html method
+     * @return string
+     */
+    public function TextValue()
     {
         return $this->Html();
+    }
+
+    /**
+     * @return string
+     */
+    public function ToString()
+    {
+        return strval($this->Value);
     }
 
     public function __toString()
@@ -1061,7 +1072,7 @@ class Field extends AltaArray implements FieldProps
 
                 DataType::DOUBLE, DataType::FLOAT, DataType::BOOL) ) ) ?
 
-                filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT) :
+                filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) :
 
                 "'" . DB::Escape(filter_var($value, FILTER_SANITIZE_STRING)) . "'");
 

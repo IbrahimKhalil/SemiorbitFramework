@@ -48,7 +48,7 @@ use Semiorbit\Support\Uploader;
  * @method File  setErr($key, $value)
  * @method File  NoControl()
  * @method File  Hide()
- * @method File  UseTableViewCol(\Semiorbit\Output\TableView $col = null)
+ * @method File  UseTableViewCol(\Semiorbit\Output\TableViewCol $col = null)
  * @method File  HideColumn()
  * @method File  ShowColumn()
  * @method File  setControlCssClass($value)
@@ -428,7 +428,7 @@ class File extends Field
 
                 $html_output = $this->ActiveTemplate()->Widget('file-image-view', array('url' => $url,
 
-                    'title' => ( $this->ActiveDataSet() ? $this->ActiveDataSet()->Title : '' ), 'time' => $this->FileTime($thumbnail) ));
+                    'title' => ( $this->ActiveDataSet() ? strip_tags($this->ActiveDataSet()->Title) : '' ), 'time' => $this->FileTime($thumbnail) ));
 
         }
 
@@ -436,14 +436,14 @@ class File extends Field
 
             $html_output =  $this->ActiveTemplate()->Widget('file-icon-view', array('url' => $url, 'ext' => $this->FileExt(),
 
-                'title' => ( $this->ActiveDataSet() ? $this->ActiveDataSet()->Title : '' ), 'time' => $this->FileTime($thumbnail)  ));
+                'title' => ( $this->ActiveDataSet() ? strip_tags($this->ActiveDataSet()->Title) : '' ), 'time' => $this->FileTime($thumbnail)  ));
 
 
         if ( $view == FieldView::LINK )
 
             $html_output = $this->ActiveTemplate()->Widget('file-link-view', array('url' => $url, 'ext' => $this->FileExt(),
 
-                'title' => ( $this->ActiveDataSet() ? $this->ActiveDataSet()->Title : '' ), 'time' => $this->FileTime($thumbnail)  ));
+                'title' => ( $this->ActiveDataSet() ? strip_tags($this->ActiveDataSet()->Title) : '' ), 'time' => $this->FileTime($thumbnail)  ));
 
 
         return $html_output;

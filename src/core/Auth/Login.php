@@ -58,7 +58,7 @@ class Login extends Controller
 
         $user_id = Auth::User()->ValidateIdentity( Form::Input(Config::LoginIdentityInput())  );
 
-		$user_password = Form::Input(Config::LoginPasswordInput());
+		$user_password = filter_var(Form::Input(Config::LoginPasswordInput()), FILTER_SANITIZE_STRING);
 
 		static::setLoginResult( $user_id ? Auth::Login($user_id, $user_password) : false );
 

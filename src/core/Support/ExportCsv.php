@@ -88,7 +88,7 @@ class ExportCsv
 
         $time = date("-d-m-Y-H-i-s");
 
-        if (empty($this->_FileName)) $this->_FileName = Str::ParamCase( $this->ActiveDataSet()->Name() );
+        if (empty($this->_FileName)) $this->_FileName = Str::ParamCase( $this->ActiveDataSet()->FullName() );
 
         return $this->_FileName . $time . $this->getFileExt();
 

@@ -253,7 +253,7 @@ trait ForeignKey
 
     /**
      * NB. This method doesn't work with table->Read()
-     * use table->Row() instead because all rows in reault should be loaded to index keyword
+     * use table->Row() instead because all rows in result should be loaded to index keyword
      *
      * @return $this
      */

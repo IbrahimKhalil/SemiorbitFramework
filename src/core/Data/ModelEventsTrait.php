@@ -37,7 +37,7 @@ trait ModelEventsTrait {
 
     public function onBeforeRemove()
     {
-
+        return null;
     }
 
     public function onRemove($res)
@@ -47,7 +47,7 @@ trait ModelEventsTrait {
 
     public function onBeforeSave()
     {
-
+        return null;
     }
 
     public function onSave($res)
@@ -87,7 +87,9 @@ trait ModelEventsTrait {
 
     public function onUserRemovedRow($res)
     {
-        if ($res)  $res = Msg::ROW_DELETED;
+        if ($res === true || $res === null || $res === Msg::DBOK)
+
+            $res = Msg::ROW_DELETED;
 
         echo Msg::Show($res);
     }

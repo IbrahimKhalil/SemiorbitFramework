@@ -104,7 +104,8 @@ class Lang
 	
 	public static function Trans($key, $pms = [], $count = 0, $default = ':key')
 	{
-		
+
+
 		if ( isset( self::$_DictIndex[ $key ] ) )
 
 		    return self::ProcessValue( self::$_DictIndex[ $key ], $pms, $count );

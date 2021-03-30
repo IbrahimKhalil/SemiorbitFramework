@@ -100,7 +100,7 @@ class ScaffoldBase extends ScaffoldBaseProvider
 
         if ($this->ActiveController()->DataSet->IsNew()) { Url::GotoHomePage('?msg=DELETE_ERR_NO_ITEM'); return; }
 
-        $ttl = $this->ActiveController()->Request->Action['title'] ?: Lang::Trans($this->ActiveController()->PackagePrefix . Str::ParamCase($this->ActiveController()->ControllerName) . ".__delete" . $this->ActiveController()->ControllerName);
+        $ttl = $this->ActiveController()->Request->Action['title'] ?: Lang::Trans($this->ActiveController()->PackagePrefix . Str::ParamCase($this->ActiveController()->ControllerName) . ".__delete");
 
         if ( $this->ActiveController()->DataSet->Policy()->DeniesDelete() ) Application::Abort(401);
 
@@ -321,6 +321,8 @@ class ScaffoldBase extends ScaffoldBaseProvider
         $pms['CTR_NAME'] = $this->ActiveController()->PackagePrefix . Str::ParamCase($this->ActiveController()->ControllerName);
 
         $pms['CTR_TITLE'] = $this->ActiveController()->ControllerTitle;
+
+        $pms['CTR_ACTION'] = $this->ActiveController()->Request->Action->Alias;
 
 
         if ( ! empty($id) && isset( $this->ActiveController()->DataSet->Title->Value ) ) {

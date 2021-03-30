@@ -471,7 +471,7 @@ class ArgumentList implements ArrayAccess, Countable, IteratorAggregate
 
                 }
 
-                // Name and Option Default Value
+                // FullName and Option Default Value
                 // ======================================================================
 
                 if (strpos($arg, '=')) {

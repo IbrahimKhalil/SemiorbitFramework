@@ -50,7 +50,7 @@ define("Start_Typing_Keywords", "Start typing here...");
 define("v_delete_question", "Are you sure want to delete comment: %s ؟");
 define("Hide","Hide");
 define("Show","Show");
-define("Visitor_Name","Visitor Name");
+define("Visitor_Name","Visitor FullName");
 define("Visitor_EMail","E-Mail");
 define("View_Orig_Page","Source Page");
 define("Del_Vcomments","Delete Comment");

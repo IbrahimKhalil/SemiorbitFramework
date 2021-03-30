@@ -12,6 +12,7 @@ namespace Semiorbit\Data;
 
 use Semiorbit\Auth\Auth;
 use Semiorbit\Component\Services;
+use Semiorbit\Debug\FileLog;
 use Semiorbit\Field\DataType;
 use Semiorbit\Field\Field;
 use Semiorbit\Field\File;
@@ -551,24 +552,50 @@ class Model
         /** @noinspection SqlNoDataSourceInspection */
         $sql = "INSERT INTO {$this->TableName()} (".join(", ", $field_name).") VALUES (".join(", ",$named_param).")";
 
-        // echo $sql;
+
         $res = $this->ActiveConnection()->Cmd( $sql, $param_value ) ? Msg::DBOK : Msg::DBERR;
+
 
         if ( $res == Msg::DBOK ) {
 
-            if ( isset( $this->ID->AutoIncrement ) &&  $this->ID->AutoIncrement )
+            if ( $this->ID->offsetExists('AutoIncrement') &&  $this->ID->AutoIncrement )
 
                 $this->ID->Value = $this->ActiveConnection()->LastInsertId();
 
+
             $this->MarkAsNew( false );
 
+        } else {
+
+            if (Config::DebugMode()) {
+
+                FileLog::Debug("FWK900", "FWK@INSERT", $sql);
+
+                FileLog::Debug("FWK900", "FWK@INSERT-PARAMS", json_encode($param_value, JSON_UNESCAPED_UNICODE));
+
+                $compiled_sql = $sql;
+
+                foreach ($param_value as $k => $v) {
+
+
+                    $compiled_sql = str_ireplace(":" . $k . ",", $v[0] === null ? "null," : '"'.$v[0].'",', $compiled_sql);
+
+                }
+
+                FileLog::Debug("FWK900", "FWK@INSERT-COMPILED", $compiled_sql);
+
+
+            }
+
         }
+
 
         $this->onSave($res);
 
         $this->onInsert($res);
 
         return $res;
+
     }
 
 
@@ -690,8 +717,7 @@ class Model
 
         //--------------------------------------------------------
 
-
-        if ( $checkpoint = $this->onBeforeSave() !== null)  return $checkpoint;
+        if ( ($checkpoint = $this->onBeforeSave()) !== null)  return $checkpoint;
 
         return true;
 
@@ -708,7 +734,11 @@ class Model
 
             if ( ! $field->CheckRequiredValue() ) {
 
-                $field->Err[] = Required;
+                $field->Err[] = "Required";
+
+                if (Config::DebugMode())
+
+                    FileLog::Debug("FWK 300", "FWK@REQUIRED", $field->Name);
 
                 $field->CssClass .= ' val-err';
 
@@ -819,26 +849,35 @@ class Model
 
     public function RemoveRow()
     {
-        $this->onBeforeRemove();
 
-        foreach ($this->Fields() as $field) :
-            /**@var File $field*/
+        $checkpoint = $this->onBeforeRemove();
 
-            if ( in_array( $field->Type, array(DataType::FILE) ) ) {
+        if ($checkpoint === null || $checkpoint === true) {
 
-                $field->DeleteFiles();
-            }
+            foreach ($this->Fields() as $field) :
 
-        endforeach;
+                /**@var File $field */
 
-        /** @noinspection SqlNoDataSourceInspection */
-        $sql="DELETE FROM {$this->TableName()} WHERE ". $this->ID->Name . " = '" . $this->ID->Value . "'";
+                if (in_array($field->Type, array(DataType::FILE))) {
 
-        $res = $this->ActiveConnection()->Cmd( $sql );
+                    $field->DeleteFiles();
+                }
 
-        $this->onRemove($res);
+            endforeach;
 
-        return $res;
+
+            $sql = "DELETE FROM {$this->TableName()} WHERE " . $this->ID->Name . " = '" . $this->ID->Value . "'";
+
+            $res = $this->ActiveConnection()->Cmd($sql);
+
+            $this->onRemove($res);
+
+            return $res;
+
+        }
+
+        return $checkpoint;
+
     }
 
 
@@ -920,7 +959,7 @@ class Model
 
         else if ( is_array( $field ) ) $myField = Field::Create( $field );
 
-        else $myField = new Field( array( 'Name' => $id, 'Value' => $field ) );
+        else $myField = new Field( array( 'FullName' => $id, 'Value' => $field ) );
 
         if ( $this instanceof DataSet ) $myField->UseDataSet( $this );
 
@@ -1103,7 +1142,7 @@ class Model
 
     public function FieldByName($name)
     {
-        return $this->SelectField( array( 'Name' => $name ) );
+        return $this->SelectField( array( 'FullName' => $name ) );
     }
 
     /**
@@ -1403,7 +1442,7 @@ class Model
 
     /**
      * Row array of model
-     * (Field->Name => Field=>Value) pairs
+     * (Field->FullName => Field=>Value) pairs
      *
      * @return array
      */
@@ -1435,7 +1474,7 @@ class Model
 
         foreach ($this->Fields() as $k => $fld) {
 
-            $arr[ $k ] = array( 'Name' => $fld->Name, 'Value' => $fld->Value );
+            $arr[ $k ] = array( 'FullName' => $fld->Name, 'Value' => $fld->Value );
 
             foreach( $props as $prop ) $arr[ $k ] [ $prop ] = $fld[ $prop ];
         }
@@ -1447,7 +1486,7 @@ class Model
 
     public function __toString()
     {
-        return $this->Title != null ? $this->Title->Value : '';
+        return $this->Title->Value ?? '';
     }
 
     public static function ModelName()

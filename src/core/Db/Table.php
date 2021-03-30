@@ -54,6 +54,10 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
 
     protected $_Pagination;
 
+    protected $_Total;
+
+    protected $_PageCount;
+
     /**
      * @param mixed $selector   string > Sql select statement<br/>
      *                          Object > SqlQuery<br/>
@@ -208,7 +212,7 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
 
         return ( $this->ActiveDataSet() && $row ) ?
 
-            $this->ActiveDataSet()->Fill( $row ) : $row;
+            $this->ActiveDataSet()->Fill( $row, false )->MarkAsNew(false) : $row;
 
 
     }
@@ -220,7 +224,7 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
 
             $this->ClearRows();
 
-            $this->_Rows = $this->ActiveConnection()->Driver()->FetchAll( $this->Result() );
+            $this->_Rows = $this->ActiveConnection()->Driver()->FetchAll( $this->Result() ) ?: [];
 
             $this->_RefreshRows = false;
 
@@ -276,7 +280,7 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
 
         return ( $this->ActiveDataSet() && $row && !$row instanceof Model ) ?
 
-            $this->ActiveDataSet()->Fill( $row ) : $row;
+            $this->ActiveDataSet()->Fill( $row, false )->MarkAsNew(false) : $row;
 
     }
 
@@ -445,7 +449,10 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
     public function Total()
     {
 
+        if ( ( ! $this->_QueryChangedFlag ) && $this->_Total !== null ) return $this->_Total;
+
         $count_query = $this->BuildTotalQuery();
+
 
         if ( ! $count_query  ) {
 
@@ -461,13 +468,17 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
 
         if ( ! $total ) $total = 0;
 
-        return $total;
+        return $this->_Total = $total;
 
     }
 
     public function PageCount()
     {
-        return $this->_Limit ? ceil( $this->Total() / $this->_Limit ) : 1;
+
+        if ( ( ! $this->_QueryChangedFlag ) && $this->_PageCount ) return $this->_PageCount;
+
+        return $this->_PageCount = ($this->_Limit ? ceil( $this->Total() / $this->_Limit ) : 1);
+
     }
 
     public function Paginate($rows_per_page = null)
@@ -773,7 +784,7 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
 
         return ( $this->ActiveDataSet() && $row && !$row instanceof Model ) ?
 
-             $this->ActiveDataSet()->Fill( $row ) : $row;
+             $this->ActiveDataSet()->Fill( $row, false )->MarkAsNew(false) : $row;
 
     }
 

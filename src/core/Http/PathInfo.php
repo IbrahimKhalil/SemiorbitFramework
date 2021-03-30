@@ -82,7 +82,7 @@ class PathInfo extends AltaArray
 
         //CONVERT PATHS TO ARRAYS
 
-        $pms = explode("/", $path);
+        $pms = $path ? explode("/", $path) : [];
 
         $pattern_pms = explode("/", $pattern);
 

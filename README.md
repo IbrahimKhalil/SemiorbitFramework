@@ -1,6 +1,6 @@
 # Semiorbit Framework
 
-**Semiorbit** is a friendly, no fat code with the same taste of an advanced PHP framework. It provides the most
+**Semiorbit** is a friendly, lightweight yet advanced PHP framework. It provides the most
 useful "web apps" development techniques in a practical, straightforward and lightweight tools. 
 
 In addition to rapid development process, Semiorbit Framework has a flexible coding rules with mostly configurable naming and 

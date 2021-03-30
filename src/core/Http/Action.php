@@ -50,10 +50,10 @@ class Action extends AltaArray
 
 
     /**
-     * Name of method in controller
+     * FullName of method in controller
      * eg: <b>Edit</b>, <b>ShowProfile</b>...
      *
-     * @param String $value Name of method in controller
+     * @param String $value FullName of method in controller
      * @return $this
      */
 

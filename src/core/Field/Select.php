@@ -160,6 +160,11 @@ class Select extends Field
 
     public function setMultiple($multiple = true)
     {
+
+        $this->Type = DataType::TEXT;
+
+        $this->MaxLength = 65535;
+
         $this->Multiple = $multiple;
 
         return $this;
@@ -279,7 +284,7 @@ class Select extends Field
 
                 $opt_list[$value] = !empty($format) ? sprintf($format, htmlspecialchars($this->Trans($opt_text)))
 
-                : htmlspecialchars($this->Trans($opt_text));
+                    : htmlspecialchars($this->Trans($opt_text));
 
             } else {
 
@@ -351,6 +356,22 @@ class Select extends Field
         return $this;
     }
 
+    public function ClearOptions()
+    {
+        $this->_Options = [];
+
+        return $this;
+    }
+
+    /**
+     * This method uses none type strict comparision, so zero could be equal '0', null and empty string
+     *
+     * @param $opt_key
+     * @param $opt_value
+     * @param bool $enable_text_formatting
+     * @param bool $disabled
+     * @return string
+     */
     public function OptionHtml($opt_key, $opt_value, $enable_text_formatting = true, $disabled = false)
     {
 
@@ -433,12 +454,18 @@ class Select extends Field
         return $this;
     }
 
+    /**
+     * @param $value
+     * @return Select
+     */
 
     public function setType($value)
     {
         $this->_TypeDefined = true;
 
-        return parent::setType($value);
+        parent::setType($value);
+
+        return $this;
     }
 
 }

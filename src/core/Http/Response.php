@@ -22,7 +22,7 @@ class Response extends ResponseHeaders
     protected $_View;
 
 
-    public function Json($data, $options = JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT)
+    public function Json($data, $options = JSON_UNESCAPED_UNICODE )
     {
 
         $this->setContentType('application/json');

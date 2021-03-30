@@ -31,18 +31,26 @@ class FileLog
 
     public function __construct($log_id = null, $append = false)
     {
+
         $this->_LogID = $log_id ?: uniqid(null, true);
 
         if (! $append && file_exists($this->Path()))
 
             unlink($this->Path());
 
-        $this->Log(static::INFO, '', 'START', '--- Logging Started ---');
     }
 
     public static function Start($log_id = null, $append = false)
     {
-        return new static($log_id, $append);
+
+        $log = new static($log_id, $append);
+
+        static::$_ActiveLogger = $log;
+
+        $log->Log(static::INFO, '', 'START', '--- Logging Started ---');
+
+        return $log;
+
     }
 
     public static function End()

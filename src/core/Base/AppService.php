@@ -126,7 +126,7 @@ class AppService
         $this->UseApplication($application);
 
         //Fire onInit Event
-        AppManager::Call( $application, 'onInit' );
+        AppManager::Call( $application, 'onInit', [$this] );
 
 
         $this->_BasePath = $base_path;

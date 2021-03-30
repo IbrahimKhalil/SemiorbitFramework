@@ -141,6 +141,16 @@ trait FieldBuilder
         return new Checkbox($field);
     }
 
+    /**
+     * @param $field
+     * @return \Semiorbit\Field\Custom
+     */
+
+    public static function Custom($field)
+    {
+        return new Custom($field);
+    }
+
 
     /**
      * @param $field

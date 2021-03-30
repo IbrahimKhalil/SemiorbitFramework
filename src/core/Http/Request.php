@@ -12,7 +12,6 @@ namespace Semiorbit\Http;
 use Semiorbit\Base\Application;
 use Semiorbit\Config\Config;
 use Semiorbit\Component\Finder;
-use Semiorbit\Routes\Route;
 use Semiorbit\Routes\Router;
 use Semiorbit\Support\Str;
 use Semiorbit\Translation\Lang;
@@ -176,7 +175,6 @@ class Request {
 
         } else {
 
-
             // DETECT CONTROLLER
 
             $this->Controller = $controller ?:
@@ -202,7 +200,7 @@ class Request {
 		
 		$this->Params = array_merge($this->Params, $path_arr);
 	
-	
+
 		$this->ID = isset( $this->Params[ Config::IDParamName() ] ) ? $this->Params[ Config::IDParamName() ] : "";
 
 		//dd(microtime(true) - $time);
@@ -410,6 +408,7 @@ class Request {
 		
 		$actions = $this->Class->Actions->All();
 
+
 		// NOT SET GO TO Index Action
 		
 		if ( isset($pms[0]) && $pms[0] != '' )  {
@@ -471,7 +470,7 @@ class Request {
 		//CONVERT PATH TO ARRAY
 		
 		$pms = $path ? explode("/", trim ($path, "/")) : [];
-		
+
 		return $pms;
 	}
 	
@@ -620,24 +619,17 @@ class Request {
 
     public static function StartupControllerName()
     {
-
-        $StartupRequest = Request::Startup();
-
-        $startup_class = Controller::Name( $StartupRequest->Controller['class']);
-
-        return $startup_class;
-
+        return Controller::Name( Request::Startup()->Controller['class'] );
     }
+
+
+    /**
+     * @return string Action alias
+     */
 
 	public static function StartupAction()
 	{
-
-		$StartupRequest = Request::Startup();
-
-		$startup_action = $StartupRequest->Action['method'];
-
-		return $startup_action;
-
+		return Request::Startup()->Action->Alias;
 	}
 	
 	

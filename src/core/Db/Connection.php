@@ -11,13 +11,9 @@ namespace Semiorbit\Db;
 
 
 
-use mysql_xdevapi\Exception;
 use Semiorbit\Base\Application;
 use Semiorbit\Config\Config;
 use Semiorbit\Db\Driver\Driver;
-use Semiorbit\Debug\AppException;
-use Semiorbit\Debug\Log;
-use Semiorbit\Http\Response;
 use Semiorbit\Support\AltaArray;
 
 

@@ -18,7 +18,7 @@ return [
 
     Config::VIEWS__EXT => ".phtml",
 
-    ## Container File Name ##
+    ## Container File FullName ##
 
     Config::VIEWS__DEFAULT_LAYOUT => "layout",
 

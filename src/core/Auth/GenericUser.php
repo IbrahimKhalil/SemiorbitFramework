@@ -25,6 +25,7 @@ class GenericUser extends DataSet
     protected $_Password;
 
     protected $_Role;
+
     
 
     public function Is($roles = null)
@@ -203,25 +204,57 @@ class GenericUser extends DataSet
     public function Authenticate($identity, $password)
     {
 
-        $identity = $this->ActiveConnection()->Escape($identity);
+        if ($auth_info = $this->AuthInfo($identity)) {
 
-        $user = $this->ActiveConnection()->Row("SELECT {$this->ID->Name} AS user_id, {$this->Password()->Name} AS user_password FROM {$this->TableName()}
+            $id = $auth_info['user_id'];
 
-                WHERE {$this->Identity()->Name} = '{$identity}' ");
+            if ($this->VerifyHashedPassword($id, $password, $auth_info['user_password'])) return $id;
 
-        $uid = $user['user_id'];
-
-        $hashed_password  = hash('sha512', $password . hash('sha512', $uid));
-
-        if ($user) if ( $user['user_password'] === $hashed_password ) return $uid;
+        }
 
         return false;
 
     }
 
+
+    public function VerifyHashedPassword($id, $password, $stored_hash)
+    {
+        return $stored_hash === $this->HashPassword($id, $password);
+    }
+
+
+    /**
+     * Finds and returns [user_id, (hashed) user_password] as an array by user name
+     *
+     * @param  string|int|object $identity user name
+     * @return \Semiorbit\Support\AltaArray|null
+     */
+
+    protected function AuthInfo($identity)
+    {
+
+        return $this->ActiveConnection()->Row("SELECT {$this->ID->Name} AS user_id, {$this->Password()->Name} AS user_password FROM {$this->TableName()}
+
+                WHERE {$this->Identity()->Name} = :id", ['id' => $identity]);
+
+    }
+
+
+    protected function HashPassword($id, $password, $algo = 'sha512')
+    {
+        return hash($algo, $password . hash($algo, $id));
+    }
+
+
     public function IsLoggedIn()
     {
         return ( ! empty( $this->ID()->Value ) && Auth::ID() == $this->ID()->Value  );
+    }
+
+
+    public function IsActive()
+    {
+        return true;
     }
 
 

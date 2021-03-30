@@ -426,7 +426,7 @@ class Actions extends AltaArray
 
             if ( ! method_exists($this->ActiveController(), $action->Method) ) Application::Abort(404, "{$action->Method} Method not found.");
 
-            return call_user_func_array(array($this->ActiveController(), $action->Method), $params );
+            return call_user_func_array(array($this->ActiveController(), $action->Method), [] );
 
         }
 

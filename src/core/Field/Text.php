@@ -49,7 +49,7 @@ namespace Semiorbit\Field;
  * @method Text  ShowColumn()
  * @method Text  setControlCssClass($value)
  * @method Text  setInputCssClass($value)
- * @method Select  setUnsigned($value = true)
+ * @method Text  setUnsigned($value = true)
  */
 
 class Text extends Field

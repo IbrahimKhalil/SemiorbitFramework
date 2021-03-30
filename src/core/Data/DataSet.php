@@ -124,6 +124,9 @@ class DataSet extends Model
 
     }
 
+    /**
+     * @return Controller|null
+     */
     public function ActiveController()
     {
         return $this->_Controller;
@@ -389,7 +392,7 @@ class DataSet extends Model
 
             else if ( $this->Table()->ActiveDataSet() !== $this || $this->Table()->InstantiateDataSetEnabled() )
 
-                $this->Fill( $myRow );
+                $this->Fill( $myRow, false )->MarkAsNew(false);
 
             return $this;
 
@@ -425,7 +428,7 @@ class DataSet extends Model
 
         else if ( $this->Table()->ActiveDataSet() !== $this || $this->Table()->InstantiateDataSetEnabled() )
 
-            $this->Fill( $myRow );
+            $this->Fill( $myRow, false )->MarkAsNew(false);
 
         return $this;
 

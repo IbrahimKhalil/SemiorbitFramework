@@ -14,6 +14,8 @@ namespace Semiorbit\Db\Driver;
 
 
 use Semiorbit\Base\Application;
+use Semiorbit\Config\Config;
+use Semiorbit\Debug\FileLog;
 use Semiorbit\Field\DataType;
 use Semiorbit\Field\Field;
 use Semiorbit\Support\AltaArray;
@@ -23,9 +25,9 @@ use Semiorbit\Support\AltaArrayKeys;
 class Mysqli implements Driver
 {
 
-    public $Host = 'localhost';        //Server Name
+    public $Host = 'localhost';        //Server FullName
 
-    public $User = 'root';            //Database User Name
+    public $User = 'root';            //Database User FullName
 
     public $Password = '';
 
@@ -125,6 +127,7 @@ class Mysqli implements Driver
 
             Application::Abort(503, "Prepare sql statement failed: {$sql}");
 
+
         $stmt->bind_param(...$params);
 
         return $stmt;
@@ -163,6 +166,17 @@ class Mysqli implements Driver
             }
 
             //$stmt->close();
+
+        }
+
+
+        if (Config::DebugMode()) {
+
+            $dbLog = new FileLog('db_log', true);
+
+            $dbLog->Log(FileLog::DEBUG, "904", "[MYSQLI@QUERY]", $sql);
+
+            $dbLog->Log(FileLog::DEBUG, "904", "[MYSQLI@PARAMS]", json_encode($params, JSON_UNESCAPED_UNICODE));
 
         }
 
@@ -447,6 +461,7 @@ class Mysqli implements Driver
         $pms = [];
 
         $ordered_types = [];
+
 
         $sql = preg_replace_callback("#:(\w+)#ui", function ($matches) use ($params, $types, &$pms, &$ordered_types) {
 

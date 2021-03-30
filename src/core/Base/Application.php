@@ -292,9 +292,10 @@ abstract class Application implements AppInterface
 
     /**
      * Triggered before creating app
+     * @param AppService $appService
      */
 
-    public static function onInit()
+    public static function onInit(AppService $appService)
     {
         //
     }

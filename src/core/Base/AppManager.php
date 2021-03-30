@@ -97,7 +97,7 @@ class AppManager
     }
 
     /**
-     * @param string $name Application Name
+     * @param string $name Application FullName
      * @return AppService
      */
 

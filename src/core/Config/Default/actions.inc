@@ -81,7 +81,7 @@ return [
 
     /*
     | 'AUTO' => Detect 'Actions Aliases' in $this->Actions >>
-    |  then 'Allowed Public Methods' (by Name).
+    |  then 'Allowed Public Methods' (by FullName).
     |	'EXPLICIT' =>  Restrict to $this->Actions explicitly defined array only.
     */
 

@@ -357,6 +357,13 @@ class QueryBuilder
         return $this->_Params;
     }
 
+    public function WithParams($params = [])
+    {
+        $this->_Params = $params;
+
+        return $this;
+    }
+
 
     public static function ClipLimit($sql)
     {
