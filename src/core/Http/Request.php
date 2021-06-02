@@ -212,7 +212,7 @@ class Request {
 	{
 		// LANG will be read in order from : PATH_INFO > QueryString > $_REQUEST > CONFIG
 
-		$lang = Lang::ActiveLang() ? Lang::ActiveLang() :  Config::DefaultLang();
+		$lang = Lang::ActiveLang() ?:  Config::DefaultLang();
 		
 		// GET LANG FROM - IN ORDER - : QueryString then $_REQUEST  
 		
@@ -607,7 +607,7 @@ class Request {
 	
 	public static function Startup()
 	{
-	
+
 		if ( empty( self::$_StartupRequest ) )
 	
 			self::$_StartupRequest = new Request();

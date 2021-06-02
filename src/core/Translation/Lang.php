@@ -10,19 +10,25 @@ namespace Semiorbit\Translation;
 
 
 
-use Semiorbit\Component\Package;
 use Semiorbit\Support\Str;
 use Semiorbit\Config\Config;
 use Semiorbit\Component\Finder;
 
 class Lang
 {
-	
-	private static $_Lang;
-	
+
+    // locale (en, de, fr, en-us, ar-eg)
+
 	private static $_Locale;
-	
-	private static $_Language;
+
+    // language (en, fr, de, ar)
+
+    private static $_Language;
+
+	// locale region (US, EG)
+
+	private static $_LocaleRegion;
+
 	
 	private static $_Dictionary = array();
 	
@@ -45,15 +51,15 @@ class Lang
 	}
 	
 	
-	public static function UseLang($lang)
+	public static function UseLang($locale)
 	{
+
+		if ( ! in_array($locale, Config::Languages() )) $locale = Config::DefaultLang();
 		
-		if ( ! in_array($lang, Config::Languages() )) $lang = Config::DefaultLang();
+		self::$_Locale = $locale;
 		
-		self::$_Lang = $lang;
-		
-		if ( ! defined('LANG') )	define( 'LANG', $lang );
-		
+		if ( ! defined('LANG') )	define( 'LANG', $locale );
+
 		self::ImportGlobals();
 		
 		return self::LangInstance();
@@ -62,43 +68,41 @@ class Lang
 	
 	public static function ActiveLang()
 	{
-		return self::$_Lang;
+		return self::$_Locale;
 	}
 	
-	public static function Locale($lang = null)
+	public static function LocaleRegion($locale = null)
 	{
-		
-		if ($lang === null && ! is_empty( self::$_Locale ) ) return self::$_Locale;
-		
-		if ( is_empty($lang) ) $lang = self::ActiveLang();
-				
-		$key = array_search($lang, Config::Languages());
-		
-		if ($key == 'default') $key = $lang;
-		
-		if ( ! $key ) return false;
-		
-		if ( ! is_string($key) || is_empty($key) ) return $lang; 
 
-		if ( $lang === self::ActiveLang() ) self::$_Locale = $key;
-		
-		return $key;
-		
+		if (!$locale && !is_empty( self::$_Locale ) ) return self::$_Locale;
+
+		if ( is_empty($locale) ) $locale = self::ActiveLang();
+
+        $normalize_language = str_replace("-", "_", $locale);
+
+        $locale_region = strpos($normalize_language, "_") ?
+
+            strtolower( explode("_", $normalize_language)[1] ) : $locale;
+
+		return self::$_LocaleRegion = $locale_region;
+
 	}
 
 	
-	public static function Language($lang = null)
+	public static function Language($locale = null)
 	{
-		
-		if ($lang === null && ! is_empty( self::$_Language ) ) return self::$_Language;
+
+		if ($locale === null && ! is_empty( self::$_Language ) ) return self::$_Language;
 				
-		$locale = self::Locale( $lang );
+		$locale = $locale ?: self::ActiveLang();
 		
-		$locale = str_replace("-", "_", $locale);
+		$normalize_language = str_replace("-", "_", $locale);
 		
-		$locale = strtolower( explode("_", $locale)[0] );
-		
-		return self::$_Language = $locale;
+		$language = strpos($normalize_language, "_") ?
+
+            strtolower( explode("_", $normalize_language)[0] ) : $locale;
+
+		return self::$_Language = $language;
 		
 	} 
 	
@@ -153,14 +157,14 @@ class Lang
 	private static function DictHas($pkg, $file, $keyword)
 	{
 		
-		$lang = self::ActiveLang();
+		$locale = self::ActiveLang();
 		
 		$language = self::Language();
-		
 
-		$res = (  $language != $lang ) ?
 
-            self::$_Dictionary[ $lang ][ $pkg ][ $file ][ $keyword ] ?? null : null;
+		$res = (  $language != $locale ) ?
+
+            self::$_Dictionary[ $locale ][ $pkg ][ $file ][ $keyword ] ?? null : null;
 		
 
 		return $res ?: self::$_Dictionary[ $language ][ $pkg ][ $file ][ $keyword ] ?? null;
@@ -204,11 +208,11 @@ class Lang
 	
 	private static function ImportGlobals()
 	{
-		
-		$lang = self::ActiveLang();
+
+		$locale = self::ActiveLang();
 		
 		$language = self::Language();
-		
+
 		$ext = Config::LangExt();
 
 
@@ -231,17 +235,17 @@ class Lang
         ], Finder::Lang, true);
 		
 		if ( $path ) include_once "{$path['path']}";
-		
+
 		
 		/**APP**/
 		
-		$app_locale_path = Finder::LookFor( array(  $language . '/' . $lang . $ext, $lang . $ext ), Finder::Lang, true, true);
-		
+		$app_locale_path = Finder::LookFor( array(  $language . '/' . $locale . $ext, $locale . $ext ), Finder::Lang, true, true);
+
 		if ( $app_locale_path ) include_once "{$app_locale_path['path']}";
 		
 		
 		$app_lang_path = Finder::LookFor( array(  $language . '/' . $language . $ext, $language . $ext ), Finder::Lang, true, true);
-		
+
 		if ( $app_lang_path ) include_once "{$app_lang_path['path']}";
 
 		
@@ -252,7 +256,7 @@ class Lang
 	private static function Import($file, $package = null, $force_reload = false)
 	{
 		
-		$lang = self::ActiveLang();
+		$locale = self::ActiveLang();
 		
 		$language = self::Language();
 		
@@ -267,13 +271,13 @@ class Lang
 		
 		if ( isset( self::$_Dictionary[ $language ][ $package_id ][ $file ]  ) 
 		  
-		  && isset( self::$_Dictionary[ $lang ][ $package_id ][ $file ] ) 
+		  && isset( self::$_Dictionary[ $locale ][ $package_id ][ $file ] )
 		  
 		  && $force_reload == false ) {
 			
 			$dict_keys['language'] = &self::$_Dictionary[ $language ][ $package_id ][ $file ];
 			
-			$dict_keys['locale']   = &self::$_Dictionary[ $lang ][ $package_id ][ $file ];
+			$dict_keys['locale']   = &self::$_Dictionary[ $locale ][ $package_id ][ $file ];
 			
 			return   $dict_keys;
 		}
@@ -289,10 +293,8 @@ class Lang
             $package_path . Str::ParamCase( $file ) . '.' . $language . $ext
 								
         ], Finder::Lang, true, $package_id !== 'semiorbit');
-			
-		if ( $path )
 
-		    /** @noinspection PhpIncludeInspection */
+		if ( $path )
 
 			self::$_Dictionary[ $language ][ $package_id ][ $file ] = include "{$path['path']}";
 				
@@ -300,34 +302,32 @@ class Lang
 
 			
 		
-		if ( $lang != $language ) {
+		if ( $locale != $language ) {
 
-            $locale = Finder::LookFor([
+            $locale_path = Finder::LookFor([
 
-                $package_path . $language . '/' . $file . '.' . $lang . $ext,
+                $package_path . $language . '/' . $file . '.' . $locale . $ext,
 
-                $package_path . $file . '.' . $lang . $ext,
+                $package_path . $file . '.' . $locale . $ext,
 
-                $package_path . $language . '/' . Str::ParamCase($file) . '.' . $lang . $ext,
+                $package_path . $language . '/' . Str::ParamCase($file) . '.' . $locale . $ext,
 
-                $package_path . Str::ParamCase($file) . '.' . $lang . $ext
+                $package_path . Str::ParamCase($file) . '.' . $locale . $ext
 
             ], Finder::Lang, true, $package_id !== 'semiorbit');
 
-            if ($locale)
+            if ($locale_path)
 
-                /** @noinspection PhpIncludeInspection */
+                self::$_Dictionary[$locale][$package_id][$file] = include "{$locale_path['path']}";
 
-                self::$_Dictionary[$lang][$package_id][$file] = include "{$locale['path']}";
-
-                else self::$_Dictionary[$lang][$package_id][$file] = array();
+                else self::$_Dictionary[$locale][$package_id][$file] = array();
 
         }
 		
 			
 		$dict_keys['language'] = &self::$_Dictionary[ $language ][ $package_id ][ $file ];
 				  	
-		$dict_keys['locale']   = &self::$_Dictionary[ $lang ][ $package_id ][ $file ];
+		$dict_keys['locale']   = &self::$_Dictionary[ $locale ][ $package_id ][ $file ];
 
 				  	
 		return   $dict_keys;
