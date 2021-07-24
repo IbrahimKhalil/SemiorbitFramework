@@ -5,9 +5,9 @@ $myTemplate = $field->ActiveTemplate();
 
 ?>
 
-<?= $field->Preview() ?>
-
 <?= $myTemplate->OpenField( $field ) ?>
+
+    <?= $field->Preview() ?>
 
 	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ) . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
 

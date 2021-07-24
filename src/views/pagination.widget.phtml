@@ -23,12 +23,12 @@ $def = array(
 
 ?>
 
-<div class="pagination_wrap <?=$this->class?>">
+<nav class="pagination_wrap <?=$this->class?>" aria-label="Page navigation example">
 
 <ul class="pagination" <?=$this->data_attr?>>
 
-	<li>
-		<a class="pagination_link pagination_counter" href="#"><?=$this->rows_count . ' '
+	<li class="page-item">
+		<a class="pagination_link pagination_counter page-link" href="#"><?=$this->rows_count . ' '
             . Lang::Trans("semiorbit::pagination.results") . ' / ' . $this->pages_count . ' ' . Lang::Trans("semiorbit::pagination.pages") ?></a>
 	</li>
 <?php 
@@ -43,8 +43,8 @@ foreach ( $this->links as $link_txt => $link_href ) :
 	if ($link_txt == 'current') $link_href = "#";
 	
 	?>
-	<li>
-		<a class="pagination_link <?=$lnk['class']?>" href="<?=$link_href?>"><?=$lnk['label']?></a>
+	<li class="page-item">
+		<a class="pagination_link page-link <?=$lnk['class']?>" href="<?=$link_href?>"><?=$lnk['label']?></a>
 	</li>
 	<?php
 
@@ -52,4 +52,4 @@ endforeach;
 ?>
 </ul>
 
-</div>
+</nav>

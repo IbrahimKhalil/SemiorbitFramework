@@ -220,7 +220,7 @@ class File extends Field
 
         $path .= $this->DirName();
 
-        if ( $real_path && $create && ! file_exists( $path ) ) mkdir($path);
+        if ( $real_path && $create && ! file_exists( $path ) ) mkdir($path, 0777, true);
 
 
 
@@ -228,7 +228,7 @@ class File extends Field
 
             $path = $path . '/' . $thumbnail;
 
-            if ( $real_path && $create && ! file_exists( $path ) ) mkdir($path);
+            if ( $real_path && $create && ! file_exists( $path ) ) mkdir($path, 0777, true);
 
         }
 

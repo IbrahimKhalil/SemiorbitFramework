@@ -2,15 +2,17 @@
 
 <?php if ($this->box_id == false) {$box_id = "group_0";} ?>
 
-<div class="semiorbit-form-group <?=( isset( $group['css_class'] ) ) ? $group['css_class'] : ''?>"  id="<?=$this->ID?>">
+<div class="panel panel-primary  <?=( isset( $group['css_class'] ) ) ? $group['css_class'] : ''?>"  id="<?=$this->ID?>">
 
-<div class="semiorbit-form-group-title">
 
-	<span><?=$this->Title?></span>
+<div class="panel-heading">
+
+    <?php if ($this->Title) : ?><span class="panel-title"><?=$this->Title?></span><?php endif; ?>
 
 </div>
 
-<div class="semiorbit-form-group-body">
+
+<div class="panel-body row">
 
     <?php if ( isset( $group['note'] ) ) : ?>
 

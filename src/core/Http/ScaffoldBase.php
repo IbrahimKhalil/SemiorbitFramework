@@ -312,7 +312,7 @@ class ScaffoldBase extends ScaffoldBaseProvider
 
         if (!$this->ActiveController()->Request->Action['cp']) return '';
 
-        if ($extra_pms == '') $pms['extra_pms'] = Url::Params();
+        $pms['extra_pms'] = $extra_pms ?: Url::Params();
 
         $pms['id'] = $id;
 

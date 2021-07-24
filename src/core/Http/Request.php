@@ -379,13 +379,13 @@ class Request {
 
 	public function LoadController()
 	{
-		
+
 		$class_name = $this->Controller->Class;
 
         if ( ! class_exists($class_name) ) Application::Abort(404, "Controller ({$class_name}) was not found!");
 
 		$this->Class = new $class_name($this);
-
+        
         if ( ! $this->Class instanceof Controller ) Application::Abort(404, "Object ({$class_name}) is not a controller!");
 		
 	}
