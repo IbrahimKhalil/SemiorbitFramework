@@ -8,6 +8,7 @@
 namespace Semiorbit\Base;
 
 
+use http\Exception;
 use Semiorbit\Component\Finder;
 use Semiorbit\Component\Services;
 use Semiorbit\Config\Config;
@@ -66,7 +67,7 @@ class AppService
     protected $_ModelsNamespace;
 
 
-    protected $_StartUpRequestLoaded = false;
+    protected $_IsStartUpRequest = true;
 
     protected $_Composer;
 
@@ -548,19 +549,19 @@ class AppService
 
         try {
 
-            AppManager::Call($this->ApplicationClass(), 'onRequest', array(&$uri));
 
-            //TODO: THERE IS AN ISSUE IF AN EMPTY $uri PASSED AFTER STARTUP
+            if ( $this->_IsStartUpRequest ) {
 
-            $request = ( is_empty( $uri ) ) ? Request::Startup() : new Request($uri);
 
-            if ( $this->_StartUpRequestLoaded === false ) {
+                $request = Request::Startup()
+
+                    ->UseApplicationClass($this->ApplicationClass());
 
                 //This property should be turned on
                 //before loading "Start up request", because maybe some other
                 //sub-request sent on "Start up request" loading process.
 
-                $this->_StartUpRequestLoaded = true;
+                $this->_IsStartUpRequest = false;
 
                 //Fire onStart Event
 
@@ -571,36 +572,56 @@ class AppService
 
                 //Fire onLoad Event
 
-                AppManager::Call($this->ApplicationClass(), 'onLoad', array($request));
+                AppManager::Call($this->ApplicationClass(), 'onLoad', [$request]);
 
 
                 Url::setPreviousPage();
 
+
+            } else {
+
+
+                AppManager::Call($this->ApplicationClass(), 'onHmvcRequestStart', [&$uri]);
+
+
+                // Empty HMVC request
+
+                if (is_empty($uri)) { @ob_end_clean(); return null; }
+
+
+                $request = new Request($uri);
+
+
+                $request
+
+                    ->UseApplicationClass($this->ApplicationClass())
+
+                    ->Load();
+
+                //Fire on request loaded event
+
+                AppManager::Call($this->ApplicationClass(), 'onHmvcRequestLoaded', [$request]);
+
+
             }
 
 
-        /*
-        echo '<div style="position:absolute;bottom:0px;left:0px;text-align:left;">';
-        echo "Lang:     "   .   $request->Lang  .                "<br />";
-        echo "Class:    "   .   $request->Controller['class']  . "<br />";
-        echo "Action:   "   .   $request->Action['method']  .    "<br />";
-        echo "ID:       "   .   $request->ID    .                "<br />";
-        echo "path:     "   .   $request->PathInfo  .            "<br />";
-        echo '</div>';
-        */
+            /*
+            echo '<div style="position:absolute;bottom:0px;left:0px;text-align:left;">';
+            echo "Lang:     "   .   $request->Lang  .                "<br />";
+            echo "Class:    "   .   $request->Controller['class']  . "<br />";
+            echo "Action:   "   .   $request->Action['method']  .    "<br />";
+            echo "ID:       "   .   $request->ID    .                "<br />";
+            echo "path:     "   .   $request->PathInfo  .            "<br />";
+            echo '</div>';
+            */
 
 
-            //Fire on request loaded event
 
-            AppManager::Call($this->ApplicationClass(), 'onRequestLoaded', array($request));
 
-            $output = null;
+            // Call Action
 
-            $output = $request->Callable ?
-
-                call_user_func_array($request->Callable, $request->Params)
-
-            : $request->Class->Actions->Call($request->Action, $request->Params);
+            $output = $request->CallAction();
 
 
             Request::LastRun($request);
@@ -614,7 +635,7 @@ class AppService
 
             //Fire onRun Event
 
-            AppManager::Call($this->ApplicationClass(), 'onRun', array(&$output));
+            AppManager::Call($this->ApplicationClass(), 'onRun', [&$output]);
 
 
         } catch (\Exception $e) {

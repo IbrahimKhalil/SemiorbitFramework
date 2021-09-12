@@ -551,47 +551,39 @@ class Field extends AltaArray implements FieldProps
                 case Validate::EMAIL :
 
                     return Validate::IsEmail($this->Value);
-                    break;
 
                 case Validate::URL :
 
                     return Validate::IsURL($this->Value);
-                    break;
 
                 case Validate::TEL :
 
                     return Validate::IsTel($this->Value);
-                    break;
 
                 case Validate::INT :
 
                     return is_int($this->Value);
-                    break;
 
                 case Validate::FLOAT :
 
                     return is_float($this->Value);
-                    break;
+
+
+                case Validate::DECIMAL:
 
                 case Validate::DOUBLE :
 
                     return is_double($this->Value);
-                    break;
 
-                case Validate::DECIMAL :
-
-                    return is_double($this->Value);
-                    break;
 
                 case Validate::NUMERIC :
 
                     return is_numeric($this->Value);
-                    break;
+
 
                 default :
 
                     return preg_match("/" . $this->Validate . "/i", $this->Value);
-                    break;
 
             }
 
@@ -606,58 +598,68 @@ class Field extends AltaArray implements FieldProps
 
         if ($value === null) {
 
-            if ($this->_FilterValue === $this->Value && $this->_FilteredValue) return $this->_FilteredValue;
+            if ($this->_FilterValue === $this->Value && $this->_FilteredValue)
 
-            if ($value === '') return $value;
+                return $this->_FilteredValue;
 
-            $value = $this->Value;
 
-            $this->_FilterValue = $value;
+            $this->_FilterValue = $value = $this->Value;
 
         }
 
+
         $filtered_value = $value;
 
+
         switch ($this->Validate) {
-
-            case Validate::EMAIL :
-
-                $filtered_value = filter_var($value, FILTER_SANITIZE_EMAIL);
-                break;
-
-            case Validate::URL :
-
-                $filtered_value = filter_var($value, FILTER_SANITIZE_URL);
-                break;
-
-            case Validate::TEL :
-
-                $filtered_value = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
-                break;
 
             case Validate::INT :
 
                 $filtered_value = intval($value);
+
                 break;
 
             case Validate::FLOAT :
 
                 $filtered_value = floatval($value);
+
                 break;
 
             case Validate::DOUBLE :
 
                 $filtered_value = doubleval($value);
+
                 break;
 
             case Validate::DECIMAL :
 
                 $filtered_value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+
                 break;
 
             case Validate::NUMERIC :
 
                 $filtered_value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_SCIENTIFIC);
+
+                break;
+
+
+            case Validate::EMAIL :
+
+                $filtered_value = filter_var($value, FILTER_SANITIZE_EMAIL);
+
+                break;
+
+            case Validate::URL :
+
+                $filtered_value = filter_var($value, FILTER_SANITIZE_URL);
+
+                break;
+
+            case Validate::TEL :
+
+                $filtered_value = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+
                 break;
 
         }
@@ -666,39 +668,52 @@ class Field extends AltaArray implements FieldProps
         switch ($this->Type) {
 
             case DataType::CHAR :
+
             case DataType::VARCHAR :
+
             case DataType::TEXT :
 
-                if (isset($this->AllowHtml) && $this->AllowHtml) $filtered_value = $value;
-                else $filtered_value = filter_var($value, FILTER_SANITIZE_STRING);
+                $filtered_value = (isset($this->AllowHtml) && $this->AllowHtml) ? $value :
+
+                    filter_var($value, FILTER_SANITIZE_STRING);
+
                 break;
 
+
             case DataType::BOOL :
+
             case DataType::INT :
 
                 $filtered_value = intval($value);
+
                 break;
 
             case DataType::DOUBLE :
 
                 $filtered_value = doubleval($value);
+
                 break;
 
             case DataType::FLOAT :
 
                 $filtered_value = floatval($value);
+
                 break;
 
             case DataType::DECIMAL :
 
                 $filtered_value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+
                 break;
 
         }
 
+        // Cache Filtered Value
+
         if ($this->_FilterValue == $value) $this->_FilteredValue = $filtered_value;
 
         return $filtered_value;
+
 
     }
 

@@ -31,7 +31,7 @@ $dom_id = $field->DomInputID();
 
 		<input type="text" class="<?= $field->InputDefaultCssClass() ?>" readonly value="<?= htmlspecialchars( $field->Value ) ?>" <?= $field->InputAttrs() ?>   title="<?=  htmlspecialchars( $field->LabelText() ) ?>" />
 
-        <img id="img_<?= $dom_id  ?>" name="img_<?=  $field->Name ?>" style="cursor:pointer;" src="<?=THEME?>images/cal.gif" alt="<?=ClickHereToPickUpTheDate?>" class="date-cal-img"   />
+        <img id="img_<?= $dom_id  ?>" name="img_<?=  $field->Name ?>" style="cursor:pointer;" src="<?=THEME?>images/cal.gif" alt="<?=ClickHereToPickUpDate?>" class="date-cal-img"   />
 
 	<?= $myTemplate->CloseInput( $field ) ?>
 

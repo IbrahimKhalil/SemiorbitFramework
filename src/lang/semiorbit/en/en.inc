@@ -1,7 +1,15 @@
 <?php
-define("pub_date", "Date");
+
+// DIRECTION CONSTANTS ======================
+const DIR = "ltr";
+const IS_RTL = false;
+const TEXT_START = "left";
+const TEXT_END = "right";
+const TEXT_START_UC = "Left";
+const TEXT_END_UC = "Right";
+
+
 define("Back","Back");
-define("Back_to_home","Back to Home");
 define("user_name","Username");
 define("password","Password");
 define("sign_out","Sign Out");
@@ -13,7 +21,7 @@ define("AddNew","Add New");
 define("nowandate", date("Y-m-d H:i:s"));
 define("date", date("Y-m-d"));
 define("today", date("Y-m-d"));
-define("ClickHereToPickUpTheDate", "Click here to pick up the date");
+define("ClickHereToPickUpDate", "Click here to pick up the date");
 define("delete_question", "Are you sure want delete this item: %s ?");
 define("Save", "Save");
 define("more","Read More");
@@ -65,7 +73,7 @@ define("Verification","Verification");
 define("This_helps_us_to_prevent_automatic_registration","Please enter the displayed character below(case insensitive)");
 define("Please_enter_the_string_shown_in_the_image_above","");
 define("VComment_Text","Comment Text");
-define("Set_Def_Pix","Select default image");
+
 define("Search","Search");
 define("AdvSearch","Advanced Search");
 define("Change_Admin_Password", "Change Admin Password");
@@ -75,8 +83,4 @@ define("Root", "--Root--");
 define("Public", "Public");
 define("Private", "Private");
 
-//PAGINATION >>>>>>>>>>>>>>>
-define("DIR", "ltr");
-define("TextStart","left");
-define("TextEnd","right");
-//END PAGINATION <<<<<<<<<<<
+

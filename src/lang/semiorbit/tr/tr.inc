@@ -1,7 +1,15 @@
 <?php
-define("pub_date", "Yayın Tarihi");
+
+// DIRECTION CONSTANTS ======================
+const DIR = "ltr";
+const IS_RTL = false;
+const TEXT_START = "left";
+const TEXT_END = "right";
+const TEXT_START_UC = "Left";
+const TEXT_END_UC = "Right";
+
+
 define("Back", "Geri");
-define("Back_to_home", "Ana sayfaya Dön");
 define("user_name", "Kullanıcı Adı");
 define("password", "Şifre");
 define("Re-Type", "Tekrar ");
@@ -34,7 +42,7 @@ define("Home","Ana Sayfa");
 define("Articles","Makaleler");
 define("Read_More","Daha Fazla");
 define("Remove_Pic","Resmi Sil");
-define("Comments","Yorumlar");
+
 define("aLinks","Kaynaklar ve Bağlantılar");
 define("aPhotos","Görseller");
 define("admin_controls","Denetim Masası");
@@ -45,7 +53,7 @@ define("ALL", "Hepsi");
 define("Yes","Evet");
 define("No","Hayır");
 define("Start_Typing_Keywords", "Uygun Öğeyı Seç...");
-define("ClickHereToPickUpTheDate", "Tarihi Seçmek İçin Buraya Tıklayın");
+define("ClickHereToPickUpDate", "Tarihi Seçmek İçin Buraya Tıklayın");
 define("Male", "Bay");
 define("Female", "Bayan");
 
@@ -78,13 +86,8 @@ define("Public", "Kamu");
 define("Private", "Özel");
 
 define("MailList", "E-Posta Listesi");
-//PAGINATION >>>>>>>>>>>>>>>
-define("DIR", "ltr");
-define("TextStart","left");
-define("TextEnd","right");
-//END PAGINATION <<<<<<<<<<<
 
-define("Change_Admin_Password", "Yöneticinin Şifresini Değiştir");
+
 
 /*
 define("second","Saniye");

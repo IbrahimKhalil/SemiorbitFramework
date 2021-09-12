@@ -315,6 +315,9 @@ class ScaffoldBase extends ScaffoldBaseProvider
         $pms['extra_pms'] = $extra_pms ?: Url::Params();
 
         $pms['id'] = $id;
+        
+        $pms['controller'] = $this->ActiveController();
+        
 
         $pms['CTR_PATH'] = $this->ActiveController()->ControllerPath;
 

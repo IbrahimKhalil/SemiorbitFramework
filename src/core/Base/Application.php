@@ -319,6 +319,18 @@ abstract class Application implements AppInterface
     }
 
     /**
+     * Triggered <b>before</b> loading controller on all http/hmvc requests.<br/>
+     * NB. Works as a <b>Middleware</b>, for checking auth, permissions etc... when each and every request is called.
+     *
+     * @param Request $request
+     */
+
+    public static function onRequest(Request $request)
+    {
+        //
+    }
+
+    /**
      * Triggered <b>after</b> loading (Start-up request) controller but before firing action.
      *
      * @param Request $request
@@ -330,25 +342,25 @@ abstract class Application implements AppInterface
     }
 
     /**
-     * Triggered after calling (any request), but <b>before</b> loading request controller.<br/>
-     * Same as <u>onStart</u> but fired on <b>both</b> (Start-up request and HMVC sub-requests).
+     * Triggered after calling (hmvc request), but <b>before</b> loading request controller.<br/>
+     * Same as <u>onStart()</u> but fired on <b>HMVC sub-requests</b> only.
      *
      * @param $uri Request URI
      */
 
-    public static function onRequest(&$uri)
+    public static function onHmvcRequest(&$uri)
     {
         //
     }
 
     /**
-     * Triggered <b>after</b> loading (any request) controller, but before firing action.<br/>
-     * Same as <u>onLoad</u> but fired on <b>both</b> (Start-up request and HMVC sub-requests).
+     * Triggered <b>after</b> loading (hmvc request) controller, but before firing action.<br/>
+     * Same as <u>onLoad()</u> but fired on <b>HMVC sub-requests</b> only.
      *
      * @param Request $request
      */
 
-    public static function onRequestLoaded(Request $request)
+    public static function onHmvcRequestLoaded(Request $request)
     {
         //
     }

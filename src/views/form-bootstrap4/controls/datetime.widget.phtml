@@ -22,8 +22,8 @@ $dom_id = $field->DomInputID();
 
     <div class="input-group date">
 
-        <input type="text" autocomplete="off" class="<?= $field->InputDefaultCssClass() ?>"
-               value="<?= htmlspecialchars($field->Value) ?>" <?= $field->InputAttrs() ?>
+        <input type="date" autocomplete="off" class="<?= $field->InputDefaultCssClass() ?>"
+               value="<?= date("Y-m-d", strtotime($field->Value)) ?>" <?= $field->InputAttrs() ?>
                title="<?= htmlspecialchars($field->LabelText()) ?>"/>
 
         <span class="input-group-addon">

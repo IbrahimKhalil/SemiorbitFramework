@@ -595,7 +595,7 @@ HEREHTML;
 		
 		$html_output = <<<HEREHTML
 		
-						<div id="{$honeypot_id}">
+						<div id="{$honeypot_id}" style="display: none;">
 							{$honeypot_label}
 							<input type="hidden" name="{$honeypot_input_name}" value="" />
 						</div>

@@ -411,4 +411,28 @@ class Str
     }
 
 
+    public static function ReplaceFirst($needle, $replace, $haystack)
+    {
+        return static::ReplaceOnce($needle, $replace, $haystack);
+    }
+
+    public static function ReplaceLast($needle, $replace, $haystack)
+    {
+        return static::ReplaceOnce($needle, $replace, $haystack, true);
+    }
+
+    protected static function ReplaceOnce($needle, $replace, $haystack, $from_right = false)
+    {
+
+        $pos = $from_right ? strripos($haystack, $needle) : stripos($haystack, $needle);
+
+        if ($pos !== false)
+
+            $haystack = substr_replace($haystack, $replace, $pos, strlen($needle));
+
+        return $haystack;
+
+    }
+
+
 }

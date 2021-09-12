@@ -10,6 +10,7 @@ namespace Semiorbit\Http;
 
 
 use Semiorbit\Base\Application;
+use Semiorbit\Base\AppManager;
 use Semiorbit\Config\Config;
 use Semiorbit\Component\Finder;
 use Semiorbit\Routes\Router;
@@ -71,7 +72,11 @@ class Request {
 
 	public $Callable;
 
+
     protected $_Path;
+
+    protected $_ApplicationClass;
+
 
 	protected static $_Url;
 	
@@ -87,23 +92,19 @@ class Request {
 
         $this->Verb = $_SERVER['REQUEST_METHOD'];
 
-        if ( ! is_empty( $Uri ) ) {
+        $this->Uri = $Uri;
 
-			$this->Load($Uri, $extra_path_info_pattern);
+        $this->PathInfoPattern = $extra_path_info_pattern;
 
-		}
-
-	}
+    }
 	
-	public function Load($Uri = '', $extra_path_info_pattern = '/id')
+	public function Load()
 	{
 
 	    //$time = microtime(true);
-
-	    $this->PathInfoPattern = $extra_path_info_pattern;
 		
-		if ( is_empty( $Uri ) )
-		{ 
+		if ( is_empty( $this->Uri ) ) {
+
 			//AUTO DETECT Uri FROM $_SERVER
 			
 			$this->DetectUri();
@@ -112,13 +113,13 @@ class Request {
 			
 			//HMVC REQUEST
 
-			$parse_path_query = Url::Utf8ParseUrl($Uri);
+			$parse_path_query = Url::Utf8ParseUrl($this->Uri);
 			
-			$this->PathInfo = isset( $parse_path_query['path'] ) ? $parse_path_query['path'] : "";
+			$this->PathInfo = $parse_path_query['path'] ?? "";
 			
-			$this->QueryString = isset( $parse_path_query ['query'] ) ? $parse_path_query ['query'] : "";
+			$this->QueryString = $parse_path_query ['query'] ?? "";
 
-			//TODO: MAKE SURE THIS IS WORKING PROPERLY IN ALL CASES
+			//TODO: TESTING >> MAKE SURE THIS IS WORKING PROPERLY IN ALL CASES
 
             // THIS WILL LOAD PARAMS FROM QUERY STRING ONLY.
             // [$_REQUEST] ARRAY WILL BE IGNORED AS LONG AS THIS IS AN HMVC REQUEST
@@ -173,6 +174,8 @@ class Request {
 
             $this->Callable = $callable;
 
+            $this->CallMiddleware();
+
         } else {
 
             // DETECT CONTROLLER
@@ -180,6 +183,10 @@ class Request {
             $this->Controller = $controller ?:
 
                 (Config::ApiMode() ? $this->DetectApiController() : $this->DetectController());
+
+
+            $this->CallMiddleware();
+
 
             $this->LoadController();
 
@@ -193,13 +200,13 @@ class Request {
 
 
 		//Add PARAMS from PATH_INFO
-		
+
 		## NB. This will override the server pms when they have same keys.
-		
+
 		$path_arr = $route_params ?: $this->ParsePath();
-		
+
 		$this->Params = array_merge($this->Params, $path_arr);
-	
+
 
 		$this->ID = isset( $this->Params[ Config::IDParamName() ] ) ? $this->Params[ Config::IDParamName() ] : "";
 
@@ -579,6 +586,8 @@ class Request {
 		
 	}
 
+
+
 	public static function PathInfo()
     {
 
@@ -643,5 +652,40 @@ class Request {
 	}
 
 
+
+
+
+    public function UseApplicationClass($application_class)
+    {
+        $this->_ApplicationClass = $application_class;
+
+        return $this;
+    }
+
+
+    public function ActiveApplicationClass()
+    {
+        return $this->_ApplicationClass;
+    }
+
+
+    private function CallMiddleware()
+    {
+        if ($this->_ApplicationClass)
+
+            AppManager::Call($this->_ApplicationClass, 'onRequest', [$this]);
+    }
+
+
+    public function CallAction()
+    {
+
+        return $this->Callable ?
+
+            call_user_func_array($this->Callable, $this->Params)
+
+            : $this->Class->Actions->Call($this->Action, $this->Params);
+
+    }
 
 }

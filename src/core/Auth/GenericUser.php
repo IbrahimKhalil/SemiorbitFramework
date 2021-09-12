@@ -60,7 +60,7 @@ class GenericUser extends DataSet
 
     public function Can($permissions)
     {
-        //TODO:: Check permissions
+        // Override this method to check permissions
         
         return $permissions ?: true;
     }
@@ -73,16 +73,14 @@ class GenericUser extends DataSet
 
     /**
      * Identity field ( which is a unique field that user can use to log in
-     * like <b>user name, number, or email</b> )
+     * like <b>username, number, or email</b> )
      *
      * @return Text
      */
 
     public function Identity()
     {
-        if ( ! $this->_Identity ) $this->MapIdentity();
-
-        return $this->_Identity;
+        return $this->_Identity ?: $this->MapIdentity()->_Identity;
     }
 
     /**
@@ -93,9 +91,7 @@ class GenericUser extends DataSet
 
     public function Password()
     {
-        if ( ! $this->_Password ) $this->MapPassword();
-
-        return $this->_Password;
+        return $this->_Password ?: $this->MapPassword()->_Password;
     }
 
     /**
@@ -107,9 +103,7 @@ class GenericUser extends DataSet
 
     public function Role()
     {
-        if ( ! $this->_Role ) $this->MapRole();
-
-        return $this->_Role;
+        return $this->_Role ?: $this->MapRole()->_Role;
     }
 
     /**

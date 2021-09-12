@@ -1,7 +1,15 @@
 <?php
-define("pub_date","تاريخ النشر");
+
+// DIRECTION CONSTANTS ======================
+const DIR = "rtl";
+const IS_RTL = true;
+const TEXT_START = "right";
+const TEXT_END = "left";
+const TEXT_START_UC = "Right";
+const TEXT_END_UC = "Left";
+
+
 define("Back","عودة");
-define("Back_to_home","عودة إلى الرئيسية");
 define("user_name","اسم المستخدم");
 define("password","كلمة المرور");
 define("Re-Type","أعد كتابة ");
@@ -33,12 +41,11 @@ define("Remove_Pic","حذف الصورة");
 
 define("enter_key_word","أدخل كلمة البحث");
 define("Tools","لوحة التحكم");
-define("Cancel_Map_Point","إلغاء النقطة");
 define("ALL", "الكل");
 define("Yes","نعم");
 define("No","لا");
 define("Start_Typing_Keywords", "حدد البند المناسب...");
-define("ClickHereToPickUpTheDate", "انقر هنا لتحديد التاريخ");
+define("ClickHereToPickUpDate", "انقر هنا لتحديد التاريخ");
 define("Male", "ذكر");
 define("Female", "أنثى");
 
@@ -58,14 +65,7 @@ define("Root", "--الجذر--");
 define("Public", "عام");
 define("Private", "خاص");
 
-//PAGINATION >>>>>>>>>>>>>>>
-define("DIR", "rtl");
-define("TextStart","right");
-define("TextEnd","left");
 
-//END PAGINATION <<<<<<<<<<<
-
-define("Change_Admin_Password", "تغير كلمة مرور المدير");
 
 /*
 define("second","ثانية");
