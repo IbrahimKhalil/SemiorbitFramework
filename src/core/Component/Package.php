@@ -52,6 +52,9 @@ class Package
         return Services::Read($this->_ServiceID);
     }
 
+
+
+
     public static function Select($service_id)
     {
         return (static::$_Instance ?: new static())->LoadService($service_id);
@@ -136,53 +139,62 @@ class Package
 
     public function Path()
     {
-        return $this->Registry()[self::PKG_PATH];
+        return $this->Registry()[self::PKG_PATH] ?? $this->UndefinedServiceException('PKG_PATH');
     }
 
     public function ControllersNamespace()
     {
-        return $this->Registry()[self::PKG_CONTROLLERS_NS];
+        return $this->Registry()[self::PKG_CONTROLLERS_NS] ?? $this->UndefinedServiceException('PKG_CONTROLLERS_NS');
     }
 
     public function ModelsNamespace()
     {
-        return $this->Registry()[self::PKG_MODELS_NS];
+        return $this->Registry()[self::PKG_MODELS_NS] ?? $this->UndefinedServiceException('PKG_MODELS_NS');
     }
 
     public function LangPath()
     {
-        return $this->Registry()[self::PKG_LANG];
+        return $this->Registry()[self::PKG_LANG] ?? $this->UndefinedServiceException('PKG_LANG');
     }
 
 
     public function ViewsPath()
     {
-        return $this->Registry()[self::PKG_VIEWS];
+        return $this->Registry()[self::PKG_VIEWS] ?? $this->UndefinedServiceException('PKG_VIEWS');
     }
 
     public function ConfigPath()
     {
-        return $this->Registry()[self::PKG_CONFIG];
+        return $this->Registry()[self::PKG_CONFIG] ?? $this->UndefinedServiceException('PKG_CONFIG');
     }
 
     public function RoutesPath()
     {
-        return $this->Registry()[self::PKG_ROUTES];
+        return $this->Registry()[self::PKG_ROUTES] ?? $this->UndefinedServiceException('PKG_ROUTES');
     }
 
     public function ModelsPath()
     {
-        return $this->Registry()[self::PKG_MODELS];
+        return $this->Registry()[self::PKG_MODELS] ?? $this->UndefinedServiceException('PKG_MODELS');
     }
 
     public function ControllersPath()
     {
-        return $this->Registry()[self::PKG_CONTROLLERS];
+        return $this->Registry()[self::PKG_CONTROLLERS] ?? $this->UndefinedServiceException('PKG_CONTROLLERS');
     }
 
     public function ApiControllersDir()
     {
         return ($this->Registry()[self::PKG_API_CONTROLLERS_DIR]) ?? '';
+    }
+
+
+
+    public function UndefinedServiceException($key)
+    {
+        //$constants = array_flip((new \ReflectionClass(__CLASS__))->getConstants());
+
+        throw new \RuntimeException("Undefined Package Service: ({$this->_ServiceID}::{$key})", 6601);
     }
 
 }

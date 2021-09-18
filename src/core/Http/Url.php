@@ -41,7 +41,7 @@ class Url
         /* returns /myproject/index.php */
         $path = Config::IndexFilePath() != '' ? Config::IndexFilePath() : $_SERVER['SCRIPT_NAME'];
 
-        if ( $path ) {
+        if ($path) {
 
             /*
              * returns an array with:
@@ -87,13 +87,13 @@ class Url
 
         return Path::Normalize($url);
     }
-    
-    
+
+
     public static function Host()
     {
         return Url::BaseUrl(false, true, false);
     }
-    
+
     public static function BaseDir()
     {
         return Url::BaseUrl(false, false, true);
@@ -103,7 +103,7 @@ class Url
     /**
      * Does a UTF-8 safe version of PHP parse_url function
      *
-     * @param   string $url URL to parse
+     * @param string $url URL to parse
      *
      * @return  mixed  Associative array or false if badly formed URL.
      *
@@ -177,9 +177,9 @@ class Url
 
         $url = Request::Url();
 
-        if ( $set_params || $exclude_params ) {
+        if ($set_params || $exclude_params) {
 
-            $url = substr( $url, 0, strpos( $url, '?' ) ) . '?' . Url::Params( $exclude_params, $set_params );
+            $url = substr($url, 0, strpos($url, '?')) . '?' . Url::Params($exclude_params, $set_params);
 
         }
 
@@ -252,7 +252,7 @@ class Url
 
         $pms = array();
 
-        foreach ( $_GET as $pm_key => $pm_val ) {
+        foreach ($_GET as $pm_key => $pm_val) {
 
             // Avoid adding url path, in some cases when url path
             // is added to query string in .htaccess file for example.
@@ -260,19 +260,19 @@ class Url
             if (starts_with($pm_key, '/')) continue;
 
 
-            if ( ! in_array( $pm_key, $exclude_params ) ) {
+            if (!in_array($pm_key, $exclude_params)) {
 
-                $pms[] = $pm_key . "=" . urlencode( isset( $set_params[ $pm_key ] ) ? $set_params[ $pm_key ] : $pm_val );
+                $pms[] = $pm_key . "=" . urlencode(isset($set_params[$pm_key]) ? $set_params[$pm_key] : $pm_val);
 
             }
 
         }
 
-        foreach( $set_params as $pm_key => $pm_val ) {
+        foreach ($set_params as $pm_key => $pm_val) {
 
-            if ( ! isset( $_GET[ $pm_key ] ) )
+            if (!isset($_GET[$pm_key]))
 
-                $pms[] = $pm_key . "=" . urlencode( $pm_val );
+                $pms[] = $pm_key . "=" . urlencode($pm_val);
 
         }
 
@@ -287,7 +287,7 @@ class Url
 
         $params = static::Params($exclude_params, $set_params);
 
-        return ! empty($params) ? $prepend . $params : '';
+        return !empty($params) ? $prepend . $params : '';
 
     }
 
@@ -340,13 +340,13 @@ class Url
 
         if (trim($url) == "") return '';
 
-        $url = str_ireplace( "http://", "", $url );
+        $url = str_ireplace("http://", "", $url);
 
-        $url = str_ireplace( "https://", "", $url );
+        $url = str_ireplace("https://", "", $url);
 
-        $url = str_ireplace( "www.", "", $url );
+        $url = str_ireplace("www.", "", $url);
 
-        $url = trim( $url, "/" );
+        $url = trim($url, "/");
 
         if ($add_www) $url = "www." . $url;
 
@@ -358,11 +358,11 @@ class Url
     public static function DomainToUrl($domain)
     {
 
-        if ( trim($domain) == "" ) return '';
+        if (trim($domain) == "") return '';
 
-        if ( starts_with( $domain, "https://" ) ) return $domain;
+        if (starts_with($domain, "https://")) return $domain;
 
-        if ( starts_with( $domain, "http://" ) ) return $domain;
+        if (starts_with($domain, "http://")) return $domain;
 
         $url = "http://" . $domain;
 
@@ -372,9 +372,8 @@ class Url
 
     public static function FileType($url)
     {
-        return strtolower( pathinfo( parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION) );
+        return strtolower(pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION));
     }
-
 
 
 }

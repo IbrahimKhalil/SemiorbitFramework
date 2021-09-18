@@ -79,10 +79,14 @@ class Request {
 
 
 	protected static $_Url;
+
+
+    private $_IsStartup = false;
+
+    private static $_StartupRequest;
 	
-	protected static $_StartupRequest;
-	
-	protected static $_LastRunRequest;
+
+	private static $_LastRunRequest;
 
 
 
@@ -614,16 +618,26 @@ class Request {
 	
 	}
 	
-	public static function Startup()
+	final public static function Startup()
 	{
 
-		if ( empty( self::$_StartupRequest ) )
-	
-			self::$_StartupRequest = new Request();
+		if ( empty( self::$_StartupRequest ) ) {
+
+            self::$_StartupRequest = new Request();
+
+            self::$_StartupRequest->_IsStartup = true;
+
+        }
+
 	
 		return self::$_StartupRequest;
 	
 	}
+
+    final public function IsStartup()
+    {
+        return $this->_IsStartup;
+    }
 
 
     public static function StartupControllerName()
@@ -673,7 +687,7 @@ class Request {
     {
         if ($this->_ApplicationClass)
 
-            AppManager::Call($this->_ApplicationClass, 'onRequest', [$this]);
+            AppManager::Call($this->_ApplicationClass, $this->_IsStartup ? 'onStartup' : 'onRequest', [$this]);
     }
 
 

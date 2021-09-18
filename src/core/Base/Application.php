@@ -319,8 +319,21 @@ abstract class Application implements AppInterface
     }
 
     /**
-     * Triggered <b>before</b> loading controller on all http/hmvc requests.<br/>
-     * NB. Works as a <b>Middleware</b>, for checking auth, permissions etc... when each and every request is called.
+     * Triggered <b>before</b> loading controller on startup request only.<br/>
+     * NB. Works as a <b>Middleware</b>, for checking auth, permissions etc... when startup request is called.
+     *
+     * @param Request $request
+     */
+
+    public static function onStartup(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Triggered <b>before</b> loading controller on all requests other than startup request.<br/>
+     * NB. Works as a <b>Middleware</b>, for checking auth, permissions etc... when hmvc request is called.<br>
+     * For startup request use <b>onStartup()</b> instead.
      *
      * @param Request $request
      */
@@ -348,7 +361,7 @@ abstract class Application implements AppInterface
      * @param $uri Request URI
      */
 
-    public static function onHmvcRequest(&$uri)
+    public static function onHmvcRequestStart(&$uri)
     {
         //
     }
