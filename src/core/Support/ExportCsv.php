@@ -9,6 +9,7 @@ use Semiorbit\Field\Select;
 
 class ExportCsv
 {
+    
     protected $_DataSet;
 
     protected $_Cols = array();
@@ -16,6 +17,8 @@ class ExportCsv
     protected $_FileName;
 
     protected $_FileExt;
+    
+    protected $_OutputHeadline = true;
 
 
     public function __construct(DataSet $data_set)
@@ -70,6 +73,13 @@ class ExportCsv
         return $this;
 
     }
+    
+    public function HideHeadline($enable = true)
+    {
+        $this->_OutputHeadline = !$enable;
+        
+        return $this;
+    }
 
     public function Columns()
     {
@@ -88,7 +98,7 @@ class ExportCsv
 
         $time = date("-d-m-Y-H-i-s");
 
-        if (empty($this->_FileName)) $this->_FileName = Str::ParamCase( $this->ActiveDataSet()->FullName() );
+        if (empty($this->_FileName)) $this->_FileName = Str::ParamCase( $this->ActiveDataSet()->Name() );
 
         return $this->_FileName . $time . $this->getFileExt();
 
@@ -170,17 +180,20 @@ class ExportCsv
 
         $heads = array();
 
-        foreach ($this->Columns() as $col)
-        {
-            /** @var $col Field */
+        if ($this->_OutputHeadline) {
 
-            $heads[] = $col->LabelText();
+            foreach ($this->Columns() as $col) {
+                /** @var $col Field */
+
+                $heads[] = $col->LabelText();
+
+            }
+
+
+            fputcsv($df, $heads, ';');
 
         }
-
-
-
-        fputcsv($df, $heads,';');
+        
 
         while ($myData->Read()) {
 
@@ -192,7 +205,7 @@ class ExportCsv
             {
                 /** @var $col Field */
 
-                $values[] = strip_tags( $col->Html() );
+                $values[] = strip_tags( $col->TextValue() );
             }
 
             fputcsv($df, $values,';');

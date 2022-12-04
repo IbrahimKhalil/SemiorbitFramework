@@ -169,7 +169,9 @@ class Request {
 
         Router::LoadRoutes();
 
-        [$controller, $action, $this->PathInfo, $route_params, $callable] = Router::Find($this->PathInfo, $this->Verb);
+        [$controller, $action, $this->PathInfo, $route_params, $callable, $this->PathInfoPattern]
+
+            = Router::Find($this->PathInfo, $this->Verb);
 
 
 
@@ -255,13 +257,13 @@ class Request {
 			// RESET PATH_INFO EXCLUDING LANG
 			
 			unset($pms[0]);
-			
-			$this->PathInfo = implode("/", $pms);
-		
+
 		}
-	
-		
-		return $lang;
+
+        $this->PathInfo = implode("/", $pms);
+
+
+        return $lang;
 		
 	}
 	
@@ -442,6 +444,12 @@ class Request {
                     unset($pms[0]);
 
                     $this->PathInfo = implode("/", $pms);
+
+                } else {
+
+                    // VERB DOES NOT MATCH
+
+                    $action = null;
 
                 }
 

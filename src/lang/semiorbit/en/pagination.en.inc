@@ -1,5 +1,5 @@
 <?php
-return array(
+return [
 
     "next"      =>  "Next",
 
@@ -17,4 +17,4 @@ return array(
 
     "of"        =>  "of"
 
-);
+];

@@ -9,7 +9,7 @@
 namespace Semiorbit\Field;
 
 use Semiorbit\Form\Form;
-
+use Semiorbit\Translation\Lang;
 
 
 /**
@@ -85,7 +85,7 @@ class Password extends Field
 
         if (is_empty($this->RetypeSuffix)) $this->RetypeSuffix = '_r';
 
-        $retype_prefix = defined('Re-Type') ? constant('Re-Type') : 'Retype';
+        $retype_prefix = Lang::Trans("semiorbit::form.retype");
 
         if (is_empty($this->RetypeCaption)) $this->RetypeCaption = $retype_prefix . $this->LabelText();
 

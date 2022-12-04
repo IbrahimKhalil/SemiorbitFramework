@@ -94,6 +94,8 @@ class OutputFormatter
         $this->setStyle('comment', new OutputFormatterStyle('yellow'));
 
         $this->setStyle('question', new OutputFormatterStyle('black', 'cyan'));
+        
+        $this->setStyle('mark', new OutputFormatterStyle('black', 'yellow'));
 
 
         foreach ($styles as $name => $style) {

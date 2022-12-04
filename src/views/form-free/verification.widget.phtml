@@ -1,12 +1,17 @@
+<?php
+
+use Semiorbit\Translation\Lang;
+
+?>
 <tr>
 	<td>
 <!--Verification AREA/////////////////////////////////////////////////////////--> 
 										<table class="verf_tbl" style="border:0px;border-collapse:collapse;border-spacing:0px;">
 										<tr>
-											<td style="text-align:center;"><div class="VerfLabel"><strong class="bigcomment" ><?=Verification?></strong> <span style="font-family:Arial" class="ttxtg"></span></div></td>
+											<td style="text-align:center;"><div class="VerfLabel"><strong class="bigcomment" ><?= Lang::Trans("semiorbit::form.verification") ?></strong> <span style="font-family:Arial" class="ttxtg"></span></div></td>
 										</tr>
 										<tr>
-											<td><div id="vrimg" style="width:189px; height:70px"><img style="margin:auto;float:none;" src="<?=BASE_URL?>ext/verf_img.php" alt="<?=Verification?>" /></div><!--&nbsp;[<a onclick="redrawimg('vrimg');">Change Image</a>]<br /><br />--></td>
+											<td><div id="vrimg" style="width:189px; height:70px"><img style="margin:auto;float:none;" src="<?=BASE_URL?>ext/verf_img.php" alt="<?= Lang::Trans("semiorbit::form.verification") ?>" /></div><!--&nbsp;[<a onclick="redrawimg('vrimg');">Change Image</a>]<br /><br />--></td>
 										</tr>
 										<tr>
 											<td style="vertical-align:top;"><input name="txtpic" id="txtpic" type="text" /></td>

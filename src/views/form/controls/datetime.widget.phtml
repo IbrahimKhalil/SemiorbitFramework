@@ -2,6 +2,7 @@
 /**@var Semiorbit\Field\DateTime $field **/
 
 use Semiorbit\Field\DateTime;
+use Semiorbit\Translation\Lang;
 
 $myTemplate = $field->ActiveTemplate();
 
@@ -31,7 +32,7 @@ $dom_id = $field->DomInputID();
 
 		<input type="text" class="<?= $field->InputDefaultCssClass() ?>" readonly value="<?= htmlspecialchars( $field->Value ) ?>" <?= $field->InputAttrs() ?>   title="<?=  htmlspecialchars( $field->LabelText() ) ?>" />
 
-        <img id="img_<?= $dom_id  ?>" name="img_<?=  $field->Name ?>" style="cursor:pointer;" src="<?=THEME?>images/cal.gif" alt="<?=ClickHereToPickUpDate?>" class="date-cal-img"   />
+        <img id="img_<?= $dom_id  ?>" name="img_<?=  $field->Name ?>" style="cursor:pointer;" src="<?=THEME?>images/cal.gif" alt="<?= Lang::Trans("semiorbit::form.click_here_to_pick_up_date") ?>" class="date-cal-img"   />
 
 	<?= $myTemplate->CloseInput( $field ) ?>
 

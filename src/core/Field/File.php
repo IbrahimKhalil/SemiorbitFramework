@@ -338,21 +338,8 @@ class File extends Field
 
             $this->Value = $this->TargetFileName ? $this->TargetFileName . $file_ext : $file_ext;
 
-            if (  $this->AutoResize && in_array( $file_ext, array( "jpg", "jpeg", "png", "gif", "bmp") ) ) {
-
-                foreach ( $this->Thumbnails as $thumbnail => $thumbnail_details ) {
-
-                    $create_thumbnail = Uploader::CreateThumbnail( $this->RealPath(), $this->DirPath( $thumbnail, true, true ),
-
-                        $this->FileName(), $thumbnail_details['w'], $thumbnail_details['h'] );
-
-                    if ( ! $create_thumbnail ) return Msg::RESIZE_FAILED;
-
-                    if ( $this->ActiveDataSet() ) $this->ActiveDataSet()->onResize( $thumbnail, $this->RealPath($thumbnail) );
-
-                }
-
-            }
+            if (! $this->CreateThumbnails()) return  Msg::RESIZE_FAILED;
+            
 
             if ( $this->ActiveDataSet() ) $this->ActiveDataSet()->onUpload( $this->RealPath() );
 
@@ -365,6 +352,53 @@ class File extends Field
         }
 
         return $upload_res;
+
+    }
+    
+    public function CreateThumbnails() : bool
+    {
+
+        if (  $this->AutoResize && in_array( $this->FileExt(), array( "jpg", "jpeg", "png", "gif", "bmp") ) ) {
+
+
+            foreach ($this->Thumbnails as $thumbnail => $thumbnail_details) {
+
+                $create_thumbnail = Uploader::CreateThumbnail($this->RealPath(), $this->DirPath($thumbnail, true, true),
+
+                    $this->FileName(), $thumbnail_details['w'], $thumbnail_details['h']);
+
+                if (!$create_thumbnail) return false;
+
+                if ($this->ActiveDataSet()) $this->ActiveDataSet()->onResize($thumbnail, $this->RealPath($thumbnail));
+
+            }
+
+            return true;
+
+        }
+        
+        return true;
+        
+    }
+
+    public function Rename($current_id, $new_id)
+    {
+
+        $current_fn = $this->DirPath( null, true, false ) . $current_id . '.' . $this->FileExt();
+
+        $new_fn = $this->DirPath( null, true, false ) . $new_id . '.' . $this->FileExt();
+
+        if (file_exists($current_fn) && !file_exists($new_fn)) rename($current_fn, $new_fn);
+
+        foreach ($this->Thumbnails as $thumbnail => $thumbnail_details) {
+
+            $current_fn = $this->DirPath( $thumbnail, true, false ) . $current_id . '.' . $this->FileExt();
+
+            $new_fn = $this->DirPath( $thumbnail, true, false ) . $new_id . '.' . $this->FileExt();
+
+            if (file_exists($current_fn) && !file_exists($new_fn)) rename($current_fn, $new_fn);
+
+        }
 
     }
 
@@ -424,7 +458,7 @@ class File extends Field
 
         if ( $view == FieldView::IMAGE ) {
 
-            if ( in_array( $this->FileExt(), array('png', 'jpg', 'gif', 'jpeg') ) )
+            if ( in_array( $this->FileExt(), array('png', 'jpg', 'gif', 'jpeg', 'svg') ) )
 
                 $html_output = $this->ActiveTemplate()->Widget('file-image-view', array('url' => $url,
 

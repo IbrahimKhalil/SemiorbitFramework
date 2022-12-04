@@ -2,26 +2,27 @@
 use Semiorbit\Form\Form;
 use Semiorbit\Http\Url;
 use Semiorbit\Field\Field;
+use Semiorbit\Translation\Lang;
 
 if (! isset($this->item_id)) { Url::GotoHomePage('?msg=DELETE_ERR'); exit; }
 
-Form::setID('del-form')->setAction($this->delete_action_url)->Open();
+Form::setID('del-form')->setCssClass('del-form')->setAction($this->delete_action_url)->Open();
 
 Field::Hidden('del-item-id')->setValue($this->item_id)->RenderControl();
 
 $my_item = "<span style='color:red'>".$this->item_title."</span>";
-			
-printf(delete_question, $my_item);
+
+printf('<h3>' . Lang::Trans("semiorbit::form.delete_question") . '</h3>', $my_item);
 
 ?>
-			
-<div class="del_form_btns">
 
-    <input type="submit" name="submit" class="submit btn primary-btn" value="<?=Yes?>" style="cursor: pointer;"/>
-	&nbsp;&nbsp;&nbsp;
-	<input type="button" style="cursor:pointer" value="<?=No?>" name="submit" class="submit btn primary-btn" onclick="window.location.href='<?=$this->no_action_url?>'" />
+    <div class="del-form-btns">
 
-</div>		
+        <button type="submit" name="submit" class="submit btn primary-btn yes-btn" value="<?= YES ?>" style="cursor: pointer;"><?= YES ?></button>
+        &nbsp;&nbsp;&nbsp;
+        <button type="button" style="cursor:pointer" value="<?= NO ?>" name="submit" class="submit btn primary-btn no-btn" onclick="window.location.href='<?=$this->no_action_url?>'" ><?= NO ?></button>
+
+    </div>
 
 <?php
 Form::Close();

@@ -1,14 +1,14 @@
 <?php
 use Semiorbit\Output\Render;
+use Semiorbit\Translation\Lang;
 
-Render::OpenBox(Tools, 'panel') ?>
+Render::OpenBox(Lang::Trans("semiorbit::form.tools")) ?>
 
 <div class="rel-links-panel">
 
     <div><p class="rel-link"><?= Render::Link(BASE_URL, project_title(), SUPER_ADMIN) ?></p></div>
 
-    <div><p class="rel-link"><?= Render::Link(BASE_URL . "Users/edit/2", Change_Admin_Password, SUPER_ADMIN) ?></p></div>
 
 </div>
 
-<?php Render::CloseBox('panel') ?>
+<?php Render::CloseBox() ?>

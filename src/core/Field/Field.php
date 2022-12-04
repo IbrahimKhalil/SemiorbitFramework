@@ -112,6 +112,8 @@ class Field extends AltaArray implements FieldProps
     protected $_SelectExpr;
 
     protected $_WhereClauseHelperFunc;
+    
+    protected $_InputAttrs = [];
 
     use FieldBuilder;
 
@@ -287,7 +289,7 @@ class Field extends AltaArray implements FieldProps
 
         if ($this->Required === true) $attrs['required'] = 'required';
 
-        $attrs = array_merge($attrs, $include_attrs);
+        $attrs = array_merge($attrs, $include_attrs, $this->_InputAttrs);
 
         $attrs = array_diff($attrs, $exclude_attrs);
 
@@ -295,6 +297,14 @@ class Field extends AltaArray implements FieldProps
 
         return $html_output;
 
+    }
+    
+    
+    public function setInputAttr($attr, $value)
+    {
+        $this->_InputAttrs[$attr] = $value;
+        
+        return $this;
     }
 
     public function InputAttrs(array $include_attrs = [], array $exclude_attrs = [])

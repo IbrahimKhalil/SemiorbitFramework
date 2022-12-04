@@ -1,8 +1,8 @@
 <?php
 use Semiorbit\Data\Msg;
 
-return array(
-   
+return [
+
     Msg::DBERR             =>   "Sorry! An unexpected error occurred. Please try again later!",
 
     Msg::DBOK              =>   "Saved Successfully!",
@@ -22,7 +22,7 @@ return array(
     Msg::INVALID_EMAIL      =>   "Please enter a valid <em>email</em>!",
 
     Msg::RETYPE_PASSWORD   =>   "Please Retype <em>Password</em>!",
-    
+
     Msg::ROW_DELETED       =>   "Removed Successfully!",
 
     Msg::REGISTER_OK       =>   "Welcome! Registered Successfully.",
@@ -40,11 +40,11 @@ return array(
     Msg::FILE_TYPE_ERR     =>   "Invalid File Type!",
 
     Msg::RESIZE_FAILED     =>   "Can not resize the uploaded photo!",
-    
+
     Msg::FILE_SIZE_ERR     =>   "Invalid file size!",
 
     Msg::NOT_VERIFIED      =>   "Sorry! Please enter correct verification code below.",
 
     Msg::COMMENTED         =>   "Thank you! Your message was sent successfully."
-    
-);
+
+];

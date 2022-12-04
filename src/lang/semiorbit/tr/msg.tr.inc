@@ -1,7 +1,7 @@
 <?php
 use Semiorbit\Data\Msg;
 
-return array(
+return [
 
     Msg::DBERR             =>   "Üzgünüz Yazarken Veritabanda Bir Hata Oluştu! Lütfen Daha Sonra Tekrar Deneyın...",
 
@@ -47,4 +47,4 @@ return array(
 
     Msg::COMMENTED         =>   "Yorumlarınız Alındı Teşekkürler!"
 
-);
+];

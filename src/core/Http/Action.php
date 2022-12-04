@@ -8,6 +8,7 @@
 namespace Semiorbit\Http;
 
 
+use Semiorbit\Output\ViewBase;
 use Semiorbit\Support\AltaArray;
 use Semiorbit\Support\Str;
 
@@ -35,6 +36,8 @@ class Action extends AltaArray
     public $onCall;
 
     public $Verb;
+    
+    private array $_Params = [];
 
     /**
      * Action constructor.
@@ -221,7 +224,34 @@ class Action extends AltaArray
     {
         return !$this->Verb || $verb == $this->Verb;
     }
+    
+    public function WithParams(array $params)
+    {
+        $this->_Params = array_merge($this->_Params, $params);
+        
+        return $this;
+    }
 
+    public function Params()
+    {
+        return $this->_Params;
+    }
+
+    /**
+     * Set parameter as action view property
+     *
+     * @param $key
+     * @param $value
+     * @return $this
+     */
+
+    public function With($key, $value)
+    {
+        $this->_Params[$key] = $value;
+
+        return $this;
+    }
+    
 
 
 }

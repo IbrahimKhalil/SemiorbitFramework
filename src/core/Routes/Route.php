@@ -109,31 +109,71 @@ class Route
         return new Route(ScopeProvider::ActiveScope(), $index);
     }
 
+    /**
+     * @param $verb
+     * @param $pattern
+     * @param $target array|callable [Controller, Action] or callabel
+     * @return ActionRoute
+     */
+    
     public static function Add($verb, $pattern, $target)
     {
         return Router::RegisterAction(ScopeProvider::ActiveScope(), $pattern, $verb, $target);
     }
 
+    /**
+     * @param $pattern
+     * @param $target array|callable [Controller, Action] or callabel
+     * @return ActionRoute
+     */
+    
     public static function AddGet($pattern, $target)
     {
         return static::Add(Request::VERB_GET, $pattern, $target);
     }
 
+    
+    /**
+     * @param $pattern
+     * @param $target array|callable [Controller, Action] or callabel
+     * @return ActionRoute
+     */
+    
     public static function AddPost($pattern, $target)
     {
         return static::Add(Request::VERB_POST, $pattern, $target);
     }
+    
 
+    /**
+     * @param $pattern
+     * @param $target array|callable [Controller, Action] or callabel
+     */
+    
     public static function AddPut($pattern, $target)
     {
         static::Add(Request::VERB_PUT, $pattern, $target);
     }
+    
 
+    /**
+     * @param $pattern
+     * @param $target array|callable [Controller, Action] or callabel
+     * @return ActionRoute
+     */
+    
     public static function AddPatch($pattern, $target)
     {
         return static::Add(Request::VERB_PATCH, $pattern, $target);
     }
 
+    
+    /**
+     * @param $pattern
+     * @param $target array|callable [Controller, Action] or callabel
+     * @return ActionRoute
+     */
+    
     public static function AddDelete($pattern, $target)
     {
         return static::Add(Request::VERB_DELETE, $pattern, $target);

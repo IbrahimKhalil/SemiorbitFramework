@@ -114,7 +114,9 @@ abstract class Controller
 
             $this->DataSet->UseController($this);
 
-        } else {
+        } else if (static::DataSet === 0) {
+
+            // AUTO DETECT
 
             if ($this->ModelPath = Finder::LookForModel($this->ControllerName, $this->Package)) {
 
@@ -207,6 +209,8 @@ abstract class Controller
 
     }
 
+
+
     public static function IndexUrl($class_name = null, $use_cache = true)
     {
 
@@ -220,65 +224,57 @@ abstract class Controller
 
     public static function ListViewUrl($class_name = null, $use_cache = true)
     {
-
-        if ( $use_cache && $title = static::Clipboard( "list_url_" . $class_name ) ) return $title;
-
-        $name = Str::ParamCase( static::Name( $class_name ) );
-
-        return static::Clipboard( "list_url_" . $class_name, Url::BaseUrl() . Lang::ActiveLang() . "/" . $name . "/list" );
-
+        return static::ActionUrl('list', null, $class_name, $use_cache);
     }
 
     public static function TableViewUrl($class_name = null, $use_cache = true)
     {
-
-        if ( $use_cache && $title = static::Clipboard( "table_url_" . $class_name ) ) return $title;
-
-        $name = Str::ParamCase( static::Name( $class_name ) );
-
-        return static::Clipboard( "table_url_" . $class_name, Url::BaseUrl() . Lang::ActiveLang() . "/" . $name . "/table" );
-
+        return static::ActionUrl('table', null, $class_name, $use_cache);
     }
 
     public static function EditUrl($id = null, $class_name = null, $use_cache = true)
     {
 
-        if ( $use_cache && $title = static::Clipboard( "edit_url_" . $class_name . $id ) ) return $title;
+        return empty($id) ?
 
-        $name = Str::ParamCase( static::Name( $class_name ) );
+            static::ActionUrl('create', $id, $class_name, $use_cache) :
 
-        if (! empty($id)) {
-
-            return static::Clipboard( "edit_url_" . $class_name . $id, Url::BaseUrl() . Lang::ActiveLang() . "/" . $name . '/edit/' . $id );
-
-        } else {
-
-            return static::Clipboard( "create_url_" . $class_name, Url::BaseUrl() . Lang::ActiveLang() . "/" . $name . '/create' );
-        }
+            static::ActionUrl('edit', $id, $class_name, $use_cache);
 
     }
 
     public static function DeleteUrl($id, $class_name = null, $use_cache = true)
     {
-
-        if ( $use_cache && $title = static::Clipboard( "delete_url_" . $class_name . $id ) ) return $title;
-
-        $name = Str::ParamCase( static::Name( $class_name ) );
-
-        return static::Clipboard( "delete_url_" . $class_name . $id, Url::BaseUrl() . Lang::ActiveLang() . "/" . $name . '/delete/' . $id );
-
+        return static::ActionUrl('delete', $id, $class_name, $use_cache);
     }
 
     public static function ShowUrl($id, $class_name = null, $use_cache = true)
     {
+        return static::ActionUrl('view', $id, $class_name, $use_cache);
+    }
 
-        if ( $use_cache && $title = static::Clipboard( "show_url_" . $class_name . $id ) ) return $title;
+    public static function ActionUrl($action, $id = null, $class_name = null, $use_cache = true)
+    {
 
-        $name = Str::ParamCase( static::Name( $class_name ) );
+        if ( $use_cache && $url = static::Clipboard( $action . "_url_" . $class_name . $id ) ) return $url;
 
-        return static::Clipboard( "show_url_" . $class_name . $id, Url::BaseUrl() . Lang::ActiveLang() . "/" . $name . '/view/' . $id );
+        return static::Clipboard( $action . "_url_" . $class_name . $id, static::IndexUrl($class_name, $use_cache) . "/{$action}/" . $id );
 
     }
 
+
+    /**
+     * Url to controller with additinal path info and query string params.
+     *
+     * @param string $path path/info/ to add to controller url
+     * @param array $params List of query string in an associative array [param => value]
+     * @param null $class_name
+     * @return string
+     */
+
+    public static function Url(string $path, array $params = [], $class_name = null) : string
+    {
+        return static::IndexUrl($class_name) . '/' . $path . ($params ? Url::QueryString([], $params) : '');
+    }
 
 }

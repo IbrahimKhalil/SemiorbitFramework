@@ -2,6 +2,7 @@
 /**@var Semiorbit\Field\DateTime $field * */
 
 use Semiorbit\Field\DateTime;
+use Semiorbit\Translation\Lang;
 
 $myTemplate = $field->ActiveTemplate();
 
@@ -29,7 +30,7 @@ $dom_id = $field->DomInputID();
         <span class="input-group-addon">
 
             <img id="img_<?= $dom_id ?>" name="img_<?= $field->Name ?>" style="cursor:pointer;"
-                 src="<?= THEME ?>images/cal.gif" alt="<?= ClickHereToPickUpDate ?>" />
+                 src="<?= THEME ?>images/cal.gif" alt="<?= Lang::Trans("semiorbit::form.click_here_to_pick_up_date") ?>" />
 
         </span>
 

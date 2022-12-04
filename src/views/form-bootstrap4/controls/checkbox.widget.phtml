@@ -15,7 +15,7 @@ $checked_html = (bool) $field->Value == true?  'checked value="1"' : 'value="0"'
 				<input type="checkbox"
 					    <?= $field->InputAttrs() ?>   title="<?=  htmlspecialchars( $field->LabelText() ) ?>"
 					<?= $checked_html ?> onclick="if(this.checked){this.value='1';}else{this.value='0';}" />
-				&nbsp; <?= htmlspecialchars( $field->LabelText() ) ?>
+				&nbsp; <?=  $field->LabelText() ?>
 			</label>
 		</div>
 

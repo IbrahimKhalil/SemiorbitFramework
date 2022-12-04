@@ -282,13 +282,13 @@ class Select extends Field
 
                 $opt_text =  $this->_Options[$value];
 
-                $opt_list[$value] = !empty($format) ? sprintf($format, htmlspecialchars($this->Trans($opt_text)))
+                $opt_list[$value] = !empty($format) ? sprintf($format, ($this->Trans($opt_text)))
 
-                    : htmlspecialchars($this->Trans($opt_text));
+                    : ($this->Trans($opt_text));
 
             } else {
 
-                $opt_list[$value] = htmlspecialchars($this->FKeyText($value));
+                $opt_list[$value] = $this->FKeyText($value);
 
             }
 
@@ -329,7 +329,12 @@ class Select extends Field
 
     public function Option($key)
     {
-        return $this->_Options[$key];
+        return $this->_Options[$key] ?? null;
+    }
+
+    public function OptionText($key)
+    {
+        return $this->Trans($this->Option($key));
     }
 
 

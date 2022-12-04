@@ -12,6 +12,7 @@ namespace Semiorbit\Output;
 
 use Semiorbit\Base\AppManager;
 use Semiorbit\Base\AppService;
+use Semiorbit\Config\Config;
 use Semiorbit\Support\Path;
 use Semiorbit\Support\JavaScriptPacker;
 
@@ -31,8 +32,11 @@ class Output
 
 
     /**
-     * Combine multiple css or js files into one file.
-     *
+     * Combine multiple css or js files into one file. <br>
+     * <b>This will automatically rebuild output if any of its content files has been changed.</b> <br><br>
+     * <u>BUT  -to optimize perferormance in production-  it will NOT rebuild or check for changes when <b>debug mode</b> in environment (.env file) is FALSE unless output file was not found! </u><br>
+     * To force rebuild when debug mode is false explicitly call ->Build() method. 
+     * 
      * @param String $output Destination file name relative to selected theme.
      * @param array $files Array of files to be included in the pack.<br/> "<b>Add</b>" method could be used later too.
      * @param string|null $theme
@@ -138,9 +142,13 @@ class Output
 
     public function __toString()
     {
-        $this->Buid();
+
+        if (Config::DebugMode() || ! file_exists($this->OutputPath())) 
+            
+            $this->Buid();
 
         return $this->OutputUrl();
+        
     }
 
     public static function Minify($fp, $theme = null, $return_url = true)
@@ -245,7 +253,7 @@ class Output
 		$buffer = str_replace(array("\r\n","\r","\t","\n",'  ','    ','     '), '', $buffer);
 
 		/* remove other spaces before/after ) */
-		$buffer = preg_replace(array('(( )+\))','(\)( )+)'), ')', $buffer);
+		$buffer = preg_replace(array('(( )+\))','(\)( )+(^[-+*/]))'), ')', $buffer);
 		
 		return $buffer;
 	}

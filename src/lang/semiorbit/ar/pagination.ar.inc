@@ -1,5 +1,5 @@
 <?php
-return array(
+return [
 
     "next"      =>  "التالي",
 
@@ -17,4 +17,4 @@ return array(
 
     "of"        =>  "من"
 
-);
+];

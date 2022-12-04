@@ -66,7 +66,7 @@ class DataSet extends Model
 
             if ($ds->IsNew()) {
 
-                if ($ds->Policy()->AllowsRead()) {
+                if ($ds->Policy()->AllowsCreate()) {
 
                     $res = $ds->InsertRow();
 
@@ -146,7 +146,7 @@ class DataSet extends Model
 
         foreach ($this->Fields() as $k => $fld) :
 
-            $res[$k] = $fld;
+            if ($fld->Err) $res[$k] = $fld;
 
         endforeach;
 
@@ -199,14 +199,14 @@ class DataSet extends Model
      * @return $this
      */
 
-    public static function FilterBy($where, $order_by = null)
+    public static function FilterBy($where, $order_by = null, $params = [])
     {
 
         /** @var DataSet $myDataSet */
 
         $myDataSet = new static;
 
-        $myDataSet->Table()->Where($where);
+        $myDataSet->Table()->Where($where)->WithParams($params);
 
         if ($order_by) $myDataSet->Table()->OrderBy($order_by);
 
@@ -268,6 +268,26 @@ class DataSet extends Model
         $myDataSet = new static;
 
         $myDataSet->Table()->Load();
+
+        return $myDataSet;
+
+    }
+
+    /**
+     * Create an instance, and load all rows in order (from database)
+     *
+     * @param $order_by string
+     * @return $this returns dataset with selected row loaded, or new instance
+     */
+
+    public static function LoadAllBy($order_by)
+    {
+
+        /** @var DataSet $myDataSet */
+
+        $myDataSet = new static;
+
+        $myDataSet->Table()->OrderBy($order_by)->Load();
 
         return $myDataSet;
 
@@ -504,7 +524,7 @@ class DataSet extends Model
      * @return static
      */
 
-    public static function LoadFrom($selector = null)
+    public static function LoadFrom($selector = null, $params = [])
     {
 
         /** @var $myDataSet DataSet */
@@ -513,7 +533,11 @@ class DataSet extends Model
 
         if ($selector instanceof Table) $myDataSet->UseTable($selector);
 
-        else $myDataSet->Table()->From( $selector === null ? $myDataSet->TableName() : $selector )->UseDataSet( $myDataSet );
+        else $myDataSet->Table()->From( $selector === null ? $myDataSet->TableName() : $selector )
+            
+            ->WithParams($params)
+            
+            ->UseDataSet( $myDataSet );
 
         return $myDataSet;
 

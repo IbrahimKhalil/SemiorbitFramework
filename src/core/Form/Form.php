@@ -345,7 +345,7 @@ HEREHTML;
 
 		if ( is_empty( static::Clipboard( $form . ':token_time' ) )) {
 
-			static::Clipboard( $form . ':input_token_time', isset ( $_SESSION[ $form . ':token_time' ] ) ? $_SESSION[ $form . ':token_time' ] : time() );
+			static::Clipboard( $form . ':input_token_time', $_SESSION[$form . ':token_time'] ?? time());
 
 			static::Clipboard( $form . ':token_time',  time() );
 
@@ -441,7 +441,7 @@ HEREHTML;
     }
 	
 	
-	public static function Submit($submit_label = Save, $flush_output = true, $submit_id = null)
+	public static function Submit($submit_label = SAVE, $flush_output = true, $submit_id = null)
 	{
 	
 		$pms['submit_label'] = $submit_label;
@@ -473,7 +473,7 @@ HEREHTML;
 	
 	}
 	
-	public static function Render($flush_output = true, $form_options = array(), \Closure $on_submit)
+	public static function Render($flush_output = true, $form_options = array(), \Closure $on_submit = null)
 	{
 		if ( ! static::ActiveDataSet() || static::IsOpen() ) return false;
 		
@@ -502,7 +502,7 @@ HEREHTML;
 	
 		$myDataSet->onRenderComplete();
 
-        if ( static::IsSubmit() ) {
+        if ( static::IsSubmit() && $on_submit ) {
 
             $on_submit( $myDataSet, $html_output );
 
@@ -876,10 +876,12 @@ HEREHTML;
 	//-------FORM::Expire Time-----------------------------------------------------------------------
 	
 	public static function setExpireTime($value = null) {
-	
+
+        $int_value = intval($value);
+
 		if ( ! static::IsOpen() )
 	
-			static::$_ExpireTime = (  is_empty( $value ) || is_empty( intval( $value ) ) ) ? 86400 : intval( $value );
+			static::$_ExpireTime = (  is_empty( $value ) || is_empty( $int_value ) ) ? 86400 : $int_value;
 	
 		return static::FormInstance();
 	
@@ -891,7 +893,7 @@ HEREHTML;
 	
 	public static function setHoneypotsMax($value = null) {
 		
-		if ( ! is_int( Config::HoneypotsMax() ) )  Config::setValueOf(Config::FORMS__HONEYPOTS_MAX, 3);
+		if ( ! is_int( Config::HoneypotsMax() ) )  Config::setValueOf(Config::GROUP__FORMS, Config::FORMS__HONEYPOTS_MAX, 3);
 	
 		if ( ! static::IsOpen() )
 			
@@ -907,7 +909,7 @@ HEREHTML;
 	
 	public static function setHoneypotsLabels($value = array()) {
 		
-		if ( ! is_array( Config::HoneypotsLabels() ) )  Config::setValueOf(Config::FORMS__HONEYPOTS_LABELS, []);
+		if ( ! is_array( Config::HoneypotsLabels() ) )  Config::setValueOf(Config::GROUP__FORMS, Config::FORMS__HONEYPOTS_LABELS, []);
 
 		static::$_HoneypotsLabels = (  is_empty( $value ) || is_array( $value ) ) ? Config::HoneypotsLabels() : $value;
 	
@@ -920,9 +922,9 @@ HEREHTML;
 
     //-------FORM::Submit Label-----------------------------------------------------------------------
 
-    public static function setSubmitLabel($value = Save) {
+    public static function setSubmitLabel($value = SAVE) {
 
-        static::$_SubmitLabel = (  is_empty( $value ) ) ? Save : $value;
+        static::$_SubmitLabel = (  is_empty( $value ) ) ? SAVE : $value;
 
         return static::FormInstance();
 

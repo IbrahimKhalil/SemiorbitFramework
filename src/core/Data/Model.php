@@ -558,10 +558,15 @@ class Model
 
         if ( $res == Msg::DBOK ) {
 
-            if ( $this->ID->offsetExists('AutoIncrement') &&  $this->ID->AutoIncrement )
+            if ( $this->ID->offsetExists('AutoIncrement') &&  $this->ID->AutoIncrement ) {
 
-                $this->ID->Value = $this->ActiveConnection()->LastInsertId();
+                $inserted_id = $this->ActiveConnection()->LastInsertId();
 
+                $this->RenamwUploadedFiles($this->ID->Value, $inserted_id);
+
+                $this->ID->Value = $inserted_id;
+
+            }
 
             $this->MarkAsNew( false );
 
@@ -626,8 +631,6 @@ class Model
 
             /**@var $fld Field*/
 
-            if ( isset( $fld[Field::AUTO_INCREMENT] ) && $fld[Field::AUTO_INCREMENT] ) continue;
-
             if ($fld->ReadOnly) continue;
 
 
@@ -689,6 +692,13 @@ class Model
 
         return Msg::UPLOAD_OK;
 
+    }
+
+    public function RenamwUploadedFiles($current_id, $new_id)
+    {
+        foreach ($this->Fields() as $k => $field)
+
+            if ($field instanceof File) $field->Rename($current_id, $new_id);
     }
 
 

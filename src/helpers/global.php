@@ -11,6 +11,7 @@
 use Semiorbit\Base\Application;
 use Semiorbit\Base\AppManager;
 use Semiorbit\Config\Config;
+use Semiorbit\Http\Url;
 
 
 function run($uri = '', $flush_output = true)
@@ -58,6 +59,11 @@ function trans($key, $pms = [], $count = 0, $default = ':key')
 function project_title()
 {
     return AppManager::CallMainApp('Title');
+}
+
+function url(string $path = '', array $params = null) : string
+{
+    return $params ? Url::Build($path, $params) : BASE_URL . LANG . '/' . $path;
 }
 
 //DATABASE
@@ -171,11 +177,13 @@ function html_email($to, $subject, $msg, $from = "")
     $headers .= "MIME-Version: 1.0\r\n";
     $headers .= "Content-type: text/html; charset=utf-8\r\n";
 
-    if (@mail($to, $subject, $msg, $headers)) {
+    if (mail($to, $subject, $msg, $headers)) {
         return true;
     } else {
         return false;
     }
+    
+    
 
 }
 

@@ -49,14 +49,12 @@ final class Config extends DefaultConfig
 
 	final public static function LoadDefaultGroup($config_group)
     {
-        /** @noinspection PhpIncludeInspection */
         return include FW . "core/Config/Default/{$config_group}.inc";
     }
     
     
     final public static function LoadGroup($config_group)
     {
-        /** @noinspection PhpIncludeInspection */
         return include Application::ConfigPath() . "{$config_group}.inc";
     }
 
@@ -98,10 +96,11 @@ final class Config extends DefaultConfig
      * @param $config_group
      * @param $config_key
      * @param null $fallback
-     * @return mixed
+     * @return mixed Returns config value, or <b>abort</b> application if not config key found.
      */
     final public static function ValueOf($config_group, $config_key, $fallback = null)
     {
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         return self::$__Config[$config_group][$config_key] ??
 
             ($fallback ?: self::MissingConfig($config_group, $config_key));

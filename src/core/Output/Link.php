@@ -116,7 +116,7 @@ class Link extends Widget
 
     public function DefaultText()
     {
-        $this->Text = $this->_DefaultText ?: View;
+        $this->Text = $this->_DefaultText ?: VIEW;
 
         return $this;
     }

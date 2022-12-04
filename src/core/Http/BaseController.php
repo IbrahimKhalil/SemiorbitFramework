@@ -66,7 +66,7 @@ abstract class BaseController extends Controller
     public $ModelPath = '';
 
 
-    const DataSet = null;
+    const DataSet = 0;
 
 
     use ClipboardTrait {

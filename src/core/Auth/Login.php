@@ -14,6 +14,7 @@ use Semiorbit\Db\DB;
 use Semiorbit\Form\Form;
 use Semiorbit\Http\Controller;
 use Semiorbit\Http\Url;
+use Semiorbit\Translation\Lang;
 
 
 class Login extends Controller
@@ -134,7 +135,7 @@ class Login extends Controller
         }
 
 
-		return $this->View->UseView('login.index')->With('msg', Login_Failed);
+		return $this->View->UseView('login.index')->With('msg', Lang::Trans("semiorbit::form.login_failed"));
 
 	}
 

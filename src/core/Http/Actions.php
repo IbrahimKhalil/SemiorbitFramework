@@ -66,10 +66,9 @@ class Actions extends AltaArray
 
     public function UseArray($array)
     {
-        $array = static::PrepareActions($array);
+        $array = static::PrepareActions($array, $this->ActiveController()->ControllerName);
 
         return parent::UseArray($array);
-
     }
 
     public function Define($array)
@@ -217,13 +216,13 @@ class Actions extends AltaArray
 
     }
 
-    public static function NormalizeAlias($alis)
+    public static function NormalizeAlias($alias)
     {
-        $key = 'A:' . $alis;
+        $key = 'A:' . $alias;
 
         if (!is_empty(self::Clipboard($key))) return self::Clipboard($key);
 
-        $str = strtolower(str_replace('-', '', $alis));
+        $str = strtolower(str_replace('-', '', $alias));
 
         return self::Clipboard($key, $str);
     }
@@ -359,7 +358,7 @@ class Actions extends AltaArray
 
     public function Show()
     {
-        return $this->Action('show');
+        return $this->Action('view');
     }
 
     /**
@@ -430,15 +429,17 @@ class Actions extends AltaArray
 
         }
 
-        return Application::Abort(401, "Unable to call action.");
+        Application::Abort(401, "Unable to call action.");
+
+        return null;
 
     }
 
 
-    public static function PrepareActions($actions)
+    public static function PrepareActions($actions, $controller = null)
     {
 
-        $hash = md5(json_encode($actions));
+        $hash = md5($controller . json_encode($actions));
 
         if (self::Clipboard($hash)) return self::Clipboard($hash);
 

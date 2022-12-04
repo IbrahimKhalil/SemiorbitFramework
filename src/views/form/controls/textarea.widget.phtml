@@ -11,7 +11,7 @@ $myTemplate = $field->ActiveTemplate();
 
 	<?= $myTemplate->OpenInput( $field ) ?>
 
-		<textarea  class="<?= $field->InputDefaultCssClass() ?>" cols="40" rows="8"  <?= $field->InputAttrs() ?>
+		<textarea  class="<?= $field->InputDefaultCssClass() ?>"   <?= $field->InputAttrs() ?> cols="40" rows="8"
 
                    title="<?=  htmlspecialchars( $field->LabelText() ) ?>" ><?=  htmlspecialchars( $field->Value )  ?></textarea>
 

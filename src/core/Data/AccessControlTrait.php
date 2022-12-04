@@ -10,7 +10,6 @@ namespace Semiorbit\Data;
 
 
 use Semiorbit\Auth\AccessControlPolicy;
-use Semiorbit\Auth\Auth;
 use Semiorbit\Auth\GenericPolicy;
 use Semiorbit\Auth\GenericUser;
 

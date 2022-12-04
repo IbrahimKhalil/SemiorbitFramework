@@ -4,7 +4,7 @@
 namespace Semiorbit\Cache;
 
 
-class Cache
+class Cache implements CacheInterface
 {
 
     protected static $__CacheProvider;

@@ -20,10 +20,13 @@ use Semiorbit\Translation\Lang;
 class ScaffoldBase extends ScaffoldBaseProvider
 {
 
+    private ?Action $_ActiveAction = null;
+    
+    
     public function Index()
     {
 
-        Auth::Allow( $this->ActiveController()->Request->Action['allow'] );
+        Auth::Allow( $this->ActiveAction()['allow'] );
 
         $this->ActiveController()->TableView();
 
@@ -35,7 +38,7 @@ class ScaffoldBase extends ScaffoldBaseProvider
         if ( ! $this->ActiveController()->DataSet instanceof DataSet )  Application::Abort(404);
 
 
-        Auth::Allow( $this->ActiveController()->Request->Action['allow'] );
+        Auth::Allow( $this->ResetActiveAction()['allow'] );
 
         $this->ActiveController()->DataSet->Read($this->ActiveController()->Request->ID);
 
@@ -56,24 +59,29 @@ class ScaffoldBase extends ScaffoldBaseProvider
 
         if ($this->ActiveController()->DataSet->IsNew()) {
 
-            $ttl =  $this->ActiveController()->Request->Action['title'] ?: Lang::Trans("{$this->ActiveController()->PackagePrefix}{$this->ActiveController()->ControllerName}.__create");
+            $ttl =  $this->ActiveAction()['title'] ?: Lang::Trans("{$this->ActiveController()->PackagePrefix}{$this->ActiveController()->ControllerName}.__create");
 
         } else {
 
-            $ttl = $this->ActiveController()->Request->Action['title'] ?: Lang::Trans("{$this->ActiveController()->PackagePrefix}{$this->ActiveController()->ControllerName}.__edit");
+            $ttl = $this->ActiveAction()['title'] ?: Lang::Trans("{$this->ActiveController()->PackagePrefix}{$this->ActiveController()->ControllerName}.__edit");
 
         }
 
 
-        $content[] = Render::OpenBox($ttl, $this->ActiveController()->Request->Action['box'],
+        $content[] = Render::OpenBox($ttl, $this->ActiveAction()['box'],
 
-            isset($this->ActiveController()->Request->Action['box_id']) ? $this->ActiveController()->Request->Action['box_id'] : "", false);
+            isset($this->ActiveAction()['box_id']) ? $this->ActiveAction()['box_id'] : "", false)
+            
+                ->WithParams($this->ActiveAction()->Params());
 
 
         $content[] = $this->ActiveController()->DataSet->RenderForm(false, $this->FormOptions());
 
 
-        $content[] = Render::CloseBox($this->ActiveController()->Request->Action['box'], false);
+        $content[] = Render::CloseBox($this->ActiveAction()['box'], false)
+
+            ->WithParams($this->ActiveAction()->Params());
+        
 
         $content[] = $this->DisplayCP(false, $this->ActiveController()->DataSet->IsNew() ? "" : $this->ActiveController()->DataSet->ID->Value);
 
@@ -90,7 +98,7 @@ class ScaffoldBase extends ScaffoldBaseProvider
         if ( ! $this->ActiveController()->DataSet instanceof DataSet )  Application::Abort(404);
 
 
-        Auth::Allow( $this->ActiveController()->Request->Action['allow'] );
+        Auth::Allow( $this->ResetActiveAction()['allow'] );
 
         $id = $this->ActiveController()->DataSet->ID->FilterValue($this->ActiveController()->Request->ID);
 
@@ -100,17 +108,21 @@ class ScaffoldBase extends ScaffoldBaseProvider
 
         if ($this->ActiveController()->DataSet->IsNew()) { Url::GotoHomePage('?msg=DELETE_ERR_NO_ITEM'); return; }
 
-        $ttl = $this->ActiveController()->Request->Action['title'] ?: Lang::Trans($this->ActiveController()->PackagePrefix . Str::ParamCase($this->ActiveController()->ControllerName) . ".__delete");
+        $ttl = $this->ActiveAction()['title'] ?: Lang::Trans($this->ActiveController()->PackagePrefix . Str::ParamCase($this->ActiveController()->ControllerName) . ".__delete");
 
         if ( $this->ActiveController()->DataSet->Policy()->DeniesDelete() ) Application::Abort(401);
 
-        $content[] = Render::OpenBox($ttl, $this->ActiveController()->Request->Action['box'],
+        $content[] = Render::OpenBox($ttl, $this->ActiveAction()['box'],
 
-            isset($this->ActiveController()->Request->Action['box_id']) ? $this->ActiveController()->Request->Action['box_id'] : "", false);
+            isset($this->ActiveAction()['box_id']) ? $this->ActiveAction()['box_id'] : "", false)
+        
+                ->WithParams($this->ActiveAction()->Params());
 
         $content[] = $this->DisplayDelMsg($this->ActiveController()->DataSet->ID['value'], false);
 
-        $content[] = Render::CloseBox($this->ActiveController()->Request->Action['box'], false);
+        $content[] = Render::CloseBox($this->ActiveAction()['box'], false)
+
+            ->WithParams($this->ActiveAction()->Params());
 
         $content[] = $this->DisplayCP(false, $this->ActiveController()->DataSet->IsNew() ? "" : $this->ActiveController()->DataSet->ID['value']);
 
@@ -127,7 +139,7 @@ class ScaffoldBase extends ScaffoldBaseProvider
         if ( ! $this->ActiveController()->DataSet instanceof DataSet )  Application::Abort(404);
 
 
-        Auth::Allow( $this->ActiveController()->Request->Action['allow'] );
+        Auth::Allow( $this->ResetActiveAction()['allow'] );
 
         //$this->ListView();
         $id = filter_var($this->ActiveController()->Request->ID);
@@ -136,7 +148,15 @@ class ScaffoldBase extends ScaffoldBaseProvider
 
         if ( $this->ActiveController()->DataSet->Policy()->DeniesRead() ) Application::Abort(401);
 
-        $this->ActiveController()->View->With('id', $id)->Render();
+        $this->ActiveController()
+
+            ->View
+
+            ->With('id', $id)
+
+            ->WithParams($this->ActiveAction()->Params())
+
+            ->Render();
 
     }
 
@@ -174,13 +194,15 @@ class ScaffoldBase extends ScaffoldBaseProvider
         if ( ! $this->ActiveController()->DataSet instanceof DataSet )  Application::Abort(404);
 
 
-        Auth::Allow( $this->ActiveController()->Request->Action['allow'] );
+        Auth::Allow( $this->ResetActiveAction()['allow'] );
 
-        $ttl = $this->ActiveController()->Request->Action['title'] ?: $this->ActiveController()->ControllerTitle;
+        $ttl = $this->ActiveAction()['title'] ?: $this->ActiveController()->ControllerTitle;
 
-        $content[] = Render::OpenBox($ttl, $this->ActiveController()->Request->Action['box'],
+        $content[] = Render::OpenBox($ttl, $this->ActiveAction()['box'],
 
-            isset($this->ActiveController()->Request->Action['box_id']) ? $this->ActiveController()->Request->Action['box_id'] : "", false);
+            isset($this->ActiveAction()['box_id']) ? $this->ActiveAction()['box_id'] : "", false)
+
+                ->WithParams($this->ActiveAction()->Params());
 
         /*
                  * TODO: TABLE ORDER AND SEARCH TOOLS
@@ -220,7 +242,9 @@ class ScaffoldBase extends ScaffoldBaseProvider
 
         $content[] = $this->ActiveController()->DataSet->ActiveTableView()->Render(false);
 
-        $content[] = Render::CloseBox($this->ActiveController()->Request->Action['box'], false);
+        $content[] = Render::CloseBox($this->ActiveAction()['box'], false)
+
+                            ->WithParams($this->ActiveAction()->Params());
 
         $content[] = $this->DisplayCP(false);
 
@@ -310,7 +334,9 @@ class ScaffoldBase extends ScaffoldBaseProvider
     public function DisplayCP($flush_output = true, $id = '', $extra_pms = '', $pms = array())
     {
 
-        if (!$this->ActiveController()->Request->Action['cp']) return '';
+        if (!$this->ActiveAction()['cp']) return '';
+        
+        if (!$pms) $pms = $this->ActiveAction()->Params();
 
         $pms['extra_pms'] = $extra_pms ?: Url::Params();
 
@@ -325,7 +351,7 @@ class ScaffoldBase extends ScaffoldBaseProvider
 
         $pms['CTR_TITLE'] = $this->ActiveController()->ControllerTitle;
 
-        $pms['CTR_ACTION'] = $this->ActiveController()->Request->Action->Alias;
+        $pms['CTR_ACTION'] = $this->ActiveAction()->Alias;
 
 
         if ( ! empty($id) && isset( $this->ActiveController()->DataSet->Title->Value ) ) {
@@ -334,14 +360,28 @@ class ScaffoldBase extends ScaffoldBaseProvider
 
         }
 
-        $view_path = View::FindPath( Str::ParamCase( $this->ActiveController()->ControllerName ) . '.cp' );
+        $view_path = View::FindPath(
 
-        $view = ($view_path) ? Str::ParamCase( $this->ActiveController()->ControllerName ) : 'default';
+            $view_name = ($this->ActiveController()->PackagePrefix . Str::ParamCase( $this->ActiveController()->ControllerName ) . '.cp') );
 
-        $cp_output = Render::View( $view . '.cp', $pms, $flush_output );
+
+        $cp_output = Render::View( ($view_path ? $view_name : 'default.cp'), $pms, $flush_output );
 
         return $cp_output;
 
+    }
+    
+    
+    private function ActiveAction() : Action
+    {
+        return $this->_ActiveAction ?:
+            
+            $this->_ActiveAction = $this->ActiveController()->Request->Action;
+    }
+
+    private function ResetActiveAction() : Action
+    {
+        return $this->_ActiveAction = $this->ActiveController()->Request->Action;
     }
 
 

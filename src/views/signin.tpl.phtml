@@ -1,5 +1,6 @@
 <?php
 use Semiorbit\Output\Render;
+use Semiorbit\Translation\Lang;
 
 Render::OpenBox(sign_in, array('signin', 'panel'));
 ?>
@@ -14,12 +15,12 @@ Render::OpenBox(sign_in, array('signin', 'panel'));
 </tr>
 <tr>
 	<td>
-		<form id="loginfrm" action="<?=BASE_URL?><?=LANG?>/signin/reg" method="POST" style="margin:0px; padding:0px;" target="_parent">
-		<div class="field_label_n"><?=user_name?></div>
+		<form id="loginfrm" action="<?= BASE_URL . LANG . '/signin/reg' ?>" method="POST" style="margin:0; padding:0;" target="_parent">
+		<div class="field_label_n"><?= Lang::Trans("semiorbit::form.user_name") ?></div>
 		<div class="txtfld_n"><input id="txtusr" name="txtusr" type="text" /></div>
-		<div class="field_label_n"><?=password?></div>
+		<div class="field_label_n"><?= Lang::Trans("semiorbit::form.password") ?></div>
 		<div class="txtfld_n"><input id="txtpass" name="txtpass" type="password"  /></div>
-		<div style="text-align:center; margin:10px; margin-left:10px;margin-bottom:0px;clear:both;"><input id="doit" style="cursor:pointer;" type="submit" value="<?=sign_in?>" /></div>
+		<div style="text-align:center; margin:10px; margin-bottom:0;clear:both;"><input id="doit" style="cursor:pointer;" type="submit" value="<?= Lang::Trans("semiorbit::form.sign_in") ?>" /></div>
 		</form>
 	</td>
 </tr>

@@ -13,6 +13,7 @@ use Semiorbit\Config\Config;
 use Semiorbit\Http\Controller;
 use Semiorbit\Http\Request;
 use Semiorbit\Support\Str;
+use Semiorbit\Translation\Lang;
 
 
 class View extends ViewBase
@@ -34,6 +35,8 @@ class View extends ViewBase
 
     protected $_RequestLayoutList;
 
+    protected $_PkgViewRoot;
+
 
 
 
@@ -49,14 +52,13 @@ class View extends ViewBase
 
         $request = $this->ActiveRequest();
 
-        $view_root = Str::ParamCase( Controller::Name( $request->Controller->Class ) );
 
         $view_sub = ( ! empty( $request->Action['view'] ) ) ? $request->Action['view'] :
 
                      ( ( isset ( $request->Action['method'] ) ) ? Str::ParamCase( $request->Action['method'] ) : null );
 
 
-        $view_name = $view_sub ? $request->Class->PackagePrefix . $view_root . '.' . $view_sub : $pkg . $view_root;
+        $view_name = $view_sub ? $this->PkgViewRoot() . $view_sub : $this->PkgViewRoot();
 
         $this->UseView( $view_name );
 
@@ -99,7 +101,6 @@ class View extends ViewBase
 
         if ( $path )
 
-            /** @noinspection PhpIncludeInspection */
             include "{$path}";
 
         else
@@ -145,6 +146,8 @@ class View extends ViewBase
     public function UseRequest( Request $request )
     {
         $this->_Request = $request;
+
+        $this->_PkgViewRoot = null;
 
         return $this;
     }
@@ -341,6 +344,38 @@ class View extends ViewBase
         return $this->_Layout;
     }
 
+
+    protected function PkgViewRoot()
+    {
+
+        if ($this->_PkgViewRoot !== null) return $this->_PkgViewRoot;
+
+        $request = $this->ActiveRequest();
+
+        $view_root = Str::ParamCase( Controller::Name( $request->Controller->Class ) );
+
+        $pkg = $request->Class->PackagePrefix;
+
+        return $this->_PkgViewRoot = ($pkg . $view_root . '.');
+
+    }
+
+
+    /**
+     * Trans function will automatically add package and current view root to translation key<br/>
+     * (key) => (pkg::view_root.key)
+     *
+     * @param $key
+     * @param array $pms
+     * @param int $count
+     * @param string $default
+     * @return mixed|string
+     */
+
+    public function Trans($key, $pms = [], $count = 0, $default = ':key')
+    {
+        return Lang::Trans($this->PkgViewRoot() . $key, $pms, $count, $default);
+    }
 
 
 }

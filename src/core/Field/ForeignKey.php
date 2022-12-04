@@ -220,9 +220,9 @@ trait ForeignKey
 
         } else {
 
-            return $this->_Cache_FKeyLoadedItems[$key] = $this->ActiveConnection()
+            return $this->_Cache_FKeyLoadedItems[$key] = htmlspecialchars($this->ActiveConnection()
 
-                ->Find("SELECT {$this->FKeyTextFieldName} FROM {$this->FKeyTable} WHERE {$this->FKeyValueFieldName} = '{$key}' ");
+                ->Find("SELECT {$this->FKeyTextFieldName} FROM {$this->FKeyTable} WHERE {$this->FKeyValueFieldName} = '{$key}' "));
 
         }
 

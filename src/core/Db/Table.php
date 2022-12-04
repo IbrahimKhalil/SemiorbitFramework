@@ -456,13 +456,13 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
 
         if ( ! $count_query  ) {
 
-            $totalResult = $this->ActiveConnection()->Table( static::ClipLimit( $this->_QueryString ) );
+            $totalResult = $this->ActiveConnection()->Table( static::ClipLimit( $this->_QueryString ) )->WithParams($this->_Params);
 
             $total = $totalResult->RowCount();
 
         } else {
 
-            $total = $this->ActiveConnection()->Find( $count_query );
+            $total = $this->ActiveConnection()->Find( $count_query, $this->_Params );
 
         }
 

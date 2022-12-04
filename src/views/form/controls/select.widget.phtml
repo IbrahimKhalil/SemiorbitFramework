@@ -38,7 +38,7 @@ $myTemplate = $field->ActiveTemplate();
 
             /** @var Semiorbit\Field\Option $opt */
 
-            $option_html = $field->OptionHtml($opt_key, $opt->Value, $opt->EnableTextFormatting, $opt->Disabled);
+            $option_html = $field->OptionHtml($opt_key, $field->Trans($opt->Value), $opt->EnableTextFormatting, $opt->Disabled);
 
             if ($opt->AtBottom) $bottom_options .= $option_html . PHP_EOL;
 

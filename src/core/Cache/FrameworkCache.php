@@ -4,11 +4,12 @@
 namespace Semiorbit\Cache;
 
 
-class FrameworkCache extends Cache
+class FrameworkCache extends Cache implements CacheInterface
 {
 
     const FWK_CACHE_DIR = 'var/cache/fwk/';
 
+    protected static $__CacheProvider;
 
 
     public static function ActiveCacheProvider()
@@ -17,7 +18,7 @@ class FrameworkCache extends Cache
 
             static::$__CacheProvider = static::UseCacheProvider(
 
-                new ManagedFileCache(self::FWK_CACHE_DIR)
+                new ManagedFileCacheProvider(self::FWK_CACHE_DIR)
 
             );
     }

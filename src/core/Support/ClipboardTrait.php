@@ -29,22 +29,26 @@ trait ClipboardTrait
 
     public static function &Clipboard($key = null, $value = null, $clear = Clipboard::KEEP)
     {
-        static $_Clipboard = array();
 
-        if ($value == null && $clear == null) return $_Clipboard[$key];
+        static $_Clipboard = [];
 
-        if ($value != null && !is_empty($key)) $_Clipboard[$key] = $value;
+        $instance = static::class; // for PHP 8.1
 
-        if ($clear === Clipboard::SET_NULL) $_Clipboard[$key] = null;
+        if ($value == null && $clear == null) return $_Clipboard[$instance][$key];
 
-        if ($clear === Clipboard::CLEAR) unset($_Clipboard[$key]);
+        if ($value != null && !is_empty($key)) $_Clipboard[$instance][$key] = $value;
 
-        if ($clear === Clipboard::CLEAR_ALL) $_Clipboard = array();
+        if ($clear === Clipboard::SET_NULL) $_Clipboard[$instance][$key] = null;
 
-        if ($key === null) return $_Clipboard;
+        if ($clear === Clipboard::CLEAR) unset($_Clipboard[$instance][$key]);
+
+        if ($clear === Clipboard::CLEAR_ALL) $_Clipboard[$instance] = array();
+
+        if ($key === null) return $_Clipboard[$instance];
 
 
-        return $_Clipboard[$key];
+        return $_Clipboard[$instance][$key];
+
     }
 
 }

@@ -9,16 +9,25 @@ use Semiorbit\Support\Path;
 
 
 
-class ManagedFileCache implements FileCacheProviderInterface
+class FileCacheProvider implements FileCacheProviderInterface
 {
 
     const DEFAULT_CACHE_DIR = 'var/cache/';
 
     protected $_CachePath;
 
+    protected $_Mode;
 
-    public function __construct($default_cache_dir = self::DEFAULT_CACHE_DIR)
+
+    const MODE_SERIALIZE = 0;
+
+    const MODE_VAR_EXPORT = 1;
+
+
+    public function __construct($mode = self::MODE_SERIALIZE, $default_cache_dir = self::DEFAULT_CACHE_DIR)
     {
+        $this->_Mode = $mode;
+
         $this->UseCachePath(Application::BasePath() . $default_cache_dir);
     }
 
@@ -49,14 +58,18 @@ class ManagedFileCache implements FileCacheProviderInterface
 
     public function Store($key, $value, $seconds = 0)
     {
-        file_put_contents($this->Path($key), $value);
+        if ($this->_Mode == self::MODE_VAR_EXPORT) return $this->StoreVar($key, $value);
+
+        file_put_contents($this->Path($key), serialize($value));
 
         return $this;
     }
 
     public function Read($key)
     {
-        return file_get_contents("{$this->Path($key)}");
+        if ($this->_Mode == self::MODE_VAR_EXPORT) return $this->ReadVar($key);
+
+        return unserialize(file_get_contents("{$this->Path($key)}"));
     }
 
     public function Clear($key = null)
@@ -78,7 +91,7 @@ class ManagedFileCache implements FileCacheProviderInterface
 
     public function StoreVar($key, $value)
     {
-        return $this->Store($key . '.php', '<?php return ' . var_export($value, true) . ';');
+        return file_put_contents($this->Path("{$key}.php"), '<?php return ' . var_export($value, true) . ';');
     }
 
 

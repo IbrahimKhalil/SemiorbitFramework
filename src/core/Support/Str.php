@@ -154,7 +154,7 @@ class Str
 
         $lang = current(array_reverse(explode("_", $str)));
 
-        if (in_array($lang, Config::Languages())) {
+        if (in_array($lang, array_merge(Config::Languages(), ['l1', 'l2', 'l3', 'l4']))) {
 
             $str = rtrim($str, "_" . $lang);
 

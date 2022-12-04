@@ -30,14 +30,23 @@ class Console
 
             /** @var Command $command */
 
-            $output = $command->Run();
+            try {
+
+                $output = $command->Run();
+
+            } catch (\Exception $exception) {
+
+               $command->ExceptionHandle($exception);
+               
+            }
 
         } else
 
             Application::Abort(404);
 
 
-        echo $output;
+        echo is_string($output) ? $output : print_r($output);
+        
     }
 
 

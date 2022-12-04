@@ -35,6 +35,14 @@ class Router
     }
 
 
+    /**
+     * @param $scope
+     * @param $pattern
+     * @param $verb
+     * @param $target array|callable [Controller, Action] or callabel
+     * @return ActionRoute
+     */
+
     public static function RegisterAction($scope, $pattern, $verb, $target)
     {
 
@@ -122,7 +130,7 @@ class Router
     public static function Find($uri, $verb)
     {
 
-        $controller = $action = $params = $callable = null;
+        $controller = $action = $params = $callable = $pattern = null;
 
         $path = Request::Path2Array($uri);
 
@@ -142,6 +150,8 @@ class Router
                     $action = $actionRoute->Action();
 
                     $callable = $actionRoute->Callable();
+
+                    $pattern = implode("/", $actionRoute->Params());
 
                     if (isset($path[0])) unset($path[0]);
 
@@ -169,7 +179,7 @@ class Router
 //            $controller = Config::MainPage();
 
 
-        return [$controller, $action, implode('/', $path), $params, $callable];
+        return [$controller, $action, implode('/', $path), $params, $callable, $pattern];
 
     }
 

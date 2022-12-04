@@ -291,6 +291,23 @@ class Url
 
     }
 
+    public static function Build(string $path, array $params = []) : string
+    {
+
+        $path = starts_with($path, 'http') ? $path : BASE_URL . LANG . '/' . $path;
+
+        if ($params) {
+
+            $qstr = [];
+
+            foreach($params as $k =>  $v) $qstr[] = ("{$k}=" . urlencode($v));
+
+            return "{$path}?" . implode("&", $qstr);
+
+        } else return $path;
+
+    }
+
 
     public static function DecodeUnicodeUrl($str)
     {

@@ -119,7 +119,7 @@ class Render
      * @return Link
      */
 
-    public static function Link($url, $text = View, $roles = array())
+    public static function Link($url, $text = VIEW, $roles = array())
     {
        return Link::Load()->setUrl($url)->setText($text)->setRoles($roles)->DefaultIcon();
     }
@@ -130,7 +130,7 @@ class Render
 
         return Link::Load()->setUrl($url)->setRoles($roles)->setDefaultCssClass("semiorbit-edit-link ")
 
-            ->setDefaultIcon($icon)->setDefaultText(Edit)->HideText();
+            ->setDefaultIcon($icon)->setDefaultText(EDIT)->HideText();
     }
 
 
@@ -140,7 +140,7 @@ class Render
 
         return Link::Load()->setUrl($url)->setRoles($roles)->setDefaultCssClass("semiorbit-delete-link ")
 
-            ->setDefaultIcon($icon)->setDefaultText(Delete)->HideText();
+            ->setDefaultIcon($icon)->setDefaultText(DELETE)->HideText();
     }
 
     public static function FileIcon($file_extension)

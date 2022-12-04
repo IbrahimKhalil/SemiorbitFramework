@@ -1,7 +1,7 @@
 <?php
 use Semiorbit\Data\Msg;
 
-return array(
+return [
    
     Msg::DBERR             =>   "نأسف لحصول خطأ أثناء الكتابة إلى قاعدة البيانات! يرجى إعادة المحاولة لاحقاً...",
 
@@ -47,4 +47,4 @@ return array(
 
     Msg::COMMENTED         =>   "تم استقبال تعليقكم وشكرا لتواصلكم!"
     
-);
+];

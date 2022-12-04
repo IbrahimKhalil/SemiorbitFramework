@@ -155,6 +155,8 @@ class GenericUser extends DataSet
         if (  ! $password ) $password = $this->{Config::UsersModelFields('Password')};
 
         $this->_Password = $password;
+        
+        $this->_Password->setExcludeFromSelect(true);
 
         return $this;
 
@@ -246,7 +248,7 @@ class GenericUser extends DataSet
     }
 
 
-    public function IsActive()
+    public function IsActive() : bool
     {
         return true;
     }
@@ -254,7 +256,7 @@ class GenericUser extends DataSet
 
     public function onBeforeLogin()
     {
-        return true;
+        return $this->IsActive();
     }
 
     public function onLogin()

@@ -18,6 +18,8 @@ abstract class Command
     private $_CliFile;
 
     private $_CliCommand;
+    
+    private $_Signature;
 
 
     public function __construct()
@@ -479,10 +481,16 @@ abstract class Command
     {
         $this->Arguments()->setIsLocked('Input Arguments List');
     }
-
+    
+    public function Signature()
+    {
+        return $this->_Signature;
+    }
 
     public function Define($signature)
     {
+        $this->_Signature = $signature;
+        
         $this->Definition()->ParseSignature($signature);
     }
 
@@ -539,6 +547,17 @@ abstract class Command
     public function CliFile()
     {
         return $this->_CliFile;
+    }
+
+    public function ExceptionHandle(\Exception $exception)
+    {
+
+        $this->Cli()->Writeln('<mark>' . $this->Signature() . '</mark>');
+
+        $this->Cli()->Writeln('Error: ' . $exception->getCode());
+
+        $this->Cli()->Writeln('<error>' . $exception->getMessage() . '</error>');
+
     }
 
 
