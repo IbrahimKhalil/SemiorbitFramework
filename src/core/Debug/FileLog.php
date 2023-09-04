@@ -11,6 +11,8 @@ class FileLog
 
     const DEFAULT_LOG_DIR = 'var/log/';
 
+    const DEV_LOG = 'dev_log';
+
 
     const INFO = 'INFO';
 
@@ -27,6 +29,7 @@ class FileLog
 
     protected static $_ActiveLogger;
 
+    protected static array $_MemLogs = [];
 
 
     public function __construct($log_id = null, $append = false)
@@ -45,17 +48,31 @@ class FileLog
 
         $log = new static($log_id, $append);
 
-        static::$_ActiveLogger = $log;
+        static::$_MemLogs[$log_id] = $log;
 
-        $log->Log(static::INFO, '', 'START', '--- Logging Started ---');
+        static::$_ActiveLogger = static::$_MemLogs[$log_id];
+
+        if (! $append) $log->Log(static::INFO, '', date("Y-m-d H:i:s"), '--- Logging Started ---');
 
         return $log;
 
     }
 
-    public static function End()
+    public static function UseLog($log_id, $append = true)
     {
-        return static::ActiveLogger()->LogStats();
+        return static::$_MemLogs[$log_id] ?? static::Start($log_id, $append);
+    }
+
+    public static function UseDevLog()
+    {
+        return static::UseLog(self::DEV_LOG);
+    }
+
+    public static function End(): void
+    {
+        static::ActiveLogger()->LogStats();
+
+        unset(static::$_MemLogs[static::ActiveLogger()->_LogID]);
     }
 
     public static function ActiveLogger()
@@ -105,6 +122,7 @@ class FileLog
     {
         return $this->Log(static::INFO, '', 'END', ' --- ' . json_encode($this->_Stats));
     }
+
 
 
     public static function Info($code, $at, $msg)

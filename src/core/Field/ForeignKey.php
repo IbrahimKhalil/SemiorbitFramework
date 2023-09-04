@@ -490,7 +490,7 @@ trait ForeignKey
     public function FKeyFilter()
     {
 
-        $filter = trim($this->FKeyFilter);
+        $filter = trim($this->FKeyFilter ?? '');
 
         if (empty($filter)) return '';
 

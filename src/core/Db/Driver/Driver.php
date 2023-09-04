@@ -23,13 +23,42 @@ interface Driver
 
 
 
-	public function Connect($db, $host = 'localhost', $user = 'root', $password = '', $port = null, $socket = null);
+	public function Connect(array $con);
 
     public function Connector();
 
-    public function Prepare($sql, $params);
+    public function Prepare($query, $params);
 
-    public function Execute($sql, $params = []);
+
+    /**
+     * Executes a prepared or unprepared query query returning a result object or boolean
+     *
+     * @param string $query
+     * @param array $params
+     * @return mixed
+     */
+
+    public function Execute(string $query, array $params = []);
+
+
+    /**
+     * Executes multiple queries
+     *
+     * @param string $sql
+     * @return mixed
+     */
+    public function ExecuteAll(string $sql);
+
+
+    /**
+     * Executes unprepared single query returning bool|int
+     * (no result object is returned)
+     *
+     * @param string $query
+     * @return bool|int true/false or number of effected rows (driver dependent)
+     */
+
+    public function Exec(string $query);
 
     public function Fetch($result, $result_type = Driver::ROW_BOTH);
 
@@ -62,7 +91,7 @@ interface Driver
     /**
      * Generates a unique id using a server function
      *
-     * @param bool|string $value TRUE or Server function as string eg. "UUID_SHORT()"
+     * @param bool|string $value TRUE or Server function as string e.g. "UUID_SHORT()"
      * @return bool
      */
 

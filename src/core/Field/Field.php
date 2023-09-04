@@ -685,7 +685,7 @@ class Field extends AltaArray implements FieldProps
 
                 $filtered_value = (isset($this->AllowHtml) && $this->AllowHtml) ? $value :
 
-                    filter_var($value, FILTER_SANITIZE_STRING);
+                    Str::Filter($value);
 
                 break;
 
@@ -1099,7 +1099,7 @@ class Field extends AltaArray implements FieldProps
 
                 filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) :
 
-                "'" . DB::Escape(filter_var($value, FILTER_SANITIZE_STRING)) . "'");
+                "'" . DB::Escape($value) . "'");
 
 
         if ($this->_WhereClauseHelperFunc)

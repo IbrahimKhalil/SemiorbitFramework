@@ -40,6 +40,8 @@ class AppService
 
     protected $_StoragePath;
 
+    protected  $_DatabasePath;
+
     protected $_AssetsPath;
 
     protected $_LangPath;
@@ -359,6 +361,17 @@ class AppService
         return ($this->_StoragePath ?:
 
             $this->_StoragePath = $this->BasePath('storage'))
+
+             . ( $path ? Path::Normalize($path, true, null) : '' );
+
+    }
+
+    public function DatabasePath($path = null)
+    {
+
+        return ($this->_DatabasePath ?:
+
+            $this->_DatabasePath = $this->BasePath('src/database'))
 
              . ( $path ? Path::Normalize($path, true, null) : '' );
 

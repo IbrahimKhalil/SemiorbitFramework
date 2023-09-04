@@ -22,6 +22,8 @@ final class Config extends DefaultConfig
 
 	private static $__Config = [];
 
+    private static $__Connections = [];
+
 
 	private static $__Loaded;
 
@@ -254,74 +256,80 @@ final class Config extends DefaultConfig
 	
 
 	
-	public static function Connections($con = null)
-	{
-		
-		static $clean_cons = array();
+	public static function Connections(): array
+    {
 
-		$connections = static::DbConnections();
+        static $clean_cons = [];
 
-		if ( $connections != $clean_cons ) :
+        $connections = Config::DbConnections();
 
-            $default_con = array( 'id' => null, 'host' => 'localhost', 'user' => 'root', 'password' => '', 'db' => '', 'port' => null, 'socket' => null, 'persistent' => true );
-		
-		foreach ( $connections as $k => $v ){
+        if ($connections != $clean_cons) {
 
-            $connections[$k] = array_merge( $default_con, $connections[$k] );
-			
-			$connections[$k]['id'] = $k;	
-			
-			if ( ! isset( $connections[$k]['persistent'] ) ) $connections[$k]['persistent'] = true;
-			
-			if ( $connections[$k]['driver'] != 'mysqli' ) { 
-			
-				$driver = strtolower ( $connections[$k]['driver'] );
-				
-				if ( $driver == 'mysql' || $driver == 'mysqli' ) {
-					
-					unset( $connections[$k] );
-					
-					$connections['mysqli'] = $v;
-					
-					$connections['mysqli']['driver'] = 'mysqli';
-					
-				}
-				
-				elseif ( $driver == 'pdo' ) {
-					
-					$connections[$k]['driver'] = 'pdo:mysql';
-					
-					$connections[$k]['pdo_driver'] = 'mysql';
-							 
-				} elseif ( stristr($driver, 'pdo:') )  {
-				
-					$driver = explode(':', $connections[$k]['driver']);
-			
-					if ( array_key_exists(1, $driver) && strtolower( $driver[0] ) == 'pdo'  ) {
-						
-						$connections[$k][ 'pdo_driver' ] = $driver[1];
-						
-					}
-					
-				}
-			
-			}
-		
-		}
-		
-		$clean_cons = $connections;
-		
-		endif;
-		
-		reset( $connections );
+            $default_con = ['id' => null, 'host' => 'localhost', 'user' => 'root', 'password' => '', 'db' => '', 'port' => null, 'socket' => null, 'persistent' => true, 'options' => []];
 
-		if ( is_empty( $con ) )	return current( $connections );
-		
-		$connection = isset( $connections[ $con ] ) ? $connections[ $con ] : false;  
-		
-		return $connection;
-	
+            foreach ($connections as $k => $v) {
+
+                $connections[$k] = array_merge($default_con, $v);
+
+                $connections[$k]['id'] = $k;
+
+                if (!isset($connections[$k]['persistent'])) $connections[$k]['persistent'] = true;
+
+                if ($connections[$k]['driver'] != 'mysqli') {
+
+                    $driver = strtolower($connections[$k]['driver']);
+
+                    if ($driver == 'mysql' || $driver == 'mysqli') {
+
+                        unset($connections[$k]);
+
+                        $connections['mysqli'] = $v;
+
+                        $connections['mysqli']['driver'] = 'mysqli';
+
+                    } elseif ($driver == 'pdo') {
+
+                        $connections[$k]['driver'] = 'pdo:mysql';
+
+                        $connections[$k]['pdo_driver'] = 'mysql';
+
+                    } elseif (stristr($driver, 'pdo:')) {
+
+                        $driver = explode(':', $connections[$k]['driver']);
+
+                        if (array_key_exists(1, $driver) && strtolower($driver[0]) == 'pdo') {
+
+                            $connections[$k]['pdo_driver'] = $driver[1];
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            Config::$__Connections = $connections;
+
+            $clean_cons = Config::DbConnections();
+
+        }
+
+        return Config::$__Connections;
+
 	}
+
+
+    public static function Connection($con = null)
+    {
+
+        $connections = Config::Connections();
+
+        reset($connections);
+
+        return is_empty($con) ? current($connections) : ($connections[$con] ?? false);
+
+    }
 	
 	
 	public static function FormTemplate()
@@ -344,7 +352,7 @@ final class Config extends DefaultConfig
 
         else if ( ! Path::IsAbsolute( $config_documents_path ) ) $documents_path = $public_path . Path::Normalize( $config_documents_path );
 
-        else $documents_path = $public_path . 'documents';
+        else $documents_path = $public_path . 'documents/';
 
         return $documents_path;
 
@@ -363,7 +371,7 @@ final class Config extends DefaultConfig
 
         else if ( ! Path::IsAbsolute( $config_documents_path ) ) $documents_url = PUBLIC_URL . Path::Normalize( $config_documents_path );
 
-        else $documents_url = PUBLIC_URL . 'documents';
+        else $documents_url = PUBLIC_URL . 'documents/';
 
         return $documents_url;
 

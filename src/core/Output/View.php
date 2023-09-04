@@ -182,7 +182,7 @@ class View extends ViewBase
 
         if ( $display_project_title ) {
 
-            $title = str_ireplace($default_project_title . Config::PageTitleSeparator(), "", $title);
+            empty($title) || $title = str_ireplace($default_project_title . Config::PageTitleSeparator(), "", $title);
 
             is_empty( $title ) || $title == $default_project_title ? $title = $default_project_title :
 

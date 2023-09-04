@@ -31,6 +31,8 @@ class Str
     {
         // Modified starting from Laravel source code of str::snake() function.
 
+        $str = $str === null ? '' : $str;
+
         $key = $str . $delimiter;
 
         if (!is_empty(self::Clipboard($key))) {
@@ -203,6 +205,19 @@ class Str
 
         return $a;
 
+    }
+
+
+    /**
+     * Strip tags and encode quotes
+     *
+     * @param string $input
+     * @return string
+     */
+
+    public static function Filter(?string $input) : string
+    {
+        return str_replace(['\'', '"'], ['&#39;', '&#34;'], strip_tags($input));
     }
 
 
@@ -432,6 +447,12 @@ class Str
 
         return $haystack;
 
+    }
+
+
+    public static function RemoveEmptyLines(?string $string)
+    {
+        return trim(preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $string), PHP_EOL);
     }
 
 

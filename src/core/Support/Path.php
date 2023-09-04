@@ -29,7 +29,7 @@ class Path
     public static function Normalize($path, $leading_slash = null, $trailing_slash = true)
     {
 
-        $path = str_replace( DIRECTORY_SEPARATOR, '/', $path );
+        $path = str_replace( DIRECTORY_SEPARATOR, '/', $path ?? '' );
 
         if ($leading_slash === null && $trailing_slash !== null ) $path = rtrim( $path, '/' );
 

@@ -6,6 +6,8 @@ namespace Semiorbit\Auth;
 
 use Semiorbit\Base\AppManager;
 use Semiorbit\Config\Config;
+use Semiorbit\Debug\FileLog;
+use Semiorbit\Http\Client;
 use Semiorbit\Http\Url;
 use Semiorbit\Session\Session;
 
@@ -103,7 +105,7 @@ class BaseAuth implements AuthInterface
 
             $this->UseUser($user);
 
-            $user_browser = $_SERVER['HTTP_USER_AGENT'];
+            $user_browser = Client::UserAgent();
 
             Session::Start(md5(AppManager::MainApp()->Name()));
 
@@ -133,7 +135,7 @@ class BaseAuth implements AuthInterface
 
         $user->Read( Session::Read(static::KEY_USER_ID) );
 
-        $user_browser = $_SERVER['HTTP_USER_AGENT'];
+        $user_browser = Client::UserAgent();
 
         $stored_password = hash('sha512', $user->Password()->Value . $user_browser);
 

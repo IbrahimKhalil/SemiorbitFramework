@@ -1,11 +1,11 @@
 <?php
-/**@var Semiorbit\Field\File $field **/
+/**@var Semiorbit\Field\File $field * */
 
 use Semiorbit\Field\File;
 use Semiorbit\Http\Url;
 use Semiorbit\Output\Render;
 
-$dummyField = Semiorbit\Field\FieldBuilder::File('preview-' . $field->Name);
+$dummyField = Semiorbit\Field\Field::File('preview-' . $field->Name);
 
 $myTemplate = $field->ActiveTemplate();
 
@@ -13,28 +13,28 @@ $myTemplate = $field->ActiveTemplate();
 
 <div class="semiorbit-file-preview">
 
-<?= $myTemplate->OpenField( $dummyField ) ?>
+    <?= $myTemplate->OpenField($dummyField) ?>
 
-<?= $myTemplate->OpenLabel( $dummyField ) . $myTemplate->CloseLabel( $dummyField )?>
+    <?= $myTemplate->OpenLabel($dummyField) . $myTemplate->CloseLabel($dummyField) ?>
 
-<?= $myTemplate->OpenInput( $dummyField ) ?>
+    <?= $myTemplate->OpenInput($dummyField) ?>
 
-<?php if ( in_array( $field->FileExt(), array('png', 'jpg', 'gif', 'jpeg') ) ) echo $field->HtmlView(reset($field->Thumbnails) ? key($field->Thumbnails) : null, 'image'); ?>
+    <?php if (in_array($field->FileExt(), array('png', 'jpg', 'gif', 'jpeg'))) echo $field->HtmlView(reset($field->Thumbnails) ? key($field->Thumbnails) : null, 'image'); ?>
 
-	<?php if ( ! empty($field->Value) ) : ?>
+    <?php if (!empty($field->Value)) : ?>
 
-    <div class="semiorbit-file-preview-tools">
+        <div class="semiorbit-file-preview-tools">
 
-        <span class="semiorbit-file-preview-icon"><?= $field->HtmlView(null, 'icon') ?></span>
+            <span class="semiorbit-file-preview-icon"><?= $field->HtmlView(null, 'icon') ?></span>
 
-        <span class="semiorbit-file-preview-delete"><?= Render::DeleteLink("?".File::REMOVE_FILE_KEY."={$field->TrackCode()}&" . Url::Params(array(File::REMOVE_FILE_KEY)), ANY_AUTHENTICATED_USER) ?></span>
+            <span class="semiorbit-file-preview-delete"><?= Render::DeleteLink("?" . File::REMOVE_FILE_KEY . "={$field->TrackCode($tm = (mt_rand()))}&" . File::REMOVE_FILE_KEY_TM . "={$tm}&" . Url::Params(array(File::REMOVE_FILE_KEY, File::REMOVE_FILE_KEY_TM)), ANY_AUTHENTICATED_USER) ?></span>
 
-    </div>
+        </div>
 
-	<?php endif; ?>
+    <?php endif; ?>
 
-<?= $myTemplate->CloseInput( $dummyField ) ?>
+    <?= $myTemplate->CloseInput($dummyField) ?>
 
-<?= $myTemplate->CloseField( $dummyField ) ?>
+    <?= $myTemplate->CloseField($dummyField) ?>
 
 </div>

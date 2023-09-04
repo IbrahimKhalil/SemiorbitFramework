@@ -23,7 +23,7 @@ $dom_id = $field->DomInputID();
     <div class="input-group date">
 
         <input type="text" autocomplete="off" class="<?= $field->InputDefaultCssClass() ?>"
-               value="<?= htmlspecialchars($field->Value) ?>" <?= $field->InputAttrs() ?>
+               value="<?= htmlspecialchars($field->Value ?: '') ?>" <?= $field->InputAttrs() ?>
                title="<?= htmlspecialchars($field->LabelText()) ?>"/>
 
         <span class="input-group-addon">

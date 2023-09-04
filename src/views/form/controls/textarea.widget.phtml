@@ -13,7 +13,7 @@ $myTemplate = $field->ActiveTemplate();
 
 		<textarea  class="<?= $field->InputDefaultCssClass() ?>"   <?= $field->InputAttrs() ?> cols="40" rows="8"
 
-                   title="<?=  htmlspecialchars( $field->LabelText() ) ?>" ><?=  htmlspecialchars( $field->Value )  ?></textarea>
+                   title="<?=  htmlspecialchars( $field->LabelText() ) ?>" ><?=  htmlspecialchars( $field->Value ?? '' )  ?></textarea>
 
 	<?= $myTemplate->CloseInput( $field ) ?>
 

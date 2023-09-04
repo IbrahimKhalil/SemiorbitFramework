@@ -68,9 +68,13 @@ class Pagination
     public function PaginationWidget()
     {
 
-        if (is_empty($this->_PaginationWidget))
+        if (is_empty($this->_PaginationWidget)) {
 
-            $this->_PaginationWidget = (is_empty(Config::PaginationWidget())) ? "Pagination" : Config::PaginationWidget();
+            $var = Config::PaginationWidget();
+
+            $this->_PaginationWidget = (is_empty($var)) ? "Pagination" : Config::PaginationWidget();
+
+        }
 
         return $this->_PaginationWidget;
 

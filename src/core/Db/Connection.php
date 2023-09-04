@@ -29,18 +29,30 @@ class Connection
     protected $_Connector;
 
 
-    public function __construct($connection_id)
+    /**
+     * Start connection to a database
+     *
+     * @param string $connection_id
+     * @param array $con optional connection info otherwise connection info will be retrieved from config
+     */
+
+    public function __construct($connection_id, array $con = [])
     {
-        $this->Connect($connection_id);
+        $this->Connect($connection_id, $con);
     }
 
     /**
+     * Open connection to a database
+     *
      * @param string $connection_id
+     * @param array $con optional connection info otherwise connection info will be retrieved from config
      * @return $this
      */
-    public function Connect($connection_id)
+
+    public function Connect($connection_id, array $con = [])
     {
-        $myCon = Config::Connections($connection_id);
+
+        $myCon = $con ?: Config::Connection($connection_id);
 
 
         if (empty($myCon))
@@ -70,6 +82,8 @@ class Connection
 
         if (is_empty($driver_class)) {
 
+            // isset($myCon['pdo_driver']) ? 'Pdo' : ...
+
             $class_name = ucfirst($myCon['driver'] ?? 'Pdo');
 
             $driver_class = 'Semiorbit\\Db\\Driver\\' . $class_name;
@@ -79,7 +93,11 @@ class Connection
 
         // CONNECT ---------------------------------------- >>
 
-        $myDriver = new $driver_class($myCon['db'], $myCon['host'], $myCon['user'], $myCon['password'], $myCon['port'], $myCon['socket'], $myCon['persistent']);
+        /**@var $myDriver Driver */
+
+        $myDriver = new $driver_class();
+
+        $myDriver->Connect($myCon);
 
         $this->ActivateConnection($myCon['id'], $myDriver);
 
@@ -105,29 +123,58 @@ class Connection
     }
 
 
-    public function Execute($query, $params = [])
+    /**
+     * Executes multiple queries
+     *
+     * @param string $sql
+     * @return bool|int true/false or number of effected rows (driver dependent)
+     */
+
+    public function ExecuteAll(string $sql)
     {
-        return $this->Cmd($query, $params);
+        return $this->Driver()->ExecuteAll($sql);
     }
 
-    public function Cmd($query, $params = [])
+
+    /**
+     * Executes unprepared single query returning bool|int
+     * (no result object is returned)
+     *
+     * @param string $query
+     * @return bool|int true/false or number of effected rows (driver dependent)
+     */
+
+    public function Exec(string $query)
     {
+        return $this->Driver()->Exec($query);
+    }
 
-        $res = false;
+    /**
+     * Executes a prepared or unprepared sql query returning a result object or boolean
+     *
+     * @param string $query
+     * @param array $params
+     * @return mixed
+     */
 
-        if (is_string($query)) {
-
-            $res = $this->Driver()->Execute($query, $params);
-
-        } elseif ($query instanceof QueryBuilder) {
-
-            $res = $this->Driver()->Execute($query->QueryString(), $query->Params());
-
-        }
+    public function Execute(string $query, array $params = [])
+    {
+        return $this->Driver()->Execute($query, $params);
+    }
 
 
-        return $res;
+    /**
+     * <b>Execute</b> alias<br>
+     * Executes a prepared or unprepared sql query returning a result object or boolean
+     *
+     * @param string $query
+     * @param array $params
+     * @return mixed
+     */
 
+    public function Cmd(string $query, array $params = [])
+    {
+        return $this->Driver()->Execute($query, $params);
     }
 
     /**

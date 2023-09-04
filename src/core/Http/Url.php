@@ -110,9 +110,9 @@ class Url
      * @see     http://us3.php.net/manual/en/function.parse-url.php
      * @since   11.1
      */
-    public static function Utf8ParseUrl($url)
+    public static function Utf8ParseUrl($url): array|false
     {
-        $result = false;
+        $result = [];
 
         // Build arrays of values we need to decode before parsing
 
@@ -138,7 +138,7 @@ class Url
             }
         }
 
-        return $result;
+        return $result ?: false;
     }
 
 

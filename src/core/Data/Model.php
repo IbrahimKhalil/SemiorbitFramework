@@ -14,6 +14,7 @@ use Semiorbit\Auth\Auth;
 use Semiorbit\Component\Services;
 use Semiorbit\Debug\FileLog;
 use Semiorbit\Field\DataType;
+use Semiorbit\Field\Editor;
 use Semiorbit\Field\Field;
 use Semiorbit\Field\File;
 use Semiorbit\Field\ID;
@@ -562,9 +563,11 @@ class Model
 
                 $inserted_id = $this->ActiveConnection()->LastInsertId();
 
-                $this->RenamwUploadedFiles($this->ID->Value, $inserted_id);
+                $this->RenameUploadedFiles($this->ID->Value, $inserted_id);
 
                 $this->ID->Value = $inserted_id;
+
+                $this->SaveEditorResources();
 
             }
 
@@ -661,6 +664,8 @@ class Model
 
         $res = $this->ActiveConnection()->Cmd( $sql, $param_value ) ? Msg::DBOK : Msg::DBERR;
 
+        if ($res) $this->SaveEditorResources();
+
         $this->onSave($res);
 
         $this->onUpdate($res);
@@ -694,11 +699,18 @@ class Model
 
     }
 
-    public function RenamwUploadedFiles($current_id, $new_id)
+    public function RenameUploadedFiles($current_id, $new_id)
     {
         foreach ($this->Fields() as $k => $field)
 
             if ($field instanceof File) $field->Rename($current_id, $new_id);
+    }
+
+    public function SaveEditorResources()
+    {
+        foreach ($this->Fields() as $k => $field)
+
+            if ($field instanceof Editor) $field->SaveResources();
     }
 
 
@@ -1375,7 +1387,7 @@ class Model
 
             if ( isset( $fld['group'] )) {
 
-                $group = $fld['group'];
+                $group = $fld['group'] ?? '';
 
                 // Adding group properties, only if not added previously
 

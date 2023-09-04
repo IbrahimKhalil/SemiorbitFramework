@@ -12,6 +12,7 @@ namespace Semiorbit\Http;
 
 use Semiorbit\Support\AltaArray;
 use Semiorbit\Support\AltaArrayKeys;
+use Semiorbit\Support\Str;
 
 
 class PathInfo extends AltaArray
@@ -55,12 +56,12 @@ class PathInfo extends AltaArray
         return $value;
     }
 
-    public function &offsetGet($key)
+    public function &offsetGet($offset): mixed
     {
 
-        if ( is_int($key) && isset( $this->_NumArr[$key] ) ) return $this->_NumArr[$key];
+        if ( is_int($offset) && isset( $this->_NumArr[$offset] ) ) return $this->_NumArr[$offset];
 
-        $value = (  $this->offsetExists($key) ) ? parent::offsetGet($key) : '';
+        $value = (  $this->offsetExists($offset) ) ? parent::offsetGet($offset) : '';
 
         return $value;
 
@@ -100,7 +101,7 @@ class PathInfo extends AltaArray
 
             isset( $pattern_pms[$n] ) ? $k = ltrim( $pattern_pms[$n], ':' ) : $k = $n;
 
-            $clean_pm = filter_var( $pm, FILTER_SANITIZE_STRING );
+            $clean_pm = Str::Filter($pm);
 
             $assoc_pm[$k] = $clean_pm;
 

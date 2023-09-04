@@ -17,28 +17,32 @@ $myTemplate = $field->ActiveTemplate();
 		<textarea  class="<?= $field->InputDefaultCssClass() ?>" cols="40" rows="8"  <?= $field->InputAttrs() ?>
 
                    title="<?=  htmlspecialchars( $field->LabelText() ) ?>" ><?=  htmlspecialchars( $field->Value )  ?></textarea>
+<?php
+if (!isset($GLOBALS['CKEDITOR_LOADED'])) :
 
-<script type="text/javascript" src="<?=EXT?>ckeditor/ckeditor.js"></script>
+    $GLOBALS['CKEDITOR_LOADED'] = true;
+
+?>
+<script src="<?=EXT?>ckeditor5/super-ckeditor.js"></script>
+<script src="<?=EXT?>ckeditor5/translations/ar.js"></script>
+<script src="<?=EXT?>ckeditor5/config.js"></script>
+<script type="text/javascript">
+
+    const ckConfig = CKEDITOR.customConfig;
+
+    ckConfig.language = '<?= LANG ?>';
+
+</script>
+<?php endif ?>
 <!--suppress JSUnresolvedVariable -->
 
-    <script type="text/javascript">
-    var editor_txt_<?=$field->DomInputID()?> = CKEDITOR.replace( '<?=$field->DomInputID()?>' );
+<script type="text/javascript">
 
-    var ckConfig = CKEDITOR.config;
-
-    ckConfig.language = '<?= LANG == "ar" ? "ar" : "en" ?>';
-
-    <?php
-     $_SESSION['KCF_ENABLED'] = Auth::Check(SUPER_ADMIN);
-     $_SESSION['KCF_UPLOAD_FOLDER'] = PUBLICPATH . 'uploads';
-     ?>
-
-    ckConfig.filebrowserBrowseUrl = '<?=EXT?>kcfinder-2.51/browse.php?type=files';
-    ckConfig.filebrowserImageBrowseUrl = '<?=EXT?>kcfinder-2.51/browse.php?type=images';
-    ckConfig.filebrowserFlashBrowseUrl = '<?=EXT?>kcfinder-2.51/browse.php?type=flash';
-    ckConfig.filebrowserUploadUrl = '<?=EXT?>kcfinder-2.51/upload.php?type=files';
-    ckConfig.filebrowserImageUploadUrl = '<?=EXT?>kcfinder-2.51/upload.php?type=images';
-    ckConfig.filebrowserFlashUploadUrl = '<?=EXT?>kcfinder-2.51/upload.php?type=flash';
+    CKEDITOR.ClassicEditor
+        .create( document.getElementById( '<?=$field->DomInputID()?>' ), ckConfig)
+        .catch( error => {
+            console.error( error );
+        } );
 
 </script>
 

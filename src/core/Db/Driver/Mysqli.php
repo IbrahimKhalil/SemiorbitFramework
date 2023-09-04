@@ -49,28 +49,28 @@ class Mysqli implements Driver
     protected $_Stmts;
 
 
-    public function __construct($db, $host = 'localhost', $user = 'root', $password = '', $port = null, $socket = null, $persistent = true)
+    public function __construct($db = null, $host = 'localhost', $user = 'root', $password = '', $port = null, $socket = null, $persistent = true)
     {
-        $this->Connect($db, $host, $user, $password, $port, $persistent);
+        if ($db) $this->Connect(['db' => $db, 'host' => $host, 'user' => $user, 'password' => $password, 'port' => $port, 'socket' => $socket, 'persistent' => $persistent]);
     }
 
 
-    public function Connect($db, $host = 'localhost', $user = 'root', $password = '', $port = null, $socket = null, $persistent = true)
+    public function Connect(array $con)
     {
 
-        $this->Host = $host;
+        $this->Host = $con['host'];
 
-        $this->User = $user;
+        $this->User = $con['user'];
 
-        $this->Password = $password;
+        $this->Password = $con['password'];
 
-        $this->Database = $db;
+        $this->Database = $con['db'];
 
-        $this->Port = $port;
+        $this->Port = $con['port'];
 
-        $this->Socket = $socket;
+        $this->Socket = $con['socket'];
 
-        $this->Persistent = $persistent;
+        $this->Persistent = $con['persistent'];
 
 
         if ($this->Persistent) $this->Host = 'p:' . $this->Host;
@@ -78,7 +78,6 @@ class Mysqli implements Driver
         mysqli_report(MYSQLI_REPORT_STRICT );
 
 
-        $myCon = null;
 
         $myCon = new \mysqli($this->Host, $this->User, $this->Password, $this->Database, $this->Port, $this->Socket);
 
@@ -99,12 +98,12 @@ class Mysqli implements Driver
 
 
     /**
-     * @param $sql string
+     * @param $query string
      * @param $params array
      * @return \mysqli_stmt
      */
 
-    public function Prepare($sql, $params)
+    public function Prepare($query, $params)
     {
 
         if (! (!is_assoc($params) &&
@@ -114,18 +113,18 @@ class Mysqli implements Driver
             preg_match("#[sibd]{1,".(count($params)-1)."}#i", $params[0])))
 
 
-            [$sql, $params] = $this->ExtractParamsArray($sql, $params);
+            [$query, $params] = $this->ExtractParamsArray($query, $params);
 
 
-        $sql_hash = md5($sql);
+        $sql_hash = md5($query);
 
         $stmt = isset($this->_Stmts[$sql_hash]) ? $this->_Stmts[$sql_hash] :
 
-            $this->_Stmts[$sql_hash] = $this->Connector()->prepare($sql);
+            $this->_Stmts[$sql_hash] = $this->Connector()->prepare($query);
 
         if (! $stmt)
 
-            Application::Abort(503, "Prepare sql statement failed: {$sql}");
+            Application::Abort(503, "Prepare query statement failed: {$query}");
 
 
         $stmt->bind_param(...$params);
@@ -136,21 +135,21 @@ class Mysqli implements Driver
 
 
     /**
-     * @param $sql
+     * @param string $query
      * @param array $params
      * @return bool|\mysqli_result
      */
 
-    public function Execute($sql, $params = [])
+    public function Execute(string $query, array $params = [])
     {
 
         if (empty($params)) {
 
-            $result = $this->Connector()->query($sql);
+            $result = $this->Connector()->query($query);
 
         } else {
 
-            $stmt = $this->Prepare($sql, $params);
+            $stmt = $this->Prepare($query, $params);
 
             if (!$stmt) return false;
 
@@ -174,7 +173,7 @@ class Mysqli implements Driver
 
             $dbLog = new FileLog('db_log', true);
 
-            $dbLog->Log(FileLog::DEBUG, "904", "[MYSQLI@QUERY]", $sql);
+            $dbLog->Log(FileLog::DEBUG, "904", "[MYSQLI@QUERY]", $query);
 
             $dbLog->Log(FileLog::DEBUG, "904", "[MYSQLI@PARAMS]", json_encode($params, JSON_UNESCAPED_UNICODE));
 
@@ -187,6 +186,35 @@ class Mysqli implements Driver
     }
 
     /**
+     * Execute multiple queries
+     *
+     * Returns true/false
+     *
+     * @param string $sql
+     * @return bool
+     */
+
+    public function ExecuteAll(string $sql)
+    {
+        return $this->Connector()->multi_query($sql);
+    }
+
+    /**
+     * Execute a single query returning true/false
+     *
+     * Returns true/false or number of effected rows (PDO)
+     *
+     * @param string $query
+     * @return bool
+     */
+
+    public function Exec(string $query)
+    {
+        return $this->Connector()->real_query($query);
+    }
+
+
+    /**
      * @param \mysqli_result $result
      * @param int $result_type
      * @return mixed
@@ -196,12 +224,6 @@ class Mysqli implements Driver
     {
 
         if (!$result instanceof \mysqli_result) return null;
-
-        //dd('d');
-
-        //dd($result->)
-
-        //dd($result);
 
         $row = $result->fetch_array($result_type);
 

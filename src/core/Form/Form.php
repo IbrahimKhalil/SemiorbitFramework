@@ -432,7 +432,7 @@ HEREHTML;
 
             endswitch;
 
-            $form_id_input_value = static::Clipboard( "{$method}:form_id_input_value", base64_decode( $value ) );
+            $form_id_input_value = static::Clipboard( "{$method}:form_id_input_value", base64_decode( $value ?? '' ) );
 
         }
 
@@ -832,11 +832,11 @@ HEREHTML;
 		
 		if ( is_empty( static::$_Action ) ) static::setAction();
 		
-		$request_pms = Url::Params(array(File::REMOVE_FILE_KEY));
-		
+		$request_pms = Url::Params(array(File::REMOVE_FILE_KEY, File::REMOVE_FILE_KEY_TM));
+
 		$action = str_ireplace( is_empty($request_pms) ? '?:pms' : ':pms', $request_pms, static::$_Action);
-		
-		$action = rtrim($action, "&");
+
+		$action = $action ? rtrim($action, "&") : Url::CurrentPage([], [File::REMOVE_FILE_KEY, File::REMOVE_FILE_KEY_TM]);
 		
 
 		return $action; 

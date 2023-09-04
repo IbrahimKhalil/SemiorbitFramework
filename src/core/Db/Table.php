@@ -654,9 +654,9 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
     }
 
     /**
-     * Whether or not an data exists by key
+     * Whether or not an data exists by offset
      *
-     * @param string $key An data key to check for
+     * @param string $offset An data offset to check for
      * @access public
      * @return boolean
      * @abstracting ArrayAccess
@@ -671,9 +671,9 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
 
 
     /**
-     * Unset an data by key
+     * Unset an data by offset
      *
-     * @param string $key The key to unset
+     * @param string $offset The offset to unset
      * @access public
      */
 
@@ -694,7 +694,7 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
      * @abstracting ArrayAccess
      */
 
-    public function offsetSet($key, $value)
+    public function offsetSet($key, mixed $value): void
     {
 
         $this->Load();
@@ -727,37 +727,37 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
     /**
      * Whether or not an offset exists
      *
-     * @param string $key An offset to check for
+     * @param string $offset An offset to check for
      * @access public
      * @return boolean
      * @abstracting ArrayAccess
      */
 
-    public function offsetExists($key)
+    public function offsetExists($offset): bool
     {
         $this->Load();
 
-        return isset( $this->_Rows[ $key ] );
+        return isset( $this->_Rows[ $offset ] );
     }
 
     /**
      * Unsets an offset
      *
-     * @param string $key The offset to unset
+     * @param string $offset The offset to unset
      * @access public
      * @abstracting ArrayAccess
      */
 
-    public function offsetUnset($key)
+    public function offsetUnset($offset): void
     {
 
         $this->Load();
 
-        $row_id = $this->FindRowID($key);
+        $row_id = $this->FindRowID($offset);
 
         if ( $row_id ) {
 
-            unset( $this->_Rows[ $key ] );
+            unset( $this->_Rows[ $offset ] );
 
             $this->_KeysIndex = false;
 
@@ -768,17 +768,17 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
     /**
      * Returns the value at specified offset
      *
-     * @param string $key The offset to retrieve
+     * @param string $offset The offset to retrieve
      * @access public
      * @return mixed
      * @abstracting ArrayAccess
      */
 
-    public function offsetGet($key)
+    public function offsetGet($offset): mixed
     {
         $this->Load();
 
-        $row_id = $this->FindRowID($key);
+        $row_id = $this->FindRowID($offset);
 
         $row = $row_id ? $this->_Rows[ $row_id ] : null;
 
@@ -792,11 +792,11 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
      * An instance of the object implementing Iterator or Traversable
      *
      * @access public
-     * @return object
+     * @return \ArrayIterator
      * @abstracting IteratorAggregate
      */
 
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         $this->Load();
 
@@ -815,15 +815,11 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
      * @abstracting Countable
      */
 
-    public function Count($load = true)
+    public function Count(bool $load = true): int
     {
-
         if ($load) $this->Load();
 
-        $count = count( $this->_Rows );
-
-        return $count;
-
+        return count( $this->_Rows );
     }
 
 
@@ -898,7 +894,7 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
 
 
     /**
-     * Current row key in rows array
+     * Current row offset in rows array
      *
      * @param bool $load
      * @return mixed

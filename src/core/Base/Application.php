@@ -241,6 +241,19 @@ abstract class Application implements AppInterface
 
 
     /**
+     * Path to files in database folder
+     *
+     * @param string $path Relative to <b>database</b> folder
+     * @return string
+     */
+
+    final public static function DatabasePath($path)
+    {
+        return static::Service()->DatabasePath($path);
+    }
+
+
+    /**
      * Path to a theme file in assets folder
      *
      * @param string $path Relative to <b>Theme</b> folder

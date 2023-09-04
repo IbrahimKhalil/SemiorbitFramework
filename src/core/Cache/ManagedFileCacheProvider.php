@@ -43,7 +43,7 @@ class ManagedFileCacheProvider implements FileCacheProviderInterface
 
     public function Path($key)
     {
-        return $this->_CachePath . $key;
+        return $this->_CachePath . $key . '.php';
     }
 
 
@@ -78,14 +78,14 @@ class ManagedFileCacheProvider implements FileCacheProviderInterface
 
     public function StoreVar($key, $value)
     {
-        return $this->Store($key . '.php', '<?php return ' . var_export($value, true) . ';');
+        return $this->Store($key, '<?php return ' . var_export($value, true) . ';');
     }
 
 
     public function ReadVar($key)
     {
         /** @noinspection PhpIncludeInspection */
-        return @include $this->Path("{$key}.php");
+        return @include $this->Path($key);
     }
 
 }

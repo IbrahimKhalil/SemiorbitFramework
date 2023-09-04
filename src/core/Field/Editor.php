@@ -12,6 +12,11 @@ namespace Semiorbit\Field;
 
 
 
+use Semiorbit\Config\Config;
+use Semiorbit\Debug\FileLog;
+use Semiorbit\Support\Base64Resources;
+use Semiorbit\Support\Path;
+
 /**
  * Class Editor
  * @package Semiorbit\Field
@@ -60,6 +65,10 @@ class Editor extends Field
 
     public $AllowHtml = true;
 
+    public $ResourcesSubDirectory;
+
+    public $Resources = [];
+
 
     public function PreRender()
     {
@@ -100,5 +109,87 @@ class Editor extends Field
         return $this;
     }
 
+    public function setResourcesSubDirectory($dir)
+    {
+        $this->ResourcesSubDirectory = $dir;
+
+        return $this;
+    }
+
+
+    public function ValidateValue()
+    {
+
+        if ($this->AllowHtml && $this->ResourcesSubDirectory) {
+
+            $data = Base64Resources::ExtractFromHtml(
+
+                $this->Value,
+
+                $this->ActiveDataSet()->DocumentsURL() . $this->ResourcesSubDirectory);
+
+            $this->Value = $data[0];
+
+            $this->Resources = $data[1];
+
+        }
+
+        return parent::ValidateValue();
+
+    }
+
+
+    public function SaveResources(): int
+    {
+
+        $saved = 0;
+
+        foreach ($this->Resources as $resource) {
+
+            [$img_data, $img_fn] = $resource;
+
+            $res = file_put_contents(
+
+                $this->DirPath(true, true) . $img_fn,
+
+                base64_decode($img_data));
+
+            if ($res) $saved++;
+
+            else {
+
+                if (Config::DebugMode()) {
+
+                    FileLog::Debug("FWK910", "FWK@SAVE_RES_EDITOR", $img_fn);
+
+                }
+
+            }
+
+        }
+
+        return $saved;
+
+    }
+
+
+    public function DirPath($real_path = true, $create = false)
+    {
+
+        $path = ( $this->ActiveDataSet() ) ?
+
+            ( $real_path ? $this->ActiveDataSet()->DocumentsRealPath() : $this->ActiveDataSet()->DocumentsPath() )
+
+            : ( Config::DocumentsPath($real_path) );
+
+        $path .= $this->ResourcesSubDirectory;
+
+        if ( $real_path && $create && ! file_exists( $path ) ) mkdir($path, 0777, true);
+
+
+
+        return Path::Normalize($path);
+
+    }
 
 }

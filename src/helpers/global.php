@@ -66,6 +66,17 @@ function url(string $path = '', array $params = null) : string
     return $params ? Url::Build($path, $params) : BASE_URL . LANG . '/' . $path;
 }
 
+
+function asset(string $path = '', $include_filemtime = false)
+{
+    return THEME . $path;
+}
+
+function masset(string $path = '', $theme = null, $include_filemtime = true)
+{
+    return Application::Asset($path, $theme, $include_filemtime);
+}
+
 //DATABASE
 
 function find($query, $params = [], $field = 0, $con = null)

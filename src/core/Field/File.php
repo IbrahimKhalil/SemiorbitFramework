@@ -65,7 +65,7 @@ class File extends Field
 
     public $TargetFileName;
 
-    public $FileTypes = 'jpg|png|gif|jpeg';
+    public $FileTypes = 'jpg|png|gif|jpeg|svg';
 
     public $SubDirectory;
 
@@ -84,6 +84,8 @@ class File extends Field
     public $CleanDataBeforeDeleteFile = true;
 
     const REMOVE_FILE_KEY = 'f86257bd9ce35726333e90ede8d34ac6';
+    
+    const REMOVE_FILE_KEY_TM = File::REMOVE_FILE_KEY . 'tm';
 
     const TRACKER_PREFIX = 'tracker::';
 
@@ -96,11 +98,12 @@ class File extends Field
 
         if (is_empty($this->View)) $this->View = FieldView::IMAGE;
 
-        if ( isset( $_GET[File::REMOVE_FILE_KEY] ) ) {
+        if ( isset( $_GET[File::REMOVE_FILE_KEY] )  && isset($_GET[File::REMOVE_FILE_KEY_TM])) {
 
+            if ( isset($_COOKIE[$this->TrackerName() . $_GET[File::REMOVE_FILE_KEY_TM]])
 
-            if ( Session::Has($this->TrackerName()) && ($_GET[File::REMOVE_FILE_KEY] == Session::Read($this->TrackerName()))) {
-
+                && ($_GET[File::REMOVE_FILE_KEY] == $_COOKIE[$this->TrackerName()  . $_GET[File::REMOVE_FILE_KEY_TM]])) {
+                
 
                 $allow_delete = true;
 
@@ -134,6 +137,10 @@ class File extends Field
 
                 unset( $_GET[File::REMOVE_FILE_KEY] );
 
+                $_GET[File::REMOVE_FILE_KEY_TM] = '';
+
+                unset( $_GET[File::REMOVE_FILE_KEY_TM] );
+
             }
 
 
@@ -141,12 +148,12 @@ class File extends Field
 
     }
 
-    public function TrackCode()
+    public function TrackCode($tm  = '')
     {
 
         $track_code = md5(uniqid($this->TrackerName(), true));
 
-        Session::Store($this->TrackerName(), $track_code);
+        setcookie($this->TrackerName() . $tm, $track_code, time() + 3600);
 
         return $track_code;
 
@@ -252,7 +259,7 @@ class File extends Field
     public function FileExt($old_data_value = false)
     {
 
-        $value = $old_data_value ? $this->DataValue() : $this->Value;
+        $value = $old_data_value ? $this->DataValue() : ($this->Value ?? '');
 
         if( ! strstr( $value, '.' ) ) return $value;
 
@@ -266,7 +273,7 @@ class File extends Field
 
     protected function ValueParts($old_data_value = false)
     {
-        return explode( '.', $old_data_value ? $this->DataValue() : $this->Value );
+        return explode( '.', $old_data_value ? $this->DataValue() : ($this->Value ?? '') );
     }
 
     public function BaseName($old_data_value = false)

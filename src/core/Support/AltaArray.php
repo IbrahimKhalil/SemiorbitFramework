@@ -4,7 +4,7 @@
 * AltaArray - SEMIORBIT ARRAY OBJECT CASE INSENSITIVE  			 semiorbit.com
 *------------------------------------------------------------------------------------------------
 *
-* REF. This class was built on code published by @author Yousef Ismaeil <cliprz@gmail.com>
+* REF. This class was built on code published by @author Yousef Ismail <cliprz@gmail.com>
 * http://docs.php.net/manual/en/class.arrayaccess.php#113865
 *
 * NB. Array string keys will be changed to LOWER CASE by default
@@ -132,7 +132,7 @@ class AltaArray implements \ArrayAccess, \Countable, \IteratorAggregate
 
             $ci_key = $this->setCase($key);
 
-            $orig_key = isset( $this->_CI_Map[ $this->setCase($key) ] ) ? $this->_CI_Map[ $this->setCase($key) ] : $key;
+            $orig_key = $this->_CI_Map[$this->setCase($key)] ?? $key;
 
         }
 
@@ -143,9 +143,9 @@ class AltaArray implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
 	/**
-	 * Get a data by key
+	 * Get a data by offset
 	 *
-	 * @param string $key to retrieve
+	 * @param string $offset to retrieve
 	 * @access public
 	 * @return mixed
 	 */
@@ -171,9 +171,9 @@ class AltaArray implements \ArrayAccess, \Countable, \IteratorAggregate
 
 
 	/**
-	 * Whether or not an data exists by key
+	 * Check if data exists by offset
 	 *
-	 * @param string $key to check for
+	 * @param string $offset to check for
 	 * @access public
 	 * @return boolean
 	 * @abstracting ArrayAccess
@@ -186,9 +186,9 @@ class AltaArray implements \ArrayAccess, \Countable, \IteratorAggregate
 
 
 	/**
-	 * Unset an data by key
+	 * Unset data by offset
 	 *
-	 * @param string $key to unset
+	 * @param string $offset to unset
 	 * @access public
 	 */
 
@@ -201,22 +201,22 @@ class AltaArray implements \ArrayAccess, \Countable, \IteratorAggregate
 	/**
 	 * Assigns a value to the specified offset
 	 *
-	 * @param string $key offset to assign the value to
+	 * @param string $offset offset to assign the value to
 	 * @param mixed  $value to set
 	 * @access public
 	 * @abstracting ArrayAccess
 	 */
 
-	public function offsetSet($key, $value)
+	public function offsetSet($offset, mixed $value): void
     {
 
-		if (is_null($key)) {
+		if (is_null($offset)) {
 
 			$this->_Data[] = $value;
 
 		} else {
 
-			$this->UpdateData($key, $value);
+			$this->UpdateData($offset, $value);
 
 		}
 
@@ -224,7 +224,7 @@ class AltaArray implements \ArrayAccess, \Countable, \IteratorAggregate
 
 
 	/**
-	 * Whether or not an offset exists
+	 * Check if an offset exists
 	 *
 	 * @param string $key offset to check for
 	 * @access public
@@ -232,9 +232,9 @@ class AltaArray implements \ArrayAccess, \Countable, \IteratorAggregate
 	 * @abstracting ArrayAccess
 	 */
 
-	public function offsetExists($key)
+	public function offsetExists($key): bool
     {
-        return isset($this->_Data[$key]) ?: isset($this->_CI_Map[$this->setCase($key)]);
+        return isset($this->_Data[$key]) || isset($this->_CI_Map[$this->setCase($key)]);
 	}
 
 	/**
@@ -245,9 +245,9 @@ class AltaArray implements \ArrayAccess, \Countable, \IteratorAggregate
 	 * @abstracting ArrayAccess
 	 */
 
-	public function offsetUnset($key)
+	public function offsetUnset($offset): void
     {
-		$this->UnsetData($key);
+		$this->UnsetData($offset);
 	}
 
 
@@ -260,20 +260,20 @@ class AltaArray implements \ArrayAccess, \Countable, \IteratorAggregate
 	 * @abstracting ArrayAccess
 	 */
 
-	public function &offsetGet($key)
+	public function &offsetGet($offset): mixed
     {
-        return  $this->_Data[  $this->_CI_Keys ?  $this->_CI_Map[ $this->setCase( $key ) ] : $key ];
+        return  $this->_Data[  $this->_CI_Keys ?  $this->_CI_Map[ $this->setCase( $offset ) ] : $offset ];
 	}
 
-	/**
-	 * An instance of the object implementing Iterator or Traversable
-	 *
-	 * @access public
-	 * @return object
-	 * @abstracting IteratorAggregate
-	 */
+    /**
+     * An instance of the object implementing Iterator or Traversable
+     *
+     * @access public
+     * @return \ArrayIterator
+     * @abstracting IteratorAggregate
+     */
 
-	public function getIterator()
+	public function getIterator(): \ArrayIterator
     {
 		return new \ArrayIterator($this->_Data);
 	}
@@ -288,11 +288,9 @@ class AltaArray implements \ArrayAccess, \Countable, \IteratorAggregate
 	 * @abstracting Countable
 	 */
 
-	public function count()
-	{
-		$count = count( $this->_Data );
-
-		return $count;
+	public function count(): int
+    {
+        return count( $this->_Data );
 	}
 
 
@@ -303,8 +301,8 @@ class AltaArray implements \ArrayAccess, \Countable, \IteratorAggregate
 	 * @return array
 	 */
 
-	public function ToArray()
-	{
+	public function ToArray(): array
+    {
 		return $this->_Data;
 	}
 
@@ -312,13 +310,13 @@ class AltaArray implements \ArrayAccess, \Countable, \IteratorAggregate
 	 * Merge multiple arrays with data
 	 *
 	 * @param array $array1 List of arrays or AltaArray(s) to merge. One array at least
-     * @param array $_ Optional more arrays to merge.
+     * @param array|null $_ Optional more arrays to merge.
 	 * @access pubic
 	 * @return array
 	 */
 
-	public function Merge($array1, $_ = null)
-	{
+	public function Merge(array $array1, $_ = null): array
+    {
 
 		$arg_list = func_get_args();
 

@@ -23,91 +23,124 @@ class DB
 	protected static $_Connection;
 	
 	protected static $_ConnectionsPool = array();
-	
-	protected static $_DBInstance;
-	
-	
-	
-	protected static function DBInstance()
-	{
 
-		if ( static::$_DBInstance === null )	static::$_DBInstance = new static();
-	
-		return static::$_DBInstance;
-	
-	}
+
+
 
     /**
      * @param string $connection_id
-     * @return DB
+     * @return
      */
 
 	public static function UseConnection($connection_id = null)
 	{
-		
-		if ( ! empty( static::$_ConnectionID ) && ( empty( $connection_id ) || $connection_id === static::$_ConnectionID ) ) return static::DBInstance(); 
-	
+
+		if ( ! empty( static::$_ConnectionID ) &&
+
+            ( empty( $connection_id ) || $connection_id === static::$_ConnectionID ) )
+
+            return static::ActiveConnection();
+
+
 		// CONNECTION AVAILABLE IN POOL ? YES  
 		
 		if ( isset( static::$_ConnectionsPool [ $connection_id ] ) ) {
 			
 			static::ActivateConnection( static::$_ConnectionsPool [ $connection_id ] );
 			
-			return static::DBInstance();
-			
-		}
-		
-		// : NOT FOUND IN POOL >> START CONNECTING
+		} else {
 
-	
-		$myCon = new Connection($connection_id); 
-		
-		static::ActivateConnection( $myCon );
+            // : NOT FOUND IN POOL >> START CONNECTING
+
+            $myCon = new Connection($connection_id);
+
+            static::ActivateConnection($myCon);
+
+        }
 
 
-		
-		return static::DBInstance();
+		return static::ActiveConnection();
 	
 	}
 
     /**
+     * Returns connection from pool or create new connection if not found. <br>
+     * <b>Notice:</b> new connection will not be added to pool unless added using <b>ActivateConnection</b> or <b>UseConnection</b>.
+     *
      * @param string $connection_id
      * @return Connection
      */
 
-    public static function Connection($connection_id = null)
+    public static function Connection($connection_id = null): Connection
     {
 
-        if ( ! empty( static::$_ConnectionID ) && ( empty( $connection_id ) || $connection_id === static::$_ConnectionID ) ) return static::ActiveConnection();
+        if ( ! empty( static::$_ConnectionID ) && ( empty( $connection_id ) || $connection_id === static::$_ConnectionID ) )
+
+            return static::ActiveConnection();
 
         // CONNECTION AVAILABLE IN POOL ? YES
-
-        if ( isset( static::$_ConnectionsPool [ $connection_id ] ) ) {
-
-            return static::$_ConnectionsPool [ $connection_id ] ;
-
-
-        }
-
         // : NOT FOUND IN POOL >> START CONNECTING
 
-        $myCon = new Connection($connection_id);
-
-        return $myCon;
+        return static::$_ConnectionsPool [$connection_id] ?? new Connection($connection_id);
 
     }
 
     /**
-     * @param string $connection_id
+     * Returns connection from pool or <b>create a new one without adding to pool</b>
+     *
+     * @param string|array $connection connection id OR connection info array
      * @return Connection
      */
 
-    public static function WithConnection($connection_id = null)
+    public static function WithConnection($connection = null)
     {
-        return static::Connection($connection_id);
+        return is_array($connection) ? new Connection(uniqid(), $connection) : static::Connection($connection);
     }
-	
-	protected static function ActivateConnection(Connection $con)
+
+
+    /**
+     * Open SQLite database connection, and <b>add it to pool</b> using database name as connection_id, without activating it.<br>
+     * Using SQLite3 driver
+     *
+     * @param string $db
+     * @param array $options
+     * @param string $encryption
+     * @return Connection
+     */
+    public static function WithSqlite(string $db, array $options = [], string $encryption = ''): Connection
+    {
+
+        if (isset( static::$_ConnectionsPool [$db] )) return static::$_ConnectionsPool [$db];
+
+
+        $con = new Connection($db, [
+
+            'id' => $db,
+
+            'driver' => 'sqlite3',
+
+            'db' => $db,
+
+            'password' => $encryption,
+
+            'options' => $options
+
+        ]);
+
+        static::$_ConnectionsPool [ $con->ConnectionID() ] = $con;
+
+        return $con;
+
+    }
+
+    /**
+     * Add connection to pool and activate it
+     *
+     * @param Connection $con
+     * @return void
+     */
+
+    protected static function ActivateConnection(Connection $con)
 	{
 		
 		static::$_Connection = $con;
@@ -124,8 +157,8 @@ class DB
 	 * @return Connection
 	 */
 
-	public static function ActiveConnection()
-	{
+	public static function ActiveConnection(): Connection
+    {
 		if ( empty( static::$_Connection ) ) static::UseConnection();
 
 		return static::$_Connection;	
@@ -161,12 +194,59 @@ class DB
 		//static::Connect( $connection_id );
 	}
 
-    public static function Execute($query, $params = [])
+
+
+    /**
+     * Executes multiple queries
+     *
+     * @param string $sql
+     * @return bool|int true/false or number of effected rows (driver dependent)
+     */
+
+    public static function ExecuteAll(string $sql)
     {
-        return static::ActiveConnection()->Cmd( $query, $params );
+        return static::ActiveConnection()->ExecuteAll($sql);
     }
 
-    public static function Cmd($query, $params = [])
+
+    /**
+     * Executes a prepared or unprepared sql query returning a result object or boolean
+     *
+     * @param string $query
+     * @param array $params
+     * @return mixed
+     */
+
+    public static function Execute(string $query, array $params = [])
+    {
+        return static::ActiveConnection()->Execute( $query, $params );
+    }
+
+
+    /**
+     * Executes unprepared single query returning bool|int
+     * (no result object is returned)
+     *
+     * @param string $query
+     * @return bool|int true/false or number of effected rows (driver dependent)
+     */
+
+    public static function Exec(string $query)
+    {
+        return static::ActiveConnection()->Exec($query);
+    }
+
+
+    /**
+     * <b>Execute</b> alias<br>
+     * Executes a prepared or unprepared sql query returning a result object or boolean
+     *
+     * @param string $query
+     * @param array $params
+     * @return mixed
+     */
+
+    public static function Cmd(string $query, array $params = [])
     {
         return static::ActiveConnection()->Cmd( $query, $params );
     }

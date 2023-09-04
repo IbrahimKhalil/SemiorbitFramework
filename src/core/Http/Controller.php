@@ -222,9 +222,10 @@ abstract class Controller
 
     }
 
-    public static function ListViewUrl($class_name = null, $use_cache = true)
+    public static function ListViewUrl($filter = null, $class_name = null, $use_cache = true)
     {
-        return static::ActionUrl('list', null, $class_name, $use_cache);
+        return static::ActionUrl('list', $filter, $class_name, $use_cache);
+
     }
 
     public static function TableViewUrl($class_name = null, $use_cache = true)

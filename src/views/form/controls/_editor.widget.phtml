@@ -1,0 +1,51 @@
+<?php
+/** @var Semiorbit\Field\TextArea $field */
+
+use Semiorbit\Auth\Auth;
+
+$myTemplate = $field->ActiveTemplate();
+
+?>
+<div class="semiorbit-form-editor">
+
+<?= $myTemplate->OpenField( $field ) ?>
+
+	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ) . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
+
+	<?= $myTemplate->OpenInput( $field ) ?>
+
+		<textarea  class="<?= $field->InputDefaultCssClass() ?>" cols="40" rows="8"  <?= $field->InputAttrs() ?>
+
+                   title="<?=  htmlspecialchars( $field->LabelText() ) ?>" ><?=  htmlspecialchars( $field->Value )  ?></textarea>
+
+<script type="text/javascript" src="<?=EXT?>ckeditor/ckeditor.js"></script>
+<!--suppress JSUnresolvedVariable -->
+
+    <script type="text/javascript">
+    var editor_txt_<?=$field->DomInputID()?> = CKEDITOR.replace( '<?=$field->DomInputID()?>' );
+
+    var ckConfig = CKEDITOR.config;
+
+    ckConfig.language = '<?= LANG == "ar" ? "ar" : "en" ?>';
+
+    <?php
+     $_SESSION['KCF_ENABLED'] = Auth::Check(SUPER_ADMIN);
+     $_SESSION['KCF_UPLOAD_FOLDER'] = PUBLICPATH . 'uploads';
+     ?>
+
+    ckConfig.filebrowserBrowseUrl = '<?=EXT?>kcfinder-2.51/browse.php?type=files';
+    ckConfig.filebrowserImageBrowseUrl = '<?=EXT?>kcfinder-2.51/browse.php?type=images';
+    ckConfig.filebrowserFlashBrowseUrl = '<?=EXT?>kcfinder-2.51/browse.php?type=flash';
+    ckConfig.filebrowserUploadUrl = '<?=EXT?>kcfinder-2.51/upload.php?type=files';
+    ckConfig.filebrowserImageUploadUrl = '<?=EXT?>kcfinder-2.51/upload.php?type=images';
+    ckConfig.filebrowserFlashUploadUrl = '<?=EXT?>kcfinder-2.51/upload.php?type=flash';
+
+</script>
+
+	<?= $myTemplate->CloseInput( $field ) ?>
+
+	<?= $myTemplate->OpenNote( $field ) . ( $field->Note ) . $myTemplate->CloseNote( $field ) ?>
+
+<?= $myTemplate->CloseField( $field ) ?>
+
+</div>
