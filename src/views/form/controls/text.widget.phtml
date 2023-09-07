@@ -18,3 +18,5 @@ $myTemplate = $field->ActiveTemplate();
 	<?= $myTemplate->OpenNote( $field ) . ( $field->Note ) . $myTemplate->CloseNote( $field ) ?>
 
 <?= $myTemplate->CloseField( $field ) ?>
+
+<?= $field->Datalist ? $myTemplate->Datalist($field) : '' ?>

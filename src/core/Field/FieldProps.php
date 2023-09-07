@@ -81,5 +81,9 @@ interface FieldProps
     const STEP = 'step';
 
     const MULTIPLE = 'multiple';
+
+    const LIST = 'list';
+
+    const AUTO_COMPLETE = 'autocomplete';
 	
 }

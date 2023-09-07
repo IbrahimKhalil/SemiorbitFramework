@@ -225,6 +225,15 @@ class FormTemplate
             $pms, $flush_output);
     }
 
+    public function Datalist(Field $field, $flush_output = false)
+    {
+        $pms['field'] = $field;
+
+        return Render::Widget( $this->TemplateSelector('datalist'),
+
+            $pms, $flush_output);
+    }
+
 
     public function Widget($widget_name, $pms = array(), $flush_output = false)
     {

@@ -12,6 +12,9 @@ namespace Semiorbit\Field;
 
 
 
+use Semiorbit\Data\DataSet;
+use Semiorbit\Db\DB;
+
 /**
  * Class Text
  * @package Semiorbit\Field
@@ -69,6 +72,8 @@ class Text extends Field
 
     public $Pattern;
 
+    use Datalist;
+
 
     public function PreRender()
     {
@@ -79,6 +84,8 @@ class Text extends Field
 
         if (is_empty($this->MaxLength)) $this->MaxLength = ($this->Type == DataType::VARCHAR) ? 255 : 0;
 
+        if ($this->DatalistSource) $this->FillDatalist();
+
     }
 
 
@@ -86,6 +93,8 @@ class Text extends Field
     {
 
         $attrs = array(Field::PLACE_HOLDER, Field::MAX_LENGTH, Field::INPUT_MODE, Field::PATTERN);
+
+        $this->AddDatalistAttrs($attrs);
 
         $include_attrs = array_merge($attrs, $include_attrs);
 

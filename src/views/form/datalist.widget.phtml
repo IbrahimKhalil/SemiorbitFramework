@@ -1,0 +1,15 @@
+<?php
+/**@var Semiorbit\Field\Text $field **/
+
+if ($field->Datalist) :
+
+    $datalist_is_list = function_exists('array_is_list') ? array_is_list($field->Datalist) : true;
+
+?>
+<datalist id="<?= $field->DatalistId() ?>">
+<?php foreach ($field->Datalist as $k => $value) : ?>
+    <option value="<?= $datalist_is_list ? $value : $k ?>"><?= $datalist_is_list ? $value : '' ?></option>
+<?php endforeach; ?>
+</datalist>
+<?php
+endif;
