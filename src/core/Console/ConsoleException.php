@@ -85,5 +85,17 @@ class ConsoleException extends AppRuntimeException
         throw new static(3050, sprintf('Invalid argument signature "%s".', $signature));
     }
 
+    public static function InvalidCommand($command_name)
+    {
+        throw new static(3055, sprintf('Invalid Command: Command name ["%s"] is not registered or command does not exist.', $command_name));
+    }
+
+    public static function MissingCommand()
+    {
+        throw new static(3060, sprintf('Missing Command! Please enter command name.'));
+    }
+
+
+
 
 }

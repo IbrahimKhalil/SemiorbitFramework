@@ -14,36 +14,70 @@ class Console
 
         global $argv;
 
-        $command_name = $argv[1] ?? Application::Abort(404, 'Please enter command');
-
-
-        //$command
-
         $output = '';
 
-        $command_fq = ConsoleRegistry::FindCommand($command_name);
+        try {
 
-        if ($command_fq && class_exists($command_fq)) {
+            $command_name = $argv[1] ?? ConsoleException::MissingCommand();
+
+            if ($command_name === '?') { Help::CommandListCli(); goto OUTPUT_LN; }
+
+            //$command
+
+            $command_fq = ConsoleRegistry::FindCommand($command_name);
+
+            if ($command_fq && class_exists($command_fq)) {
 
 
-            $command = new $command_fq();
+                $command = new $command_fq();
 
-            /** @var Command $command */
+                /** @var Command $command */
 
-            try {
+                try {
 
-                $output = $command->Run();
+                    $output = $command->Run();
 
-            } catch (\Exception $exception) {
+                } catch (\Exception $exception) {
 
-               $command->ExceptionHandle($exception);
-               
+                    $command->ExceptionHandle($exception);
+
+                }
+
+            } else {
+
+                ConsoleException::InvalidCommand($command_name);
+
             }
 
-        } else
 
-            Application::Abort(404);
+        } catch (\Exception $exception) {
 
+            $cli =  new Cli();
+
+            $registered_commands = ConsoleRegistry::ListCommandsNames();
+
+            $cn_str = '';
+
+            foreach ($registered_commands as $k => $cn)
+
+                $cn_str .= '<mark>' . ($k+1) . '-</mark> <info>' . $cn . '</info>  ';
+
+
+            $cli->Writeln('<question>Semiorbit Framework Console</question>');
+
+            $cli->Writeln('');
+
+            $cli->Writeln($cn_str);
+
+            $cli->Writeln('Error: ' . $exception->getCode());
+
+            $cli->Writeln('<error>' . $exception->getMessage() . '</error>');
+
+            $cli->Writeln('<comment>Help:</comment> To get detailed list of commands run: <question>php sc ?</question>');
+
+        }
+
+        OUTPUT_LN:
 
         echo is_string($output) ? $output : print_r($output);
         

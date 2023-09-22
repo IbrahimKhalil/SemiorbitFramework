@@ -19,7 +19,7 @@ class ConsoleRegistry
 
     /**
      * @param $command
-     * @return Command
+     * @return string
      */
 
     public static function FindCommand($command)
@@ -30,6 +30,11 @@ class ConsoleRegistry
     public static function ListCommands()
     {
         return static::$_Reg;
+    }
+
+    public static function ListCommandsNames()
+    {
+        return array_keys(static::$_Reg);
     }
 
     public static function RegisterCommand($command, $class)
