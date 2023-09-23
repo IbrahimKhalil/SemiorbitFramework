@@ -287,7 +287,7 @@ class Field extends AltaArray implements FieldProps
 
         if ($this->InputIsReadOnly === true) $attrs['readonly'] = 'readonly';
 
-        if ($this->Required === true) $attrs['required'] = 'required';
+        if ($this->Required === true && $this->Control !== Control::CHECKBOX) $attrs['required'] = 'required';
 
         $attrs = array_merge($attrs, $include_attrs, $this->_InputAttrs);
 
