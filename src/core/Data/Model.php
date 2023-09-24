@@ -545,7 +545,7 @@ class Model
 
             $named_param[] = $fld->WhereClausePrepareValue(":{$fld->Name}", true);
 
-            $param_value[$fld->Name] = [$fld->Value === '' ? null : $fld->Value, $fld->Type];
+            $param_value[$fld->Name] = [$fld->Value === '' ? null : $fld->PreparedValue(), $fld->Type];
 
 
         endforeach;
@@ -649,7 +649,7 @@ class Model
             $params[] = "`{$fld->Name}` = {$named_placeholder}";
 
 
-            $param_value[$fld->Name] = [$fld->Value === '' ? null : $fld->Value, $fld->Type];
+            $param_value[$fld->Name] = [$fld->Value === '' ? null : $fld->PreparedValue(), $fld->Type];
 
 
         endforeach;

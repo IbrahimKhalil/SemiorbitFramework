@@ -22,7 +22,7 @@ trait ModelEventsTrait {
 
     public function onInsert($res)
     {
-        return $res;
+        //
     }
 
     public function onBeforeUpdate()
@@ -32,7 +32,7 @@ trait ModelEventsTrait {
 
     public function onUpdate($res)
     {
-        return $res;
+        //
     }
 
     public function onBeforeRemove()
@@ -52,7 +52,7 @@ trait ModelEventsTrait {
 
     public function onSave($res)
     {
-        return $res;
+        //
     }
 
     public function onUserInsertedRow($res, &$show_form, $show_err_report = false, $form_output = null)

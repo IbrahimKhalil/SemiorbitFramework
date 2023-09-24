@@ -112,7 +112,9 @@ class Field extends AltaArray implements FieldProps
     protected $_SelectExpr;
 
     protected $_WhereClauseHelperFunc;
-    
+
+    protected $_StoreValuePrepareHelperFunc;
+
     protected $_InputAttrs = [];
 
     use FieldBuilder;
@@ -530,20 +532,25 @@ class Field extends AltaArray implements FieldProps
 
     public function CheckUniqueValue()
     {
+
         if ($this->Unique) {
 
             $ds = $this->ActiveDataSet();
 
             if (!$ds) return true;
 
-            $value = $ds->ActiveConnection()->Escape($this->Value);
+            $id = $ds->ID->PreparedValue();
 
-            $id = $ds->ActiveConnection()->Escape($ds->ID->Value);
+            $id_where_clause = $ds->ID->WhereClausePrepareValue(":{$ds->ID->Name}", true);
+
+            $value = $this->PreparedValue();
+
+            $value_where_clause = $this->WhereClausePrepareValue(":{$this->Name}", true);
 
             /** @noinspection SqlNoDataSourceInspection */
-            $sql = "SELECT {$this->Name} FROM {$ds->TableName()} WHERE {$this->Name} LIKE '{$value}' AND {$ds->ID->Name} != '{$id}' ";
+            $sql = "SELECT {$this->Name} FROM {$ds->TableName()} WHERE {$this->Name} = {$value_where_clause} AND {$ds->ID->Name} != {$id_where_clause} ";
 
-            return (!$ds->ActiveConnection()->Find($sql));
+            return (!$ds->ActiveConnection()->Find($sql, [$this->Name => [$value, $this->Type], $ds->ID->Name => [$id, $ds->ID->Type]]));
 
         }
 
@@ -857,8 +864,6 @@ class Field extends AltaArray implements FieldProps
 
         if ($this->ID == Str::PascalCase($this->Name)) $this->ID = null;
 
-        if ($this->Caption == Str::PascalCase($this->Name)) $this->Name = null;
-
         $this->Name = strval($value);
 
         $this->InitializeProps();
@@ -1091,15 +1096,7 @@ class Field extends AltaArray implements FieldProps
     public function WhereClausePrepareValue($value, $is_param = false)
     {
 
-        $value = $is_param ? $value :
-
-            (( in_array($this->Type, array(DataType::INT, DataType::DECIMAL,
-
-                DataType::DOUBLE, DataType::FLOAT, DataType::BOOL) ) ) ?
-
-                filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) :
-
-                "'" . DB::Escape($value) . "'");
+        $prepared_value = $is_param ? $value : $this->QuoteAndEscapeValue($value);
 
 
         if ($this->_WhereClauseHelperFunc)
@@ -1107,7 +1104,7 @@ class Field extends AltaArray implements FieldProps
             return call_user_func($this->_WhereClauseHelperFunc, $value, $is_param);
 
 
-        return $value;
+        return $prepared_value;
 
     }
 
@@ -1118,9 +1115,64 @@ class Field extends AltaArray implements FieldProps
         return $this;
     }
 
+
+    /**
+     * Add a callable function / closure to <b>manipulate field value</b> before saving. <br>
+     * Callable closure can have two params <br>
+     * <u>function ($value, Field $field) {}</u> <br>
+     * <b>$value:</b> refer to this field value <br>
+     * <b>$field:</b> refer to this field object <br>
+     *
+     * @param callable $callable
+     * @return static
+     */
+
+    public function StoreValuePrepareHelper(callable $callable)
+    {
+        $this->_StoreValuePrepareHelperFunc = $callable;
+
+        return $this;
+    }
+
+
+    /**
+     * Prepare value for storing.
+     *
+     * @param $value
+     * @return mixed|string
+     */
+
+    public function ValuePrepareForStoring($value)
+    {
+
+        return $this->_StoreValuePrepareHelperFunc ?
+
+             call_user_func($this->_StoreValuePrepareHelperFunc, $value, $this) : $value;
+
+    }
+
+
+    public function QuoteAndEscapeValue($value)
+    {
+
+        return (( in_array($this->Type, array(DataType::INT, DataType::DECIMAL,
+
+                DataType::DOUBLE, DataType::FLOAT, DataType::BOOL) ) ) ?
+
+                filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) :
+
+                Str::Quote(DB::Escape($value)));
+
+    }
+
+    /**
+     * Prepare field value for storing.
+     *
+     * @return object
+     */
     public function PreparedValue()
     {
-        return $this->WhereClausePrepareValue($this->Value);
+        return $this->ValuePrepareForStoring($this->Value);
     }
 
     public function setColCssClass($css_class)

@@ -456,4 +456,31 @@ class Str
     }
 
 
+    /**
+     * Add quotes around a string <b>'str'</b>
+     *
+     * @param string $str
+     * @param string $quote Single quote by default 'str'
+     * @return string
+     */
+
+    public static function Quote($str, string $quote = "'"): string
+    {
+        return $quote . $str . $quote;
+    }
+
+
+    /**
+     * Add double quotes around a string <b>"str"</b>
+     *
+     * @param string $str
+     * @return string
+     */
+
+    public static function DoubleQuote($str): string
+    {
+        return Str::Quote($str, '"');
+    }
+
+
 }

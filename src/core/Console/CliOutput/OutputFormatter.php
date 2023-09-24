@@ -320,7 +320,7 @@ class OutputFormatter
     }
 
     /**
-     * Applies current style from stack to text, if must be applied.
+     * Applies current style from stack to text, if it must be applied.
      */
 
     private function ApplyCurrentStyle(string $text, string $current, int $width, int &$currentLineLength): string

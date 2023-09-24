@@ -379,7 +379,7 @@ class Mysqli implements Driver
     /**
      * Generates a unique id using a server function
      *
-     * @param bool|string $value TRUE or Server function as string eg. "UUID_SHORT()"
+     * @param bool|string $value TRUE or Server function as string e.g. "UUID_SHORT()"
      * @return bool
      */
 
@@ -390,7 +390,7 @@ class Mysqli implements Driver
 
         $result = $this->Connector()->query("SELECT {$func}")->fetch_array();
 
-        return  isset($result[0]) ? $result[0] : false;
+        return $result[0] ?? false;
 
     }
 
@@ -414,8 +414,6 @@ class Mysqli implements Driver
     {
 
         $named_parameters = false;
-
-        $type_string = "";
 
         $pms = [];
 
@@ -516,7 +514,7 @@ class Mysqli implements Driver
 
         elseif (in_array($data_type, [DataType::FLOAT, DataType::DOUBLE])) return "d";
 
-        elseif (in_array($data_type, [DataType::BINARY])) return "b";
+        elseif (in_array($data_type, [DataType::BINARY])) return "s";
 
         else return "s";
 

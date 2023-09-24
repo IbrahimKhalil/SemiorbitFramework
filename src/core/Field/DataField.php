@@ -74,6 +74,20 @@ class DataField
     }
 
 
+    public static function BinaryText($name)
+    {
+
+        return Field::Text($name)
+
+            ->setType(DataType::BINARY)
+
+            ->StoreValuePrepareHelper(Binary::Bin2HexStroingHelper())
+
+            ->WhereClauseHelper(Binary::UnHexTextHelper());
+
+    }
+
+
 
     public static function CreationDate($name = 'creation_date')
     {
