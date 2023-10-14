@@ -52,6 +52,12 @@ class FilterInput
         return Validate::IsTrue(filter_input(static::$_InputType, $var));
     }
 
+    public static function Hex($var): ?string
+    {
+        $val = static::ValueOf($var);
+
+        return ctype_xdigit($val) ? $val : null;
+    }
 
 
 

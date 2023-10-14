@@ -35,8 +35,6 @@ class GenericUser extends DataSet
 
         if ( $roles === null || $roles === '' || $roles === array() || $roles === true ) return true;
 
-        if ( ! $this->IsLoggedIn() ) return false;
-
         if ( $roles === SUPER_ADMIN ) return $this->IsSuperAdmin();
 
         else if ( $roles === ANY_AUTHENTICATED_USER ) return $this->IsLoggedIn();
