@@ -400,6 +400,8 @@ class Sqlite3 implements Driver
     }
 
 
-
-
+    public function DriverManagementSystem(): string
+    {
+        return 'sqlite';
+    }
 }

@@ -104,5 +104,13 @@ interface Driver
 
     public function Rollback();
 
+
+    /**
+     * Returns driver type like [in lowercase, no spaces]: 'mysql', 'sqlite', 'sqlserver', 'oracle', 'postgresql'
+     *
+     * @return string
+     */
+    public function DriverManagementSystem() : string;
+
 	
 }

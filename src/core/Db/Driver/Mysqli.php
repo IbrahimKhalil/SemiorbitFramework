@@ -522,4 +522,9 @@ class Mysqli implements Driver
 
     }
 
+    public function DriverManagementSystem(): string
+    {
+        return 'mysql';
+    }
+
 }
