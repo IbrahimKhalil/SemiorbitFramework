@@ -313,7 +313,7 @@ class Output
     {
         if ( is_empty( $theme ) )
 
-            $this->_Theme = AppManager::MainApp()->ThemePath();
+            $theme = AppManager::MainApp()->ThemePath();
 
         $this->_Theme = $theme;
 

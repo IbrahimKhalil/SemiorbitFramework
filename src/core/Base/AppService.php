@@ -201,7 +201,7 @@ class AppService
 
     public function RoutesPath($path = '')
     {
-        return $this->_RoutesPath . ( $path ? Path::Normalize($path, false, null) : '' );
+        return $this->_RoutesPath . ( $path ? Path::Normalize($path, true, null) : '' );
     }
 
     public function UseRoutesPath($routes_path = null)
@@ -362,7 +362,7 @@ class AppService
 
             $this->_StoragePath = $this->BasePath('storage'))
 
-             . ( $path ? Path::Normalize($path) : '' );
+             . ( $path ? Path::Normalize($path, true, null) : '' );
 
     }
 
@@ -373,7 +373,7 @@ class AppService
 
             $this->_DatabasePath = $this->BasePath('src/database'))
 
-             . ( $path ? Path::Normalize($path) : '' );
+             . ( $path ? Path::Normalize($path, true, null) : '' );
 
     }
 
