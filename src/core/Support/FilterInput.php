@@ -12,21 +12,21 @@ class FilterInput
 
     public static function String($var): ?string
     {
-        $val = self::ValueOf($var);
+        $val = static::ValueOf($var);
 
         return $val ? Str::Filter($val) : null;
     }
 
     public static function Date($var, $format = 'Y-m-d'): ?string
     {
-        $val = self::ValueOf($var);
+        $val = static::ValueOf($var);
 
         return $val ? date($format, strtotime($val)) : null;
     }
 
     public static function DateTime($var, $format = 'Y-m-d H:i:s'): ?string
     {
-        $val = urldecode(self::ValueOf($var));
+        $val = urldecode(static::ValueOf($var));
 
         return $val ? date($format, strtotime($val)) : null;
     }
@@ -56,6 +56,7 @@ class FilterInput
     {
         $val = static::ValueOf($var);
 
+        /** @noinspection PhpComposerExtensionStubsInspection */
         return ctype_xdigit($val) ? $val : null;
     }
 

@@ -89,7 +89,7 @@ class TextArea extends Field
 
     public function DefaultHtmlBuilder()
     {
-        return $this->AllowHtml ?  $this->Value : nl2br( htmlentities( $this->Value ) );
+        return $this->AllowHtml ?  $this->Value : ($this->Value ? nl2br( htmlentities( $this->Value ) ) : $this->Value);
     }
 
     /**

@@ -35,7 +35,7 @@ class FileLog
     public function __construct($log_id = null, $append = false)
     {
 
-        $this->_LogID = $log_id ?: uniqid(null, true);
+        $this->_LogID = $log_id ?: uniqid('', true);
 
         if (! $append && file_exists($this->Path()))
 

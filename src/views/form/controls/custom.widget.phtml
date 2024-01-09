@@ -6,9 +6,9 @@ $myTemplate = $field->ActiveTemplate();
 ?>
 <?= $myTemplate->OpenField( $field ) ?>
 
-	<input type="hidden"  class="<?= $field->InputDefaultCssClass() ?>" value="<?= htmlspecialchars( $field->Value ) ?>" <?= $field->InputAttrs() ?> />
+	<input type="hidden"  class="<?= $field->InputDefaultCssClass() ?>" value="<?= $field->Value ? htmlspecialchars( $field->Value ) : $field->Value ?>" <?= $field->InputAttrs() ?> />
 	
-	<?=$field->HtmlCtrl?>
+	<?= $field->HtmlCtrl ?>
 	
 	
 <?= $myTemplate->CloseField( $field ) ?>

@@ -362,7 +362,7 @@ class AppService
 
             $this->_StoragePath = $this->BasePath('storage'))
 
-             . ( $path ? Path::Normalize($path, true, null) : '' );
+             . ( $path ? Path::Normalize($path) : '' );
 
     }
 
@@ -373,7 +373,7 @@ class AppService
 
             $this->_DatabasePath = $this->BasePath('src/database'))
 
-             . ( $path ? Path::Normalize($path, true, null) : '' );
+             . ( $path ? Path::Normalize($path) : '' );
 
     }
 
