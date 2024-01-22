@@ -292,6 +292,8 @@ class Mysqli implements Driver
 
         }
 
+        $result->free_result();
+
         return $tbl;
 
     }
@@ -315,6 +317,8 @@ class Mysqli implements Driver
             $tbl[] = $row;
 
         }
+
+        $result->free_result();
 
         return $tbl;
 
@@ -518,13 +522,42 @@ class Mysqli implements Driver
 
         else return "s";
 
-
-
     }
 
     public function DriverManagementSystem(): string
     {
         return 'mysql';
+    }
+
+    public function FreeResult($result)
+    {
+
+        if ($result instanceof \mysqli_result) $result->free_result();
+
+        elseif ($result === true) {
+
+            // free result for multi_query
+
+            do {
+
+                // Store the current result set
+
+                $resultSet = $this->Connector()->store_result();
+
+                // Free the current result set
+
+                if ($resultSet instanceof \mysqli_result) $resultSet->free();
+
+            } while ($this->Connector()->more_results() && $this->Connector()->next_result());
+
+
+        }
+
+    }
+
+    public function ErrorInfo()
+    {
+        return $this->Connector()->error_list;
     }
 
 }

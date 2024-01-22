@@ -301,6 +301,16 @@ class DB
         return static::ActiveConnection()->Driver()->Escape($value);
 	}
 
+    public static function FreeResult($result)
+	{
+        return static::ActiveConnection()->Driver()->FreeResult($result);
+	}
+
+    public static function ErrorInfo()
+    {
+        return static::ActiveConnection()->Driver()->ErrorInfo();
+    }
+
 
     public static function BeginTransaction()
     {
@@ -316,5 +326,6 @@ class DB
     {
         return  static::ActiveConnection()->Driver()->Rollback();
     }
+
 	
 }

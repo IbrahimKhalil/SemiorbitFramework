@@ -694,7 +694,7 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
      * @abstracting ArrayAccess
      */
 
-    public function offsetSet($key, mixed $value): void
+    public function offsetSet($key, $value): void
     {
 
         $this->Load();
@@ -774,7 +774,7 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
      * @abstracting ArrayAccess
      */
 
-    public function offsetGet($offset): mixed
+    public function offsetGet($offset)
     {
         $this->Load();
 

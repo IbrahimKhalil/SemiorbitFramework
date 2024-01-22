@@ -274,7 +274,7 @@ class Sqlite3 implements Driver
 
         }
 
-
+        $result->finalize();
 
         return $tbl;
 
@@ -299,6 +299,8 @@ class Sqlite3 implements Driver
             $tbl[] = $row;
 
         }
+
+        $result->finalize();
 
         return $tbl;
 
@@ -341,7 +343,15 @@ class Sqlite3 implements Driver
 
         if ($result === false) return 0;
 
-        if ($result instanceof \SQLite3Result) return count($this->FetchAll($result));
+        if ($result instanceof \SQLite3Result) {
+
+            $count = count($this->FetchAll($result));
+
+            $result->finalize();
+
+            return $count;
+
+        }
 
         else return $this->Connector()->changes();
 
@@ -404,4 +414,26 @@ class Sqlite3 implements Driver
     {
         return 'sqlite';
     }
+
+    public function FreeResult($result)
+    {
+        if ($result instanceof \SQLite3Result) $result->finalize();
+    }
+
+    public function ErrorInfo()
+    {
+
+        return [
+
+            "errno" => $this->Connector()->lastErrorCode(),
+
+            "error" => $this->Connector()->lastErrorMsg(),
+
+            "extended" => $this->Connector()->lastExtendedErrorCode()
+
+        ];
+
+    }
+
+
 }

@@ -105,6 +105,12 @@ interface Driver
     public function Rollback();
 
 
+    public function FreeResult($result);
+
+
+    public function ErrorInfo();
+
+
     /**
      * Returns driver type like [in lowercase, no spaces]: 'mysql', 'sqlite', 'sqlserver', 'oracle', 'postgresql'
      *

@@ -1,11 +1,11 @@
 <?php
-define('APPPATH', '');
+const APPPATH = '';
 
-define('FW', '../../');
+const FW = '../../';
 
-define('PUBLICPATH', '');
+const PUBLICPATH = '';
 
-define('LANG', 'en');
+const LANG = 'en';
 
 
 /* Default Naming Conventions */

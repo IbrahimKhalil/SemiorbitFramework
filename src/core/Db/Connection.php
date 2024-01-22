@@ -292,18 +292,25 @@ class Connection
         return $this->Driver()->Escape($value);
     }
 
+    public function FreeResult($result)
+    {
+        return $this->Driver()->FreeResult($result);
+    }
+
+    public function ErrorInfo()
+    {
+        return $this->Driver()->ErrorInfo();
+    }
 
 
 
-	
-	
 	
 	/* Connection Props */
 	
 	public function ConnectionID() 	{ return $this->_ConnectionID; }
 
     /**
-     * @return \mysqli|\PDO
+     * @return \mysqli|\PDO|\SQLite3
      */
 
     public function Connector() 	{ return $this->_Connector; }
