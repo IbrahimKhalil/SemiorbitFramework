@@ -48,6 +48,8 @@ class Mysqli implements Driver
 
     protected $_Stmts;
 
+    private array $_CashedErrorList = [];
+
 
     public function __construct($db = null, $host = 'localhost', $user = 'root', $password = '', $port = null, $socket = null, $persistent = true)
     {
@@ -191,12 +193,62 @@ class Mysqli implements Driver
      * Returns true/false
      *
      * @param string $sql
-     * @return bool
+     * @return false|array
+     */
+
+    /**
+     * Returns array of mysqli_result sets
+     * or false if failed
+     * or null if partially (some queries) failed
+     * NB. FreeResult should be called after executing multi_query
+     *
+     * @param string $sql
+     * @return array|bool|null
      */
 
     public function ExecuteAll(string $sql)
     {
-        return $this->Connector()->multi_query($sql);
+
+
+        $exec = $this->Connector()->multi_query($sql);
+
+        $list_result = [];
+
+        $this->_CashedErrorList = [];
+
+        if ($exec) {
+
+            do {
+
+                // Store the current result set
+
+                $result = $this->Connector()->store_result();
+
+                // Check for errors in the current result set
+
+                if ($result instanceof \mysqli_result) {
+
+                    $list_result[] = $result;
+
+                } else if ($this->Connector()->errno) {
+
+                    array_push($this->_CashedErrorList, ...$this->Connector()->error_list);
+
+                    $exec = null;
+
+                    break; // Exit the loop in case of an error
+                }
+
+                // Move to the next result set
+
+            } while ($this->Connector()->more_results() && $this->Connector()->next_result());
+
+            return $exec && $list_result ? $list_result : $exec;
+
+        }
+
+        return $exec;
+
     }
 
     /**
@@ -534,7 +586,7 @@ class Mysqli implements Driver
 
         if ($result instanceof \mysqli_result) $result->free_result();
 
-        elseif ($result === true) {
+        else {
 
             // free result for multi_query
 
@@ -557,7 +609,7 @@ class Mysqli implements Driver
 
     public function ErrorInfo()
     {
-        return $this->Connector()->error_list;
+        return [...$this->_CashedErrorList, ...$this->Connector()->error_list];
     }
 
 }
