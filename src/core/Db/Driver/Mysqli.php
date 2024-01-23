@@ -243,6 +243,9 @@ class Mysqli implements Driver
 
             } while ($this->Connector()->more_results() && $this->Connector()->next_result());
 
+
+            if ($this->Connector()->errno && $exec) return null;
+
             return $exec && $list_result ? $list_result : $exec;
 
         }
