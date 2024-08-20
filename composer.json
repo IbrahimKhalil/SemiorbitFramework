@@ -2,7 +2,7 @@
   "name": "semiorbit/framework",
   "description": "Semiorbit PHP Framework",
   "keywords": ["framework", "php","semiorbit"],
-  "version": "8.1.1",
+  "version": "8.2.0",
   "license": "MIT",
   "homepage": "https://framework.semiorbit.com",
   "authors": [
@@ -17,7 +17,7 @@
     }
   ],
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.2",
     "ext-json": "*",
     "ext-mysqli": "*"
   },
