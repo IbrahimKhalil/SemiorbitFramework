@@ -914,9 +914,9 @@ class Field extends AltaArray implements FieldProps
         return $this;
     }
 
-    public function setPermission($value)
+    public function setPermission($roles, $permissions = null)
     {
-        $this->Permission = $value;
+        $this->Permission = [$roles, $permissions];
         return $this;
     }
 
@@ -1144,6 +1144,12 @@ class Field extends AltaArray implements FieldProps
 
     public function ValuePrepareForStoring($value)
     {
+
+        if ($this->Type === DataType::BOOL) {
+
+            $this->Required ? $value = (int) $value : ($value === null ? $value : (int) $value);
+
+        }
 
         return $this->_StoreValuePrepareHelperFunc ?
 

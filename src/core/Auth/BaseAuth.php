@@ -6,7 +6,6 @@ namespace Semiorbit\Auth;
 
 use Semiorbit\Base\AppManager;
 use Semiorbit\Config\Config;
-use Semiorbit\Debug\FileLog;
 use Semiorbit\Http\Client;
 use Semiorbit\Http\Url;
 use Semiorbit\Session\Session;

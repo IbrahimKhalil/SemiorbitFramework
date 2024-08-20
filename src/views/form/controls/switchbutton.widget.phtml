@@ -1,0 +1,117 @@
+<?php
+/**@var Semiorbit\Field\Checkbox $field **/
+
+
+use Semiorbit\Field\SwitchButton;
+
+$myTemplate = $field->ActiveTemplate();
+
+$checked_html = (bool) $field->Value == true?  'checked value="1"' : 'value="0"';
+
+
+if ( ! SwitchButton::StyleLoaded() ) :
+?>
+
+<style>
+    .semiorbit-switch {
+        position : relative;
+        display  : inline-block;
+        width    : 60px;
+        height   : 34px;
+    }
+
+    .semiorbit-switch input {
+        opacity : 0;
+        width   : 0;
+        height  : 0;
+    }
+
+    .slider {
+        position           : absolute;
+        cursor             : pointer;
+        top                : 0;
+        left               : 0;
+        right              : 0;
+        bottom             : 0;
+        background-color   : #ccc;
+        -webkit-transition : .4s;
+        transition         : .4s;
+    }
+
+    .slider:before {
+        position           : absolute;
+        content            : "";
+        height             : 26px;
+        width              : 26px;
+        left               : 4px;
+        bottom             : 4px;
+        background-color   : white;
+        -webkit-transition : .4s;
+        transition         : .4s;
+    }
+
+    input:checked + .slider {
+        background-color : #2196F3;
+    }
+
+    input:focus + .slider {
+        box-shadow : 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform : translateX(26px);
+        -ms-transform     : translateX(26px);
+        transform         : translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius : 34px;
+    }
+
+    .slider.round:before {
+        border-radius : 50%;
+    }
+
+    .semiorbit-switch-lbl {
+        font-size : large;
+        display   : inline-block;
+    }
+
+    .semiorbit-switch-holder {
+        clear       : both;
+        display     : flex;
+        align-items : center;
+    }
+</style>
+
+<?php
+endif;
+
+SwitchButton::MarkStyleLoaded();
+
+?>
+
+<?= $myTemplate->OpenField( $field ) ?>
+
+	<?= $myTemplate->OpenLabel( $field ) . $myTemplate->CloseLabel( $field )?>
+
+	<?= $myTemplate->OpenInput( $field ) ?>
+
+
+    <div class="semiorbit-switch-holder">
+        <label class="semiorbit-switch"  class="<?= $field->InputDefaultCssClass() ?>"  title="<?=  htmlspecialchars( $field->LabelText() ) ?>">
+            <input type="checkbox" <?= $field->InputAttrs() ?> value="<?= htmlspecialchars( $field->Value ) ?>" <?= $checked_html ?>  onclick="if(this.checked){this.value='1';}else{this.value='0';}">
+            <span class="slider round"></span>
+        </label>
+
+       <label class="semiorbit-switch-lbl" for="<?=  $field->DomInputID() ?>"> &nbsp; <?= $field->LabelText() ?></label>
+
+    </div>
+
+
+	<?= $myTemplate->CloseInput( $field ) ?>
+
+	<?= $myTemplate->OpenNote( $field ) . ( $field->Note ) . $myTemplate->CloseNote( $field ) ?>
+
+<?= $myTemplate->CloseField( $field ) ?>

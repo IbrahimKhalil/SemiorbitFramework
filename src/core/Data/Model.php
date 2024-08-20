@@ -10,6 +10,7 @@ namespace Semiorbit\Data;
 
 
 
+use AllowDynamicProperties;
 use Semiorbit\Auth\Auth;
 use Semiorbit\Component\Services;
 use Semiorbit\Debug\FileLog;
@@ -36,6 +37,7 @@ use Semiorbit\Translation\Lang;
  * @property Field Title
  * @property ID _ID
  */
+#[AllowDynamicProperties]
 
 class Model
 {
@@ -1378,12 +1380,11 @@ class Model
 
         foreach ($this->Fields() as $k => $fld) {
 
-            if (! $include_hidden)
-            {
-                if (in_array($fld['control'], array('none'))) continue;
+            if (! $include_hidden) if (in_array($fld['control'], array('none'))) continue;
 
-                if ($fld['permission']!==null && ! Auth::Check($fld['permission'])) continue;
-            }
+            if ($fld['permission'] !== null && !Auth::Check(...((array) $fld['permission']))) continue;
+
+
 
             if ( isset( $fld['group'] )) {
 

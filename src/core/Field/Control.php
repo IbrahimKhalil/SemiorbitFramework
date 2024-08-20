@@ -56,5 +56,7 @@ class Control
 	
 	const CUSTOM = 'custom';
 
+    const SWITCHBUTTON = 'switchbutton';
+
 	
 }

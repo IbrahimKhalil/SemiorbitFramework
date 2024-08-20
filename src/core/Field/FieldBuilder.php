@@ -140,6 +140,11 @@ trait FieldBuilder
     {
         return new Checkbox($field);
     }
+    
+    public static function SwitchButton($field)
+    {
+        return new SwitchButton($field);
+    }
 
     /**
      * @param $field
