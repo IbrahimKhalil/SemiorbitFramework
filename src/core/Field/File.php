@@ -33,7 +33,7 @@ use Semiorbit\Support\Uploader;
  * @method File  setType($value)
  * @method File  setRequired($value = true)
  * @method File  setGroup($value)
- * @method File  setPermission($value)
+ * @method File  setPermission($roles, $permissions = null)
  * @method File  setTemplate($value)
  * @method File  setCssClass($value)
  * @method File  setID($value)

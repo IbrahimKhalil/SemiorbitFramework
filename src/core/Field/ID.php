@@ -30,7 +30,7 @@ use Semiorbit\Output\TableViewCol;
  * @method ID  setType($value)
  * @method ID  setRequired($value = true)
  * @method ID  setGroup($value)
- * @method ID  setPermission($value)
+ * @method ID  setPermission($roles, $permissions = null)
  * @method ID  setTemplate($value)
  * @method ID  setCssClass($value)
  * @method ID  setID($value)

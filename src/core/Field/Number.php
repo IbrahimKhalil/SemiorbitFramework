@@ -29,7 +29,7 @@ namespace Semiorbit\Field;
  * @method \Semiorbit\Field\Number  setType($value)
  * @method \Semiorbit\Field\Number  setRequired($value = true)
  * @method \Semiorbit\Field\Number  setGroup($value)
- * @method \Semiorbit\Field\Number  setPermission($value)
+ * @method \Semiorbit\Field\Number  setPermission($roles, $permissions = null)
  * @method \Semiorbit\Field\Number  setTemplate($value)
  * @method \Semiorbit\Field\Number  setCssClass($value)
  * @method \Semiorbit\Field\Number  setID($value)

@@ -33,7 +33,7 @@ use Semiorbit\Support\Path;
  * @method Editor  setType($value)
  * @method Editor  setRequired($value)
  * @method Editor  setGroup($value)
- * @method Editor  setPermission($value)
+ * @method Editor  setPermission($roles, $permissions = null)
  * @method Editor  setTemplate($value)
  * @method Editor  setCssClass($value)
  * @method Editor  setID($value)

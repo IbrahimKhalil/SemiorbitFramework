@@ -32,7 +32,7 @@ use Semiorbit\Db\DB;
  * @method Text  setType($value)
  * @method Text  setRequired($value = true)
  * @method Text  setGroup($value)
- * @method Text  setPermission($value)
+ * @method Text  setPermission($roles, $permissions = null)
  * @method Text  setTemplate($value)
  * @method Text  setCssClass($value)
  * @method Text  setID($value)

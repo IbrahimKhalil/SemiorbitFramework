@@ -28,7 +28,7 @@ namespace Semiorbit\Field;
  * @method Hidden  setType($value)
  * @method Hidden  setRequired($value)
  * @method Hidden  setGroup($value)
- * @method Hidden  setPermission($value)
+ * @method Hidden  setPermission($roles, $permissions = null)
  * @method Hidden  setTemplate($value)
  * @method Hidden  setCssClass($value)
  * @method Hidden  setID($value)

@@ -28,7 +28,7 @@ use Semiorbit\Support\Str;
  * @method Select  setValue($value)
  * @method Select  setRequired($value = true)
  * @method Select  setGroup($value)
- * @method Select  setPermission($value)
+ * @method Select  setPermission($roles, $permissions = null)
  * @method Select  setTemplate($value)
  * @method Select  setCssClass($value)
  * @method Select  setID($value)

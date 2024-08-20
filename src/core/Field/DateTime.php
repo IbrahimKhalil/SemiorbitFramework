@@ -29,7 +29,7 @@ namespace Semiorbit\Field;
  * @method DateTime  setType($value)
  * @method DateTime  setRequired($value = true)
  * @method DateTime  setGroup($value)
- * @method DateTime  setPermission($value)
+ * @method DateTime  setPermission($roles, $permissions = null)
  * @method DateTime  setTemplate($value)
  * @method DateTime  setCssClass($value)
  * @method DateTime  setID($value)

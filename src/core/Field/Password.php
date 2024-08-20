@@ -29,7 +29,7 @@ use Semiorbit\Translation\Lang;
  * @method Password  setType($value)
  * @method Password  setRequired($value = true)
  * @method Password  setGroup($value)
- * @method Password  setPermission($value)
+ * @method Password  setPermission($roles, $permissions = null)
  * @method Password  setTemplate($value)
  * @method Password  setCssClass($value)
  * @method Password  setID($value)

@@ -29,7 +29,7 @@ namespace Semiorbit\Field;
  * @method TextArea  setType($value)
  * @method TextArea  setRequired($value = true)
  * @method TextArea  setGroup($value)
- * @method TextArea  setPermission($value)
+ * @method TextArea  setPermission($roles, $permissions = null)
  * @method TextArea  setTemplate($value)
  * @method TextArea  setCssClass($value)
  * @method TextArea  setID($value)
