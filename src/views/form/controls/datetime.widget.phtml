@@ -26,11 +26,11 @@ $dom_id = $field->DomInputID();
 
 <?= $myTemplate->OpenField( $field ) ?>
 
-	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ) . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
+	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ?? '') . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
 
 	<?= $myTemplate->OpenInput( $field ) ?>
 
-		<input type="text" class="<?= $field->InputDefaultCssClass() ?>" readonly value="<?= htmlspecialchars( $field->Value ) ?>" <?= $field->InputAttrs() ?>   title="<?=  htmlspecialchars( $field->LabelText() ) ?>" />
+		<input type="text" class="<?= $field->InputDefaultCssClass() ?>" readonly value="<?= htmlspecialchars( $field->Value ?? '') ?>" <?= $field->InputAttrs() ?>   title="<?=  htmlspecialchars( $field->LabelText() ) ?>" />
 
         <img id="img_<?= $dom_id  ?>" name="img_<?=  $field->Name ?>" style="cursor:pointer;" src="<?=THEME?>images/cal.gif" alt="<?= Lang::Trans("semiorbit::form.click_here_to_pick_up_date") ?>" class="date-cal-img"   />
 

@@ -259,7 +259,7 @@ class Field extends AltaArray implements FieldProps
 
         if (is_empty($value)) $value = isset($this->{$attr}) ? $this->{$attr} : '';
 
-        $html_output = !is_empty($value) ? $attr . ' = "' . htmlspecialchars($value) . '" ' : "";
+        $html_output = !is_empty($value) ? $attr . ' = "' . htmlspecialchars($value ?? '') . '" ' : "";
 
         return $html_output;
 

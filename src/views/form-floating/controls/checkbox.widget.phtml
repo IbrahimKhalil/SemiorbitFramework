@@ -12,9 +12,9 @@ $checked_html = (bool) $field->Value == true?  'checked value="1"' : 'value="0"'
 
 	<?= $myTemplate->OpenInput( $field ) ?>
 
-		<input type="checkbox"  class="<?= $field->InputDefaultCssClass() ?>" value="<?= htmlspecialchars( $field->Value ) ?>" <?= $field->InputAttrs() ?>   title="<?=  htmlspecialchars( $field->LabelText() ) ?>"
+		<input type="checkbox"  class="<?= $field->InputDefaultCssClass() ?>" value="<?= htmlspecialchars( $field->Value ?? '') ?>" <?= $field->InputAttrs() ?>   title="<?=  htmlspecialchars( $field->LabelText() ) ?>"
             <?= $checked_html ?>  onclick="if(this.checked){this.value='1';}else{this.value='0';}" />
-        &nbsp; <label for="<?=  $field->DomInputID() ?>"><?= htmlspecialchars( $field->LabelText() ) ?></label>
+        &nbsp; <label for="<?=  $field->DomInputID() ?>"><?= htmlspecialchars( $field->LabelText() ?? '') ?></label>
 
 	<?= $myTemplate->CloseInput( $field ) ?>
 

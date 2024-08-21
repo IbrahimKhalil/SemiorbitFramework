@@ -10,13 +10,13 @@ $myTemplate = $field->ActiveTemplate();
 
 <?= $myTemplate->OpenField( $field ) ?>
 
-	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ) . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
+	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ?? '') . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
 
 	<?= $myTemplate->OpenInput( $field ) ?>
 
 		<textarea  class="<?= $field->InputDefaultCssClass() ?>" cols="40" rows="8"  <?= $field->InputAttrs() ?>
 
-                   title="<?=  htmlspecialchars( $field->LabelText() ) ?>" ><?=  htmlspecialchars( $field->Value )  ?></textarea>
+                   title="<?=  htmlspecialchars( $field->LabelText() ?? '') ?>" ><?=  htmlspecialchars( $field->Value )  ?></textarea>
 
 <script type="text/javascript" src="<?=EXT?>ckeditor/ckeditor.js"></script>
 <!--suppress JSUnresolvedVariable -->

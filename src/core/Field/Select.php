@@ -394,9 +394,9 @@ class Select extends Field
 
             ((!empty($this->SelectedFormat) && $selected_html == "selected") ? $this->SelectedFormat : $this->Format);
 
-        $opt_text = !empty($format) && !isset($this->_Options[$opt_key]) ? sprintf($format, htmlspecialchars($opt_value))
+        $opt_text = !empty($format) && !isset($this->_Options[$opt_key]) ? sprintf($format, htmlspecialchars($opt_value ?? ''))
 
-            : htmlspecialchars($opt_value);
+            : htmlspecialchars($opt_value ?? '');
 
         $disabled_html = $disabled ? ' disabled ' : '';
 

@@ -10,7 +10,7 @@ $myTemplate = $field->ActiveTemplate();
 <?= $myTemplate->OpenInput($field) ?>
 
     <select class="<?= $field->InputDefaultCssClass() ?>" <?= $field->InputAttrs() ?>
-            title="<?= htmlspecialchars($field->LabelText()) ?>">
+            title="<?= htmlspecialchars($field->LabelText() ?? '') ?>">
 
         <?php
 
@@ -67,7 +67,7 @@ $myTemplate = $field->ActiveTemplate();
 
 <?= $myTemplate->CloseInput($field) ?>
 
-<?= $myTemplate->OpenLabel($field) . htmlspecialchars($field->LabelText()) . $field->RequiredMark() . $myTemplate->CloseLabel($field) ?>
+<?= $myTemplate->OpenLabel($field) . htmlspecialchars($field->LabelText() ?? '') . $field->RequiredMark() . $myTemplate->CloseLabel($field) ?>
 
 <?= $myTemplate->OpenNote($field) . ($field->Note) . $myTemplate->CloseNote($field) ?>
 

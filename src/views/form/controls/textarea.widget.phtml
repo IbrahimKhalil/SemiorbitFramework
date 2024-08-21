@@ -7,13 +7,13 @@ $myTemplate = $field->ActiveTemplate();
 
 <?= $myTemplate->OpenField( $field ) ?>
 
-	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ) . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
+	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ?? '') . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
 
 	<?= $myTemplate->OpenInput( $field ) ?>
 
 		<textarea  class="<?= $field->InputDefaultCssClass() ?>"   <?= $field->InputAttrs() ?> cols="40" rows="8"
 
-                   title="<?=  htmlspecialchars( $field->LabelText() ) ?>" ><?=  htmlspecialchars( $field->Value ?? '' )  ?></textarea>
+                   title="<?=  htmlspecialchars( $field->LabelText() ?? '') ?>" ><?=  htmlspecialchars( $field->Value ?? '' )  ?></textarea>
 
 	<?= $myTemplate->CloseInput( $field ) ?>
 

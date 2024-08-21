@@ -11,11 +11,11 @@ $myTemplate = $field->ActiveTemplate();
 
 		<textarea  class="<?= $field->InputDefaultCssClass() ?>" cols="40" rows="8"  <?= $field->InputAttrs() ?>
 
-                   title="<?=  htmlspecialchars( $field->LabelText() ) ?>" ><?=  htmlspecialchars( $field->Value ?? '' )  ?></textarea>
+                   title="<?=  htmlspecialchars( $field->LabelText() ?? '') ?>" ><?=  htmlspecialchars( $field->Value ?? '' )  ?></textarea>
 
 	<?= $myTemplate->CloseInput( $field ) ?>
 
-	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ) . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
+	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText()  ?? '') . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
 
 
 	<?= $myTemplate->OpenNote( $field ) . ( $field->Note ) . $myTemplate->CloseNote( $field ) ?>

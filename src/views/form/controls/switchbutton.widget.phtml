@@ -100,8 +100,8 @@ SwitchButton::MarkStyleLoaded();
 
 
     <div class="semiorbit-switch-holder">
-        <label class="semiorbit-switch"  class="<?= $field->InputDefaultCssClass() ?>"  title="<?=  htmlspecialchars( $field->LabelText() ) ?>">
-            <input type="checkbox" <?= $field->InputAttrs() ?> value="<?= htmlspecialchars( $field->Value ) ?>" <?= $checked_html ?>  onclick="if(this.checked){this.value='1';}else{this.value='0';}">
+        <label class="semiorbit-switch"  class="<?= $field->InputDefaultCssClass() ?>"  title="<?=  htmlspecialchars( $field->LabelText() ?? '') ?>">
+            <input type="checkbox" <?= $field->InputAttrs() ?> value="<?= htmlspecialchars( $field->Value ?? '') ?>" <?= $checked_html ?>  onclick="if(this.checked){this.value='1';}else{this.value='0';}">
             <span class="slider round"></span>
         </label>
 

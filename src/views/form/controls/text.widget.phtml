@@ -7,7 +7,7 @@ $myTemplate = $field->ActiveTemplate();
 
 <?= $myTemplate->OpenField( $field ) ?>
 
-	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ) . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
+	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ?? '') . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
 
 	<?= $myTemplate->OpenInput( $field ) ?>
 

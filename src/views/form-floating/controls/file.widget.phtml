@@ -11,11 +11,11 @@ $myTemplate = $field->ActiveTemplate();
 
 	<?= $myTemplate->OpenInput( $field ) ?>
 
-        <input type="file"  class="<?= $field->InputDefaultCssClass() ?>" value="<?= htmlspecialchars( $field->Value ) ?>" <?= $field->InputAttrs() ?>   title="<?=  htmlspecialchars( $field->LabelText() ) ?>" />
+        <input type="file"  class="<?= $field->InputDefaultCssClass() ?>" value="<?= htmlspecialchars( $field->Value ?? '') ?>" <?= $field->InputAttrs() ?>   title="<?=  htmlspecialchars( $field->LabelText() ) ?>" />
 
 	<?= $myTemplate->CloseInput( $field ) ?>
 
-	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ) . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
+	<?= $myTemplate->OpenLabel( $field ) . htmlspecialchars( $field->LabelText() ?? '') . $field->RequiredMark() . $myTemplate->CloseLabel( $field )?>
 
 	<?= $myTemplate->OpenNote( $field ) . ( $field->Note ) . $myTemplate->CloseNote( $field ) ?>
 
