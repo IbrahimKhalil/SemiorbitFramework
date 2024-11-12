@@ -31,4 +31,16 @@ class Base36
     }
 
 
+    /**
+     * Checks if input is a base36 string
+     *
+     * @param $input
+     * @return bool
+     */
+    function isBase36($input): bool
+    {
+        return preg_match('/^[0-9a-z]+$/i', $input) === 1;
+    }
+
+
 }

@@ -69,6 +69,8 @@ class Editor extends Field
 
     public $Resources = [];
 
+    public $ContentLanguage = LANG;
+
 
     public function PreRender()
     {
@@ -78,6 +80,8 @@ class Editor extends Field
         if (is_empty($this->Type)) $this->Type = DataType::TEXT;
 
         if (is_empty($this->MaxLength)) $this->MaxLength = ($this->Type == DataType::VARCHAR) ? 500 : 65535;
+
+        if (is_empty($this->ContentLanguage)) $this->ContentLanguage = LANG;
 
     }
 
@@ -191,5 +195,16 @@ class Editor extends Field
         return Path::Normalize($path);
 
     }
+
+
+    public function setContentLanguage($lang = LANG)
+    {
+
+        $this->ContentLanguage = $lang;
+
+        return $this;
+
+    }
+
 
 }

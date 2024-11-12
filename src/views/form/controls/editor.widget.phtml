@@ -1,5 +1,5 @@
 <?php
-/** @var Semiorbit\Field\TextArea $field */
+/** @var Semiorbit\Field\Editor $field */
 
 use Semiorbit\Auth\Auth;
 
@@ -24,22 +24,23 @@ if (!isset($GLOBALS['CKEDITOR_LOADED'])) :
 
 ?>
 <script src="<?=EXT?>ckeditor5/super-ckeditor.js"></script>
-<script src="<?=EXT?>ckeditor5/translations/ar.js"></script>
+<script src="<?=EXT?>ckeditor5/translations/<?= LANG ?>.js"></script>
 <script src="<?=EXT?>ckeditor5/config.js"></script>
 <script type="text/javascript">
-
     const ckConfig = CKEDITOR.customConfig;
-
-    ckConfig.language = '<?= LANG ?>';
-
 </script>
 <?php endif ?>
 <!--suppress JSUnresolvedVariable -->
 
 <script type="text/javascript">
 
+    ckConfig.language = {
+        'ui' : '<?= LANG ?>',
+        'content': '<?= $field->ContentLanguage ?>'
+    };
+
     CKEDITOR.ClassicEditor
-        .create( document.getElementById( '<?=$field->DomInputID()?>' ), ckConfig)
+        .create( document.getElementById( '<?= $field->DomInputID() ?>' ), ckConfig)
         .catch( error => {
             console.error( error );
         } );

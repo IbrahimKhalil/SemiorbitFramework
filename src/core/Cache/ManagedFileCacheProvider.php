@@ -41,9 +41,23 @@ class ManagedFileCacheProvider implements FileCacheProviderInterface
     }
 
 
-    public function Path($key)
+    public function Path($key, bool $create_dir = true)
     {
-        return $this->_CachePath . $key . '.php';
+
+        $file_path = $this->_CachePath . $key . '.php';
+
+        if ($create_dir && !file_exists($file_path)) {
+
+            $dir_path = dirname($file_path);
+
+            if (!file_exists($dir_path = Path::Normalize($dir_path)))
+
+                mkdir($dir_path, 0777, true);
+
+        }
+
+        return $file_path;
+
     }
 
 
@@ -72,7 +86,7 @@ class ManagedFileCacheProvider implements FileCacheProviderInterface
      */
     public function Has($key)
     {
-        return file_exists($this->Path($key));
+        return file_exists($this->Path($key, false));
     }
 
 
