@@ -37,7 +37,7 @@ class Base36
      * @param $input
      * @return bool
      */
-    function isBase36($input): bool
+    function IsBase36($input): bool
     {
         return preg_match('/^[0-9a-z]+$/i', $input) === 1;
     }
