@@ -2,8 +2,6 @@
 
 namespace Semiorbit\Support;
 
-use Semiorbit\Field\Validate;
-
 class FilterInput
 {
 
@@ -21,14 +19,14 @@ class FilterInput
     {
         $val = static::ValueOf($var);
 
-        return $val ? date($format, strtotime($val)) : null;
+        return Filter::Date($val, $format);
     }
 
     public static function DateTime($var, $format = 'Y-m-d H:i:s'): ?string
     {
         $val = urldecode(static::ValueOf($var));
 
-        return $val ? date($format, strtotime($val)) : null;
+        return Filter::DateTime($val, $format);
     }
 
     public static function Number($var): ?int
@@ -56,8 +54,22 @@ class FilterInput
     {
         $val = static::ValueOf($var);
 
-        /** @noinspection PhpComposerExtensionStubsInspection */
-        return ctype_xdigit($val) ? $val : null;
+        return Filter::Hex($val);
+    }
+
+
+    public static function Email($var): ?string
+    {
+        $val = static::ValueOf($var);
+
+        return Filter::Email($val);
+    }
+
+    public static function Tel($var, bool $force_leading_plus = false, $default_country_code = null): ?string
+    {
+        $val = static::ValueOf($var);
+
+        return Filter::Tel($val, $force_leading_plus, $default_country_code);
     }
 
 

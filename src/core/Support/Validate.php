@@ -6,7 +6,7 @@
 *
 */
 
-namespace Semiorbit\Field;
+namespace Semiorbit\Support;
 
 
 
@@ -35,25 +35,25 @@ class Validate
 	const REG = 'reg';
 
 
-    public static function IsEmail($value)
+
+    public static function IsDecimal($value): bool
     {
-        return preg_match("/^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,10})$/i", $value);
+        return Filter::Decimal($value) !== false;
     }
 
-    public static function IsTel($value)
+    public static function IsEmail($value): bool
     {
-        //TODO:: TEL CHECK
-        return $value;
+        return Filter::Email($value) !== null;
     }
 
-    public static function IsURL($value)
+    public static function IsTel($value, $force_leading_plus = false): bool
     {
-        return filter_var($value, FILTER_VALIDATE_URL);
+        return preg_match($force_leading_plus ? '/^\+\d[\d\s\-\(\)]*$/' : '/^\+?\d[\d\s\-\(\)]*$/', $value) === 1;
     }
 
-    public static function IsDecimal($value)
+    public static function IsURL($value): bool
     {
-        return is_double($value);
+        return Filter::Url($value) !== null;
     }
 
 

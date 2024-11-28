@@ -482,5 +482,4 @@ class Str
         return Str::Quote($str, '"');
     }
 
-
 }

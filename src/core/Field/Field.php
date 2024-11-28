@@ -11,16 +11,18 @@ namespace Semiorbit\Field;
 
 
 
-use Semiorbit\Db\DB;
-use Semiorbit\Output\TableViewCol;
-use Semiorbit\Support\AltaArray;
-use Semiorbit\Data\DataSet;
 use Semiorbit\Config\Config;
+use Semiorbit\Data\DataSet;
+use Semiorbit\Db\DB;
 use Semiorbit\Form\Form;
 use Semiorbit\Form\FormTemplate;
-use Semiorbit\Support\Uploader;
-use Semiorbit\Translation\Lang;
+use Semiorbit\Output\TableViewCol;
+use Semiorbit\Support\AltaArray;
+use Semiorbit\Support\Filter;
 use Semiorbit\Support\Str;
+use Semiorbit\Support\Uploader;
+use Semiorbit\Support\Validate;
+use Semiorbit\Translation\Lang;
 
 
 class Field extends AltaArray implements FieldProps
@@ -437,7 +439,7 @@ class Field extends AltaArray implements FieldProps
 
     public function DataValue()
     {
-        if (is_empty($this->_DataValue)) $this->_DataValue = $this->Value;
+        if (is_empty($this->_DataValue)) $this->_DataValue = $this->Value ?: '';
 
         return $this->_DataValue;
     }
@@ -563,46 +565,27 @@ class Field extends AltaArray implements FieldProps
 
         if ($this->Value !== null && $this->Value !== '') {
 
-            switch ($this->Validate) {
+            return match ($this->Validate) {
 
-                case Validate::EMAIL :
+                Validate::EMAIL => Validate::IsEmail($this->Value),
 
-                    return Validate::IsEmail($this->Value);
+                Validate::URL => Validate::IsURL($this->Value),
 
-                case Validate::URL :
+                Validate::TEL => Validate::IsTel($this->Value),
 
-                    return Validate::IsURL($this->Value);
+                Validate::INT => is_int($this->Value),
 
-                case Validate::TEL :
+                Validate::FLOAT => is_float($this->Value),
 
-                    return Validate::IsTel($this->Value);
+                Validate::DOUBLE => is_double($this->Value),
 
-                case Validate::INT :
+                Validate::DECIMAL => Validate::IsDecimal($this->Value),
 
-                    return is_int($this->Value);
+                Validate::NUMERIC => is_numeric($this->Value),
 
-                case Validate::FLOAT :
+                default => preg_match("/" . $this->Validate . "/i", $this->Value)
 
-                    return is_float($this->Value);
-
-
-                case Validate::DECIMAL:
-
-                case Validate::DOUBLE :
-
-                    return is_double($this->Value);
-
-
-                case Validate::NUMERIC :
-
-                    return is_numeric($this->Value);
-
-
-                default :
-
-                    return preg_match("/" . $this->Validate . "/i", $this->Value);
-
-            }
+            };
 
         }
 
@@ -650,32 +633,32 @@ class Field extends AltaArray implements FieldProps
 
             case Validate::DECIMAL :
 
-                $filtered_value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                $filtered_value = Filter::Decimal($value);
 
                 break;
 
             case Validate::NUMERIC :
 
-                $filtered_value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_SCIENTIFIC);
+                $filtered_value = Filter::Numeric($value);
 
                 break;
 
 
             case Validate::EMAIL :
 
-                $filtered_value = filter_var($value, FILTER_SANITIZE_EMAIL);
+                $filtered_value = Filter::Email($value);
 
                 break;
 
             case Validate::URL :
 
-                $filtered_value = filter_var($value, FILTER_SANITIZE_URL);
+                $filtered_value = Filter::Url($value);
 
                 break;
 
             case Validate::TEL :
 
-                $filtered_value = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+                $filtered_value = Filter::Tel($value);
 
                 break;
 
