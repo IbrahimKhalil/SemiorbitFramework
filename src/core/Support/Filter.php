@@ -58,7 +58,7 @@ class Filter
         return filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) ?: null;
     }
 
-    public static function Email($value): ?string
+    public static  function Email($value): ?string
     {
         return filter_var($value, FILTER_SANITIZE_EMAIL) ?: null;
     }
@@ -91,12 +91,12 @@ class Filter
      * | '0123456789'      | Invalid when `$force_leading_plus = true`        | Invalid          |
      */
 
-    public static function Tel(string $value, bool $force_leading_plus = false, $default_country_code = null): ?string
+    public static function Tel(mixed $value, bool $force_leading_plus = false, $default_country_code = null): ?string
     {
 
         // Remove all characters except digits and an optional leading +
 
-        $sanitized = preg_replace('/[^\d+]/', '', $value);
+        $sanitized = preg_replace('/[^\d+]/', '', $value ?? '');
 
 
         // Check if the value matches the general valid format
