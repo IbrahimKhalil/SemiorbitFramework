@@ -32,11 +32,11 @@ class ValidateInput
     /**
      * Validate if the input is a <b>positive</b> int/bigint id
      *
-     * @param $var
+     * @param string $var
      * @param bool $allow_zero
      * @return int|null
      */
-    public static function Id($var, bool $allow_zero = false): ?int
+    public static function Id(string $var = 'id', bool $allow_zero = false): ?int
     {
         return ($res = filter_input(static::$_InputType, $var, FILTER_VALIDATE_INT))
 
@@ -44,14 +44,26 @@ class ValidateInput
     }
 
 
-    public static function Uuid($var): ?string
+    /**
+     * Validate if input string is a UUID/GUID
+     *
+     * @param string $var
+     * @return string|null
+     */
+    public static function Uuid(string $var = 'id'): ?string
     {
         $val = static::ValueOf($var);
 
         return Validate::IsUuid($val) ? $val : null;
     }
 
-    public static function uniqueId($var): ?string
+    /**
+     * Validate if input string is a php unique id compatible
+     *
+     * @param string $var
+     * @return string|null
+     */
+    public static function uniqueId(string $var = 'id'): ?string
     {
         $val = static::ValueOf($var);
 
