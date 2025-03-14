@@ -11,6 +11,7 @@ namespace Semiorbit\Data;
 
 
 use AllowDynamicProperties;
+use Semiorbit\Auth\AccessControlPolicyInterface;
 use Semiorbit\Auth\Auth;
 use Semiorbit\Component\Services;
 use Semiorbit\Config\Config;
@@ -81,6 +82,8 @@ class Model
     protected $_Package;
 
     protected $_PackagePrefix;
+
+    private $_ImplementsAccessControlPolicyInterface;
 
 
 
@@ -480,6 +483,10 @@ class Model
 
         }
 
+
+
+        if ($this->ImplementsAccessControlPolicyInterface()) $this->CheckPoint();
+
         if ( $check_if_new ) {
 
             $sql = "select count(" . $this->ID->Name . ") as chk from " . $this->TableName() . " where " . $this->ID->Name . " = '{$this->ID->Value}' ";
@@ -493,6 +500,28 @@ class Model
         $this->onStart();
 
         return $this;
+
+    }
+
+    public function ImplementsAccessControlPolicyInterface(): bool
+    {
+        return $this->_ImplementsAccessControlPolicyInterface === null ?
+
+            $this->_ImplementsAccessControlPolicyInterface = $this instanceof AccessControlPolicyInterface : $this->_ImplementsAccessControlPolicyInterface;
+    }
+
+    private function CheckPoint(): void
+    {
+
+        static $checking = false;
+
+        if ($checking) return; // Prevent infinite loop
+
+        $checking = true;
+
+        if (! $this->Policy()->AllowsRead()) $this->NewRecord();
+
+        $checking = false;
 
     }
 
@@ -516,7 +545,18 @@ class Model
     public function InsertRow()
     {
 
-        $this->onBeforeInsert();
+        if ($this->ImplementsAccessControlPolicyInterface() && !$this->Policy()->AllowsCreate()) {
+
+            if (Config::DebugMode()) FileLog::Debug("FWK 405", "FWK@INSERT-ACCESS-DENIED", $this->ID->Value);
+
+            return 0;
+
+        }
+
+
+        $checkpoint = $this->onBeforeInsert();
+
+        if (!($checkpoint === null || $checkpoint === true)) return $checkpoint;
 
 
         if ( is_empty( $this->ID->Value ) )  $this->AutoID();
@@ -594,6 +634,8 @@ class Model
 
                 FileLog::Debug("FWK900", "FWK@INSERT-COMPILED", $compiled_sql);
 
+                FileLog::Debug("FWK900", "FWK@INSERT-ERR", print_r(DB::ErrorInfo(), true));
+
 
             }
 
@@ -618,7 +660,18 @@ class Model
     public function UpdateRow()
     {
 
-        $this->onBeforeUpdate();
+        if ($this->ImplementsAccessControlPolicyInterface() && !$this->Policy()->AllowsUpdate()) {
+
+            if (Config::DebugMode()) FileLog::Debug("FWK 405", "FWK@UPDATE-ACCESS-DENIED", $this->ID->Value);
+
+            return 0;
+
+        }
+
+
+        $checkpoint = $this->onBeforeUpdate();
+
+        if (!($checkpoint === null || $checkpoint === true)) return $checkpoint;
 
 
         if (($validation = $this->Validate()) !== true) return $validation;
@@ -667,6 +720,32 @@ class Model
         $res = $this->ActiveConnection()->Cmd( $sql, $param_value ) ? Msg::DBOK : Msg::DBERR;
 
         if ($res) $this->SaveEditorResources();
+
+        else {
+
+            if (Config::DebugMode()) {
+
+                FileLog::Debug("FWK901", "FWK@UPDATE", $sql);
+
+                FileLog::Debug("FWK901", "FWK@UPDATE-PARAMS", json_encode($param_value, JSON_UNESCAPED_UNICODE));
+
+                $compiled_sql = $sql;
+
+                foreach ($param_value as $k => $v) {
+
+
+                    $compiled_sql = str_ireplace(":" . $k . ",", $v[0] === null ? "null," : '"'.$v[0].'",', $compiled_sql);
+
+                }
+
+                FileLog::Debug("FWK901", "FWK@UPDATE-COMPILED", $compiled_sql);
+
+                FileLog::Debug("FWK901", "FWK@UPDATE-ERR", print_r(DB::ErrorInfo(), true));
+
+
+            }
+
+        }
 
         $this->onSave($res);
 
@@ -874,6 +953,14 @@ class Model
     public function RemoveRow()
     {
 
+        if ($this->ImplementsAccessControlPolicyInterface() && !$this->Policy()->AllowsDelete()) {
+
+            if (Config::DebugMode()) FileLog::Debug("FWK 405", "FWK@DELETE-ACCESS-DENIED", $this->ID->Value);
+
+            return 0;
+
+        }
+
         $checkpoint = $this->onBeforeRemove();
 
         if ($checkpoint === null || $checkpoint === true) {
@@ -893,6 +980,14 @@ class Model
             $sql = "DELETE FROM {$this->TableName()} WHERE " . $this->ID->Name . " = '" . $this->ID->Value . "'";
 
             $res = $this->ActiveConnection()->Cmd($sql);
+
+            if (!$res && Config::DebugMode()) {
+
+                FileLog::Debug("FWK 400", "FWK@DELETE", $sql);
+
+                FileLog::Debug("FWK 400", "FWK@DELETE-ERR", print_r(DB::ErrorInfo(), true));
+
+            }
 
             $this->onRemove($res);
 
@@ -1055,7 +1150,7 @@ class Model
     /**
      * Select fields that listed properties match assigned values in selector.
      *
-     * @param array $selector List of pairs (prop=>value) to match
+     * @param array $selector _List of pairs (prop=>value) to match
      * @param int $array_type
      * @return array Array of fields
      */
@@ -1145,7 +1240,7 @@ class Model
     /**
      * Find first field that matches selector
      *
-     * @param string|array $selector  Array List of pairs (prop=>value) to match
+     * @param string|array $selector  Array _List of pairs (prop=>value) to match
      *
      * @return Field Returns first field that matches selector or NULL
      */

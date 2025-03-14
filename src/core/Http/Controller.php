@@ -268,7 +268,7 @@ abstract class Controller
      * Url to controller with additinal path info and query string params.
      *
      * @param string $path path/info/ to add to controller url
-     * @param array $params List of query string in an associative array [param => value]
+     * @param array $params _List of query string in an associative array [param => value]
      * @param null $class_name
      * @return string
      */

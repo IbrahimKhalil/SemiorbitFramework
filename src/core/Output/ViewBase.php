@@ -293,7 +293,7 @@ class ViewBase extends AltaArray
     /**
      * Add a list of parameters to view input
      *
-     * @param array $pms List of parameters as an associative array with key=>value pairs
+     * @param array $pms _List of parameters as an associative array with key=>value pairs
      * @return $this
      */
 

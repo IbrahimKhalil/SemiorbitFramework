@@ -103,7 +103,7 @@ return [
 
 
     /*
-    | List of Default Actions By Verb
+    | _List of Default Actions By Verb
     | Each item should follow this pattern
     | [verb, action alias, number of parameters (0 for unlimited)]
     */
@@ -118,7 +118,7 @@ return [
 
 
     /*
-    | List of Default Actions By Verb [For RestControllers]
+    | _List of Default Actions By Verb [For RestControllers]
     | Each item should follow this pattern
     | [verb, action alias, number of parameters (0 for unlimited)]
     */

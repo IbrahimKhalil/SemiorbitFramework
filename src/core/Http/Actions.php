@@ -81,7 +81,7 @@ class Actions extends AltaArray
 
         // Prepare a list of all allowed actions for this controller.
 
-        // List actions from actions array [in ACTIONS mode] and (+) from public methods [in AUTO mode]
+        // _List actions from actions array [in ACTIONS mode] and (+) from public methods [in AUTO mode]
 
 
         $tmp_actions = array();
@@ -98,7 +98,7 @@ class Actions extends AltaArray
 
 
 
-        // List of methods defined in actions, maybe one method is assigned for multiple actions
+        // _List of methods defined in actions, maybe one method is assigned for multiple actions
 
         // eg. actions(edit, create) => 'Edit'
 

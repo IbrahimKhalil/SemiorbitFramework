@@ -3,6 +3,6 @@
 
 return [
 
-    // List of service providers
+    // _List of service providers
 
 ];

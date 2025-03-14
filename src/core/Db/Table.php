@@ -840,7 +840,7 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
     /**
      * Merge multiple arrays with data
      *
-     * @param array $array1 List of arrays or Table(s) to merge. One array at least
+     * @param array $array1 _List of arrays or Table(s) to merge. One array at least
      * @param array $_ Optional more arrays to merge.
      * @access pubic
      * @return array

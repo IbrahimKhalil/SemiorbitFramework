@@ -165,7 +165,7 @@ trait ForeignKey
 
         if ($this->FKeyDataSet) {
 
-            //TODO: List important fields only
+            //TODO: _List important fields only
 
             $tbl = $this->ActiveConnection()
 

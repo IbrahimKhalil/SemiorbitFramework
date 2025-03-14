@@ -84,7 +84,7 @@ class ArgumentList implements ArrayAccess, Countable, IteratorAggregate
     }
 
 
-    #region List & Index
+    #region _List & Index
 
     public function HasArgument($index)
     {
@@ -368,7 +368,7 @@ class ArgumentList implements ArrayAccess, Countable, IteratorAggregate
 
             'Total' => $this->count(),
 
-            'List' => $this->SignatureArray()
+            '_List' => $this->SignatureArray()
 
         ];
     }

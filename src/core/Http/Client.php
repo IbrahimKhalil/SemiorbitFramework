@@ -148,7 +148,7 @@ class Client
 
 
     /**
-     * List languages and locales from http accept language with ranks
+     * _List languages and locales from http accept language with ranks
      * [locale => rank, ...]
      *
      * @param string|null $accepted_languages

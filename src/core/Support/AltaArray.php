@@ -309,7 +309,7 @@ class AltaArray implements \ArrayAccess, \Countable, \IteratorAggregate
 	/**
 	 * Merge multiple arrays with data
 	 *
-	 * @param array $array1 List of arrays or AltaArray(s) to merge. One array at least
+	 * @param array $array1 _List of arrays or AltaArray(s) to merge. One array at least
      * @param array|null $_ Optional more arrays to merge.
 	 * @access pubic
 	 * @return array

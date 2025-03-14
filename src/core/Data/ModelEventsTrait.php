@@ -17,7 +17,7 @@ trait ModelEventsTrait {
 
     public function onBeforeInsert()
     {
-
+        return null;
     }
 
     public function onInsert($res)
@@ -27,7 +27,7 @@ trait ModelEventsTrait {
 
     public function onBeforeUpdate()
     {
-
+        return null;
     }
 
     public function onUpdate($res)

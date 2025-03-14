@@ -58,11 +58,65 @@ class Uploader
         return strtolower( pathinfo( $file, PATHINFO_EXTENSION ) );
     }
 
+    /**
+     * @throws \ImagickException
+     */
     public static function CreateThumbnail($original_image_path, $thumbnail_directory, $target_file_name, $thumbnail_width, $thumbnail_height = 0, $square = false)
     {
+
+
         //Getting Image Type & Creating Image using proper function.
 
         $img_type = static::FileExt($original_image_path);
+
+
+        if (extension_loaded('imagick')) {
+
+            // Use Imagick if available
+
+            $image = new \Imagick($original_image_path);
+
+            $orig_width = $image->getImageWidth();
+
+            $orig_height = $image->getImageHeight();
+
+            if ($square) {
+
+                $thumbnail_height = $thumbnail_width;
+
+                $image->cropThumbnailImage($thumbnail_width, $thumbnail_height);
+
+            } elseif ($thumbnail_height == 0) {
+
+                $thumbnail_height = intval($orig_height * ($thumbnail_width / $orig_width));
+
+                $image->resizeImage($thumbnail_width, $thumbnail_height, \Imagick::FILTER_LANCZOS, 1);
+
+            } else {
+
+                $image->resizeImage($thumbnail_width, $thumbnail_height, \Imagick::FILTER_LANCZOS, 1);
+
+            }
+
+            // Ensure directory exists
+
+            if (!file_exists($thumbnail_directory)) mkdir($thumbnail_directory, 0755, true);
+
+
+            // Save the new thumbnail
+
+            $target_file_path = "{$thumbnail_directory}/{$target_file_name}." . $img_type;
+
+            $image->writeImage($target_file_path);
+
+            $image->destroy();
+
+            return file_exists($target_file_path);
+
+        }
+
+        // Fallback to GD if Imagick is not available
+
 
         switch ( $img_type ) {
 

@@ -173,7 +173,7 @@ abstract class AccessControlPolicy implements AccessControlPolicyInterface
 
     final public function AllowsRead()
     {
-        $for = $this->User();
+        $for = $this->User(); // loop is here!!
         
         $filter_event = $this->FireOnBeforeAuthorize($for);
 

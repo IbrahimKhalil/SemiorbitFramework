@@ -119,6 +119,18 @@ class DataField
     }
 
 
+    public static function Date($name = 'date')
+    {
+        
+        return Field::DateTime($name)
+
+            ->setType(DataType::DATE)
+
+            ->setShowTime(false)
+
+            ->setFormat("%Y-%m-%d");
+        
+    }
 
 
 }

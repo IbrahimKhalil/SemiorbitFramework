@@ -118,7 +118,7 @@ class BasicTemplate
     }
 
     /**
-     * List of params
+     * _List of params
      *
      * Params list will be used to render template
      * Render engine replaces each param by key name and sets its according value.

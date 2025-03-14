@@ -474,12 +474,12 @@ abstract class Command
 
     public function LockDefinition()
     {
-        $this->Definition()->setIsLocked('Definition List');
+        $this->Definition()->setIsLocked('Definition _List');
     }
 
     public function LockInput()
     {
-        $this->Arguments()->setIsLocked('Input Arguments List');
+        $this->Arguments()->setIsLocked('Input Arguments _List');
     }
     
     public function Signature()
@@ -518,7 +518,7 @@ abstract class Command
     {
        if ( ! $this->Definition()->IsLocked() )
 
-            ConsoleException::LockedList('Input Arguments List');
+            ConsoleException::LockedList('Input Arguments _List');
 
         return $this->_Args;
     }
