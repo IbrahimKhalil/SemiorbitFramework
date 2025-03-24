@@ -115,7 +115,7 @@ class Sqlite3 implements Driver
 
         if (! $stmt)
 
-            Application::Abort(503, "Prepare query statement failed: {$query}");
+            Application::Abort(503, "Prepare query statement failed: {$this->Connector()->lastErrorMsg()}. Query: {$query}");
 
 
         foreach ($params as $param => $value)

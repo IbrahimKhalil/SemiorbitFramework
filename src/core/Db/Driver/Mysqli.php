@@ -126,7 +126,7 @@ class Mysqli implements Driver
 
         if (! $stmt)
 
-            Application::Abort(503, "Prepare query statement failed: {$query}");
+            Application::Abort(503, "Prepare query statement failed: {$this->Connector()->error}. Query: {$query}");
 
 
         $stmt->bind_param(...$params);
