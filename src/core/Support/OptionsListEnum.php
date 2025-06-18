@@ -6,6 +6,12 @@ use Exception;
 use Semiorbit\Component\Services;
 use Semiorbit\Translation\Lang;
 
+
+/**
+ * It helps translate labels from trans files/sources
+ *
+ * @implements OptionsEnumInterface
+ */
 trait OptionsListEnum
 {
 
@@ -28,7 +34,7 @@ trait OptionsListEnum
     }
 
 
-    public function label(): string
+    public function Label(): string
     {
 
         return static::TransSource() ?  Lang::Trans(static::TransSource(). '.' . $this->name)

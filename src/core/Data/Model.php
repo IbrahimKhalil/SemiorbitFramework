@@ -841,7 +841,7 @@ class Model
 
                 if (Config::DebugMode())
 
-                    FileLog::Debug("FWK 300", "FWK@REQUIRED", $field->Name);
+                    FileLog::Debug("FWK 300", "FWK@REQUIRED", $this->TableName() . "." . $field->Name);
 
                 $field->CssClass .= ' val-err';
 
