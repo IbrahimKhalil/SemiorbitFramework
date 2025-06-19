@@ -243,6 +243,8 @@ class DataSet extends Model
     public static function Find($id)
     {
 
+        if ($id === null || $id === '') return null;
+
         $myDataSet = static::Load($id);
 
         if ( $myDataSet->IsNew() ) return null;
