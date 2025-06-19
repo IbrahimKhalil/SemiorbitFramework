@@ -15,5 +15,7 @@ interface OptionsEnumInterface
 
     public static function ToFullArray(): array;
 
+    public static function ToArraySubset(array $options): array;
+
 
 }

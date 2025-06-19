@@ -19,13 +19,34 @@ trait OptionsEnumTrait
 
         foreach (static::cases() as $case) {
 
-            $result[$case->name] = $case->Label();
+            $result[$case->value] = $case->Label();
 
         }
 
         return $result;
 
     }
+
+    public static function ToArraySubset(array $options): array
+    {
+
+        $result = [];
+
+        foreach (static::cases() as $case) {
+
+            if (in_array($case, $options, true)) {
+
+                $result[$case->value] = $case->Label();
+
+            }
+
+        }
+
+        return $result;
+
+    }
+
+
 
     /**
      * Convert enum to [NAME => Link] array
@@ -37,7 +58,7 @@ trait OptionsEnumTrait
 
         foreach (static::cases() as $case) {
 
-            $result[$case->name] = $case->Link();
+            $result[$case->value] = $case->Link();
 
         }
 
@@ -55,7 +76,9 @@ trait OptionsEnumTrait
 
         foreach (static::cases() as $case) {
 
-            $result[$case->name] = [
+            $result[$case->value] = [
+
+                'name' => $case->name,
 
                 'label' => $case->Label(),
 
