@@ -37,9 +37,9 @@ class Mysqli implements Driver
 
     public $Socket = null;
 
-    public $CharSet = 'utf8';
+    public $CharSet = 'utf8mb4';
 
-    public $Collation = 'utf8_general_ci';
+    public $Collation = 'utf8mb4_unicode_ci';
 
     public $Persistent = true;
 

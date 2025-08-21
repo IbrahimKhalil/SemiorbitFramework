@@ -73,7 +73,7 @@ const LANG = 'en';
  * * Note 3.
  *   -------
  * * In PHP class methods and functions are "Case Insensitive" 
- * * so thanks PHP, we can use it the way we are accustomed to.
+ * * so thanks to PHP, we can use it the way we are accustomed to.
  * * to do that easily enable: "_semiorbit_ide_helper_camel_case"
  * 
  * 

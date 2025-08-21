@@ -937,6 +937,13 @@ class Table extends QueryBuilder implements \ArrayAccess, \IteratorAggregate, \C
         return isset($this->_Rows[$this->_CurrentKey][$col]) ? $this->_Rows[$this->_CurrentKey][$col] : null;
     }
 
+    public function setCurrentRowItem($col, $value, $load = false): void
+    {
+        if ($load) $this->Load();
+
+        $this->_Rows[$this->_CurrentKey][$col] = $value;
+    }
+
     /**
      * Move rows array pointer to first row
      *
