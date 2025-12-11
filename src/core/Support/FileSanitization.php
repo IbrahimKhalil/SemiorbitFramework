@@ -82,6 +82,14 @@ class FileSanitization
 
             // Perl
             '#!/usr/bin/perl',
+
+
+            // JSP / Java
+            '<%@', '<jsp:', '<%=', '<%', 'out.println',
+            'Runtime.getRuntime(', 'java.lang.Runtime', 'ProcessBuilder',
+            'Class.forName(', 'new FileInputStream', 'javax.script.', 'javax.servlet.',
+            'request.getParameter',
+
         ];
 
 

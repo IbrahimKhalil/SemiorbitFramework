@@ -306,7 +306,11 @@ class Uploader
             'reg','scr',
 
             // Dangerous archives
-            '7z','rar','tar','gz','tgz'
+            '7z','rar','tar','gz','tgz',
+
+            // JSP / Java
+            'jsp','jspx','jspf','war','jar','class',
+
         ];
 
         return in_array($ext, $bad, true);
@@ -331,6 +335,17 @@ class Uploader
             'application/x-msdownload',
             'application/x-executable',
             'application/x-dosexec',
+
+            // JSP / Java related
+            'application/x-jsp',
+            'application/jsp',
+            'text/jsp',
+            'application/java',
+            'application/java-archive',   // JAR/WAR
+
+            // JVM scripting
+            'application/x-groovy',
+            'application/x-scala',
 
             // Dangerous archive formats
             'application/x-7z-compressed',
