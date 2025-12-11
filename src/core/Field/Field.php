@@ -1000,12 +1000,21 @@ class Field extends AltaArray implements FieldProps
         return $this;
     }
 
+
+    /**
+     * This hides field from both Form View and Table View
+     * <b>Hide = NoControl + HideColumn</b>
+     * @return $this
+     */
+    
     public function Hide()
     {
 
         $this->setControl(Control::NONE);
 
         $this->setView(FieldView::HIDDEN);
+
+        $this->ActiveTableViewCol()->Hide();
 
         return $this;
 

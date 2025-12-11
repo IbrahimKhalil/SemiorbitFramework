@@ -16,42 +16,437 @@ use Semiorbit\Data\Msg;
 class Uploader
 {
 
-    public static function Upload($input_file, $upload_dir, $target_filename)
+    /** Maximum file size allowed (50MB default) */
+    const MAX_SIZE = 52428800;
+
+    /** SVG processing mode: safe | rasterize | raw */
+    const SVG_MODE = 'safe';
+
+
+    /**
+     * Upload
+     *
+     * Validates, sanitizes, and stores a file upload. Supports:
+     * - Image validation (JPEG/PNG/GIF/WebP)
+     * - SVG sanitization or rasterization
+     * - PDF validation
+     * - Dangerous content scanning
+     * - MIME + extension enforcement
+     *
+     * @param array|string $input_file     $_FILES[] array or literal file path.
+     * @param string $upload_dir     Target storage directory.
+     * @param string $target_filename Desired filename (without extension).
+     *
+     * @return int Msg::* constant representing success or failure reason.
+     */
+
+    public static function Upload(array|string $input_file, string $upload_dir, string $target_filename): int
     {
 
-        if ( is_array($input_file) ) {
+        $is_array = is_array($input_file);
 
-            $target_file = $upload_dir . $target_filename . "." . static::FileExt( $input_file['name'] );
+        $tmp_path  = $is_array ? $input_file['tmp_name'] : $input_file;
 
-            if ( move_uploaded_file( $input_file['tmp_name'], $target_file ) ) return Msg::UPLOAD_OK;
+        $orig_name = $is_array ? $input_file['name']     : basename($input_file);
 
-        } else if ( is_string($input_file) ) {
 
-            $target_file = $upload_dir . $target_filename . "." . static::FileExt( $input_file );
+        if (!file_exists($tmp_path)) {
 
-            if ( copy( $input_file, $target_file ) ) return Msg::UPLOAD_OK;
+            return Msg::UPLOAD_FAILED;
 
         }
 
-        return Msg::UPLOAD_FAILED;
+
+        // 1. Size check
+
+        if (!FileSanitization::ValidateSize($tmp_path, self::MAX_SIZE)) {
+
+            return Msg::FILE_SIZE_ERR;
+
+        }
+
+
+
+        // 2. MIME detection
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+
+        $mime  = finfo_file($finfo, $tmp_path);
+
+        finfo_close($finfo);
+
+
+        if (!is_string($mime)) {
+
+            return Msg::FILE_TYPE_ERR;
+
+        }
+
+
+        // 3. Determine safe extension
+
+        $ext = static::SecureExtensionFromMime($mime, $orig_name);
+
+        if (!$ext) return Msg::FILE_TYPE_ERR;
+
+
+        if (!static::ExtensionMatchesMimeCategory($ext, $mime)) {
+
+            return Msg::FILE_TYPE_ERR;
+
+        }
+
+
+        // 4. Validation by MIME
+
+        if (str_starts_with($mime, 'image/') && $mime !== 'image/svg+xml') {
+
+            if (!FileSanitization::ValidateImage($tmp_path)) {
+
+                return Msg::FILE_TYPE_ERR;
+            }
+
+        }
+
+
+        if ($mime === 'image/svg+xml') {
+
+            if (self::SVG_MODE === 'safe') {
+
+                if (!FileSanitization::SanitizeSvgSafe($tmp_path)) {
+
+                    return Msg::FILE_TYPE_ERR;
+                }
+            }
+
+            elseif (self::SVG_MODE === 'rasterize') {
+
+                $png = FileSanitization::RasterizeSvg($tmp_path);
+
+                if (!$png) return Msg::FILE_TYPE_ERR;
+
+                $tmp_path = $png;
+
+                $ext = 'png';
+
+            }
+
+            elseif (self::SVG_MODE === 'raw') {
+
+                if (!FileSanitization::SanitizeSvgRaw($tmp_path)) {
+
+                    return Msg::FILE_TYPE_ERR;
+
+                }
+
+            }
+
+        }
+
+
+        if ($mime === 'application/pdf') {
+
+            if (!FileSanitization::ValidatePdf($tmp_path)) {
+
+                return Msg::FILE_TYPE_ERR;
+            }
+
+        }
+
+
+        // 5. Generic dangerous signature scan
+
+        if (FileSanitization::ContainsDangerousCode($tmp_path)) {
+
+            return Msg::FILE_TYPE_ERR;
+
+        }
+
+
+        // 6. Move the final file
+
+        if (!is_dir($upload_dir)) {
+
+            mkdir($upload_dir, 0755, true);
+
+        }
+
+        $target_file = rtrim($upload_dir, '/') . '/' . $target_filename . '.' . $ext;
+
+        $ok = $is_array ? move_uploaded_file($tmp_path, $target_file)
+
+            : copy($tmp_path, $target_file);
+
+
+        if (!$ok) return Msg::UPLOAD_FAILED;
+
+
+        // 7. Force non-executable permission
+
+        @chmod($target_file, 0644);
+
+
+
+        return Msg::UPLOAD_OK;
 
     }
 
 
-    public static function IsAllowedFileType($input_file_id, $allowed_file_types)
+    public static function ExtensionMatchesMimeCategory(string $ext, string $mime): bool
     {
 
-        $fn = is_array($input_file_id) ? $input_file_id['name'] : $input_file_id;
+        $ext = strtolower($ext);
 
-        if ( empty($allowed_file_types) || preg_match("/" . $allowed_file_types . "$/i", strtolower($fn) ) ) {
+        // IMAGE EXTENSIONS MUST HAVE REAL IMAGE MIME
 
-            return true;
+        if (in_array($ext, ['jpg','jpeg','png','gif','webp'], true)) {
+
+            return str_starts_with($mime, 'image/');
 
         }
+
+
+        // SVG MUST HAVE SVG MIME
+
+        if ($ext === 'svg') {
+
+            return ($mime === 'image/svg+xml');
+
+        }
+
+
+        // PDF handled by real PDF validator, but require correct MIME family
+
+        if ($ext === 'pdf') {
+
+            return str_starts_with($mime, 'application/pdf');
+
+        }
+
+        // Otherwise: generic files
+        // Allow any MIME except explicitly prohibited ones
+
+        return !Uploader::IsProhibitedMime($mime);
+
+    }
+
+
+    /**
+     * SecureExtensionFromMime
+     *
+     * Maps MIME type to a secure extension. Falls back to original
+     * file extension only if it matches a safe pattern.
+     *
+     * @param string $mime      MIME type detected via finfo.
+     * @param string $origName  Original filename for fallback extension.
+     *
+     * @return string|false Safe extension or FALSE if invalid.
+     */
+
+    public static function SecureExtensionFromMime(string $mime, string $origName): string|false
+    {
+
+
+        // 1. Block prohibited MIME types
+
+        if (static::IsProhibitedMime($mime)) {
+
+            return false;
+
+        }
+
+
+        // 2. Extract original extension (lowercase)
+
+        $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+
+
+        // 3. Block prohibited extensions
+
+        if (static::IsProhibitedExtension($ext)) {
+
+            return false;
+
+        }
+
+
+        // 4. Accept extension if it is at least syntactically safe
+
+        // (1–6 chars, alphanumeric only)
+
+        if (preg_match('/^[a-zA-Z0-9]{1,6}$/', $ext)) {
+
+            return $ext;
+
+        }
+
+
+        // 5. Otherwise fail
 
         return false;
 
     }
+
+    public static function IsProhibitedExtension(string $ext): bool
+    {
+
+        $bad = [
+
+            // Executable code
+            'php','php3','php4','php5','php7','php8','phtml','phar',
+            'cgi','exe','msi','bin','dll','com',
+
+            // Shell / script
+            'sh','bash','ksh','csh','zsh',
+            'bat','cmd','ps1','psm1',
+            'vbs','vbe','js','jse','wsf','wsh',
+            'py','pyc','pyo','pyw',
+            'rb','gemspec',
+            'pl','lua',
+            'reg','scr',
+
+            // Dangerous archives
+            '7z','rar','tar','gz','tgz'
+        ];
+
+        return in_array($ext, $bad, true);
+
+    }
+
+    public static function IsProhibitedMime(string $mime): bool
+    {
+
+        $bad = [
+
+            // Executable formats
+            'text/html',
+            'application/x-php',
+            'application/x-httpd-php',
+            'application/x-perl',
+            'application/x-python',
+            'application/x-sh',
+            'application/x-shellscript',
+            'application/javascript',
+            'text/javascript',
+            'application/x-msdownload',
+            'application/x-executable',
+            'application/x-dosexec',
+
+            // Dangerous archive formats
+            'application/x-7z-compressed',
+            'application/x-rar',
+            'application/x-tar',
+            'application/gzip',
+        ];
+
+        return in_array($mime, $bad, true);
+
+    }
+
+
+
+//    public static function LegacyUpload($input_file, $upload_dir, $target_filename)
+//    {
+//
+//        if ( is_array($input_file) ) {
+//
+//            $target_file = $upload_dir . $target_filename . "." . static::FileExt( $input_file['name'] );
+//
+//            if ( move_uploaded_file( $input_file['tmp_name'], $target_file ) ) return Msg::UPLOAD_OK;
+//
+//        } else if ( is_string($input_file) ) {
+//
+//            $target_file = $upload_dir . $target_filename . "." . static::FileExt( $input_file );
+//
+//            if ( copy( $input_file, $target_file ) ) return Msg::UPLOAD_OK;
+//
+//        }
+//
+//        return Msg::UPLOAD_FAILED;
+//
+//    }
+
+
+    public static function IsAllowedFileType($input_file, string $allowed_types): bool
+    {
+
+        // ---------------------------------------------------
+        // 1) Resolve original filename and tmp path
+        // ---------------------------------------------------
+
+        $filename = is_array($input_file) ? $input_file['name']     : $input_file;
+
+        $filepath = is_array($input_file) ? $input_file['tmp_name'] : $input_file;
+
+        if (!file_exists($filepath)) return false;
+
+
+        $filename = strtolower($filename);
+
+
+        // ---------------------------------------------------
+        // 2) EXTENSION check (regex or list)
+        //    $allowed_types['extensions'] = 'jpg|jpeg|png|pdf'
+        // ---------------------------------------------------
+
+        if (!empty($allowed_types)) {
+
+            if (!preg_match('/\.(' . $allowed_types . ')$/i', $filename)) {
+
+                return false;
+
+            }
+
+        }
+
+
+        // ---------------------------------------------------
+        // 3) MIME TYPE check
+        //    $allowed_types['mimes'] = ['image/jpeg', 'image/png', ...]
+        // ---------------------------------------------------
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+
+        $mime  = finfo_file($finfo, $filepath);
+
+        finfo_close($finfo);
+
+
+        if (!empty($allowed_types['mimes'])) {
+
+            if (!in_array($mime, $allowed_types['mimes'], true)) {
+
+                return false;
+
+            }
+
+        }
+
+
+        // ---------------------------------------------------
+        // 4) OPTIONAL: ensure extension matches MIME map
+        // ---------------------------------------------------
+
+        if (!empty($allowed_types['mime_map'])) {
+
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+            if (isset($allowed_types['mime_map'][$mime])) {
+
+                if (!in_array($ext, $allowed_types['mime_map'][$mime], true)) {
+
+                    return false;
+
+                }
+
+            }
+
+        }
+
+        return true;
+
+    }
+
 
     public static function FileExt($file)
     {

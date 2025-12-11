@@ -339,7 +339,7 @@ class File extends Field
 
         $upload_res = Uploader::Upload( $this->SourceFile, $this->DirPath( null, true, true ), $this->FileName() );
 
-        if ( $upload_res == Msg::UPLOAD_OK ) {
+        if ( $upload_res === Msg::UPLOAD_OK ) {
 
             $file_ext = is_array( $this->SourceFile ) ? Uploader::FileExt( $this->SourceFile['name'] ) : Uploader::FileExt( $this->SourceFile );
 

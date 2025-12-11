@@ -75,9 +75,17 @@ class ManagedFileCacheProvider implements FileCacheProviderInterface
 
     public function Clear($key = null)
     {
-        return $key ? (unlink($this->Path($key . ($this->Has($key . '.php') ? '.php' : '')))) :
 
-            Path::RemoveDirectory($this->CachePath());
+        if ($key) {
+
+            $file = $this->Path($key . ($this->Has($key . '.php') ? '.php' : ''));
+
+            return file_exists($file) ? unlink($file) : false;
+
+        }
+
+        return Path::RemoveDirectory($this->CachePath());
+
     }
 
     /**
