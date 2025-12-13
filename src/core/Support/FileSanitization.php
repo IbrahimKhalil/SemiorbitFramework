@@ -56,26 +56,28 @@ class FileSanitization
 
         $patterns = [
 
-            // PHP
-            '<?php', '<?=', '<%=', '<%php', 'eval(', 'assert(', 'preg_replace(', 'base64_decode(',
+            // 1. PHP Execution Tags (Most common image polyglot vectors)
+            '<?php',   // Standard PHP start tag
+            '<?=',     // Short echo tag
+            '<%php',   // ASP-style PHP tag
 
-            // JavaScript / HTML
-            '<script', 'javascript:', 'onload=', 'onclick=',
+            // 3. HTML/JS Execution (Common payload injection via comments/metadata)
+            '<script',     // HTML/JavaScript opening tag
+            'javascript:',  // JS protocol handler
 
             // System commands
             'system(', 'exec(', 'shell_exec(', 'passthru(', 'popen(',
 
-            // Windows scripting
-            'wscript.', 'createobject(', 'vbscript', 'msgbox', 'wshshell',
-
-            // Batch / PowerShell
-            '@echo off', 'powershell', 'cmd.exe',
-
-            // Shell
-            '#!/bin/bash', '#!/bin/sh',
-
             // Python
             'import os', 'import subprocess', 'subprocess.',
+
+            // 4. Java/JSP (Common web application context attacks)
+            '<%@', '<jsp:', '<%=',
+            'Runtime.getRuntime(',
+
+            // 5. Shell commands (For files that might be interpreted as code)
+            '#!/bin/bash',
+            '#!/bin/sh',
 
             // Ruby
             'require "',
@@ -83,14 +85,8 @@ class FileSanitization
             // Perl
             '#!/usr/bin/perl',
 
-
-            // JSP / Java
-            '<%@', '<jsp:', '<%=', '<%', 'out.println',
-            'Runtime.getRuntime(', 'java.lang.Runtime', 'ProcessBuilder',
-            'Class.forName(', 'new FileInputStream', 'javax.script.', 'javax.servlet.',
-            'request.getParameter',
-
         ];
+        
 
 
         $chunkSize = 8192;   // 8 KB
@@ -159,70 +155,117 @@ class FileSanitization
      * @return bool TRUE if file is a valid image, FALSE if invalid or suspicious.
      */
 
-    public static function ValidateImage(string $path)
+    public static function ValidateImage(string $path, $strict_mode = true)
     {
 
-        // -----------------------------------------
-        // LAYER 1: GD image decode (best validation)
-        // -----------------------------------------
+        if (!is_file($path) || !is_readable($path)) {
 
-        if (function_exists('imagecreatefromstring')) {
-
-            $data = @file_get_contents($path);
-
-            if ($data === false) return false;
-
-            $img = @imagecreatefromstring($data);
-
-            if ($img === false) return false;
-
-
-            imagedestroy($img);
-
-            return true;
+            return false;
 
         }
+        
+        if ($strict_mode) {
+
+            // -----------------------------------------
+            // LAYER 1: GD image decode (best validation)
+            // -----------------------------------------
+
+            if (function_exists('imagecreatefromstring')) {
+
+                $data = @file_get_contents($path);
+
+                if ($data !== false) {
+
+                    $img = @imagecreatefromstring($data);
+
+                    if ($img !== false) {
+
+                        imagedestroy($img);
+
+                        return true; // real image (any supported type)
+
+                    }
+                }
+
+            }
 
 
-        // -----------------------------------------
-        // LAYER 2: exif_imagetype() (magic bytes)
-        // -----------------------------------------
+            /* -----------------------------------------
+             * LAYER 2: GD JPEG decode (strongest check)
+             * ----------------------------------------- */
 
-        if (function_exists('exif_imagetype')) {
+            if (function_exists('imagecreatefromjpeg')) {
 
-            $type = @exif_imagetype($path);
+                $img = @imagecreatefromjpeg($path);
 
-            if ($type === false) return false;
+                if ($img !== false) {
 
-            return in_array($type, [
+                    imagedestroy($img);
 
-                IMAGETYPE_JPEG,
+                    return true; // ✔ real JPEG (any variant)
 
-                IMAGETYPE_PNG,
+                }
 
-                IMAGETYPE_GIF,
+            }
 
-                IMAGETYPE_WEBP,
+        } else {
 
-                IMAGETYPE_BMP,
+            // -----------------------------------------
+            // LAYER 3: exif_imagetype() (magic bytes)
+            // -----------------------------------------
 
-            ], true);
+            // This checks the file's header signature (magic bytes). This is a fast,
+
+            // reliable check for file format, regardless of color space (RGB/CMYK)
+
+            // or source (camera/scanned), as these attributes don't change the
+
+            // fundamental JPEG signature.
+
+            if (function_exists('exif_imagetype')) {
+
+                $type = @exif_imagetype($path);
+
+                if ($type === false) return false;
+
+                // Note: Use IMAGETYPE_JPEG. There isn't a separate constant for CMYK,
+
+                // as they share the same fundamental file type.
+
+                return in_array($type, [
+
+                    IMAGETYPE_JPEG,
+
+                    IMAGETYPE_PNG,
+
+                    IMAGETYPE_GIF,
+
+                    IMAGETYPE_WEBP,
+
+                    IMAGETYPE_BMP,
+
+                    IMAGETYPE_TIFF_II, // Add common professional/scanned formats if needed
+
+                    IMAGETYPE_TIFF_MM,
+
+                ], true);
+
+            }
+
+
+            // -----------------------------------------
+            // LAYER 4: getimagesize() fallback
+            // -----------------------------------------
+
+            if (function_exists('getimagesize')) {
+
+                $info = @getimagesize($path);
+
+                return $info !== false;
+
+            }
 
         }
-
-
-        // -----------------------------------------
-        // LAYER 3: getimagesize() fallback
-        // -----------------------------------------
-
-        if (function_exists('getimagesize')) {
-
-            $info = @getimagesize($path);
-
-            return $info !== false;
-
-        }
-
 
         // -----------------------------------------
         // NO IMAGE FUNCTIONS AVAILABLE

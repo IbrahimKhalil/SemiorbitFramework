@@ -22,7 +22,8 @@
     "ext-mysqli": "*",
     "ext-fileinfo": "*",
     "ext-dom": "*",
-    "ext-libxml": "*"
+    "ext-libxml": "*",
+    "semiorbit/upwatch": "dev-main"
   },
   "autoload": {
     "files": [

@@ -65,7 +65,7 @@ class File extends Field
 
     public $TargetFileName;
 
-    public $FileTypes = 'jpg|png|gif|jpeg|svg';
+    public $FileTypes = 'jpg|png|gif|jpeg';
 
     public $SubDirectory;
 

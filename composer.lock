@@ -1,0 +1,63 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "55b5a17e82267401f7876824dfa81e90",
+    "packages": [
+        {
+            "name": "semiorbit/upwatch",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/semiorbit/upwatch-php.git",
+                "reference": "2b046189603956116d3fcac9de865f422093273c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/semiorbit/upwatch-php/zipball/2b046189603956116d3fcac9de865f422093273c",
+                "reference": "2b046189603956116d3fcac9de865f422093273c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SemiorbitUpWatch\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP helper for Semiorbit UpWatch upload scanning system",
+            "support": {
+                "issues": "https://github.com/semiorbit/upwatch-php/issues",
+                "source": "https://github.com/semiorbit/upwatch-php/tree/1.0.1"
+            },
+            "time": "2025-12-13T21:50:43+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "semiorbit/upwatch": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=8.2",
+        "ext-json": "*",
+        "ext-mysqli": "*",
+        "ext-fileinfo": "*",
+        "ext-dom": "*",
+        "ext-libxml": "*"
+    },
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
+}

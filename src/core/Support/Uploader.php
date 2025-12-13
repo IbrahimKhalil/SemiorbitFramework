@@ -9,8 +9,8 @@ namespace Semiorbit\Support;
 
 
 use Semiorbit\Data\Msg;
-
-
+use Semiorbit\Debug\FileLog;
+use SemiorbitUpWatch\UpWatch;
 
 
 class Uploader
@@ -161,8 +161,7 @@ class Uploader
             return Msg::FILE_TYPE_ERR;
 
         }
-
-
+        
         // 6. Move the final file
 
         if (!is_dir($upload_dir)) {
@@ -185,6 +184,10 @@ class Uploader
 
         @chmod($target_file, 0644);
 
+
+        // 8. Add to UpWatch for security scan
+
+        UpWatch::file($target_file, FileLog::LogDirPath() . 'uploads.log', false);
 
 
         return Msg::UPLOAD_OK;
