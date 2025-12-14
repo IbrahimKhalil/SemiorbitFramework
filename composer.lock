@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "55b5a17e82267401f7876824dfa81e90",
+    "content-hash": "32ebd0aeda4896a59795c7c526271fb6",
     "packages": [
         {
             "name": "semiorbit/upwatch",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/semiorbit/upwatch-php.git",
-                "reference": "2b046189603956116d3fcac9de865f422093273c"
+                "reference": "7eb93301f418a762a21b6cdbc1fe0faa5cfce93b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/semiorbit/upwatch-php/zipball/2b046189603956116d3fcac9de865f422093273c",
-                "reference": "2b046189603956116d3fcac9de865f422093273c",
+                "url": "https://api.github.com/repos/semiorbit/upwatch-php/zipball/7eb93301f418a762a21b6cdbc1fe0faa5cfce93b",
+                "reference": "7eb93301f418a762a21b6cdbc1fe0faa5cfce93b",
                 "shasum": ""
             },
             "require": {
@@ -37,9 +37,9 @@
             "description": "PHP helper for Semiorbit UpWatch upload scanning system",
             "support": {
                 "issues": "https://github.com/semiorbit/upwatch-php/issues",
-                "source": "https://github.com/semiorbit/upwatch-php/tree/1.0.1"
+                "source": "https://github.com/semiorbit/upwatch-php/tree/1.0.3"
             },
-            "time": "2025-12-13T21:50:43+00:00"
+            "time": "2025-12-14T01:36:31+00:00"
         }
     ],
     "packages-dev": [],
