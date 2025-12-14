@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "32ebd0aeda4896a59795c7c526271fb6",
+    "content-hash": "57283dd02ea0b9d6b9889d932c831c37",
     "packages": [
         {
             "name": "semiorbit/upwatch",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/semiorbit/upwatch-php.git",
-                "reference": "7eb93301f418a762a21b6cdbc1fe0faa5cfce93b"
+                "reference": "1173ec7d8550df452154fbc6f31555d1ff971c74"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/semiorbit/upwatch-php/zipball/7eb93301f418a762a21b6cdbc1fe0faa5cfce93b",
-                "reference": "7eb93301f418a762a21b6cdbc1fe0faa5cfce93b",
+                "url": "https://api.github.com/repos/semiorbit/upwatch-php/zipball/1173ec7d8550df452154fbc6f31555d1ff971c74",
+                "reference": "1173ec7d8550df452154fbc6f31555d1ff971c74",
                 "shasum": ""
             },
             "require": {
@@ -34,20 +34,29 @@
             "license": [
                 "MIT"
             ],
+            "authors": [
+                {
+                    "name": "Ibrahim Khalil Khalbous",
+                    "email": "ibrahim@semiorbit.com"
+                },
+                {
+                    "name": "Semiorbit Solution Co. LLC",
+                    "email": "framework@semiorbit.com",
+                    "homepage": "https://semiorbit.com"
+                }
+            ],
             "description": "PHP helper for Semiorbit UpWatch upload scanning system",
             "support": {
                 "issues": "https://github.com/semiorbit/upwatch-php/issues",
-                "source": "https://github.com/semiorbit/upwatch-php/tree/1.0.3"
+                "source": "https://github.com/semiorbit/upwatch-php/tree/1.0.6"
             },
-            "time": "2025-12-14T01:36:31+00:00"
+            "time": "2025-12-14T02:01:15+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "semiorbit/upwatch": 20
-    },
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
