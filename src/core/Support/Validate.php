@@ -13,6 +13,8 @@ namespace Semiorbit\Support;
 
 
 
+use DateTime;
+
 class Validate
 {
 
@@ -150,5 +152,21 @@ class Validate
         return preg_match($pattern, $id) === 1;
 
     }
+
+
+    function IsDate(string $date, $format = 'Y-m-d'): bool
+    {
+        return static::IsDateTime($date, $format);
+    }
+
+    function IsDateTime(string $date_time, $format = 'Y-m-d H:i:s'): bool
+    {
+
+        $d = DateTime::createFromFormat($format, $date_time);
+
+        return $d && $d->format($format) === $date_time;
+
+    }
+
 
 }

@@ -58,7 +58,6 @@ class FileSanitization
 
             // 1. PHP Execution Tags (Most common image polyglot vectors)
             '<?php',   // Standard PHP start tag
-            '<?=',     // Short echo tag
             '<%php',   // ASP-style PHP tag
 
             // 3. HTML/JS Execution (Common payload injection via comments/metadata)
@@ -72,7 +71,7 @@ class FileSanitization
             'import os', 'import subprocess', 'subprocess.',
 
             // 4. Java/JSP (Common web application context attacks)
-            '<%@', '<jsp:', '<%=',
+            '<jsp:',
             'Runtime.getRuntime(',
 
             // 5. Shell commands (For files that might be interpreted as code)
@@ -445,17 +444,15 @@ class FileSanitization
         return !static::ContainsDangerousCode($path);
     }
 
-
     /**
      * ValidatePdf
      *
      * Performs basic PDF validation:
      * - Ensures the file begins with "%PDF"
-     * - Rejects PDFs containing embedded JavaScript ("/JS" or "/JavaScript")
      *
      * @param string $path Path to PDF file.
      *
-     * @return bool TRUE if PDF is safe, FALSE otherwise.
+     * @return bool TRUE if PDF header exists, FALSE otherwise.
      */
 
     public static function ValidatePdf(string $path): bool
@@ -469,19 +466,6 @@ class FileSanitization
 
         }
 
-
-        $contents = @file_get_contents($path);
-
-        if ($contents === false) return false;
-
-
-        if (stripos($contents, '/JavaScript') !== false ||
-
-            stripos($contents, '/JS') !== false) {
-
-            return false;
-
-        }
 
         return true;
 

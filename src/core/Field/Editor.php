@@ -128,7 +128,7 @@ class Editor extends Field
 
             $data = Base64Resources::ExtractFromHtml(
 
-                $this->Value,
+                $this->Value ?? '',
 
                 $this->ActiveDataSet()->DocumentsURL() . $this->ResourcesSubDirectory);
 
