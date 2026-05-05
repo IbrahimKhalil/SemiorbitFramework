@@ -154,12 +154,12 @@ class Validate
     }
 
 
-    function IsDate(string $date, $format = 'Y-m-d'): bool
+    public static function IsDate(string $date, $format = 'Y-m-d'): bool
     {
         return static::IsDateTime($date, $format);
     }
 
-    function IsDateTime(string $date_time, $format = 'Y-m-d H:i:s'): bool
+    public static function IsDateTime(string $date_time, $format = 'Y-m-d H:i:s'): bool
     {
 
         $d = DateTime::createFromFormat($format, $date_time);
