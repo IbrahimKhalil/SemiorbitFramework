@@ -206,7 +206,11 @@ class AppService
 
     public function UseRoutesPath($routes_path = null)
     {
-        $this->_RoutesPath = $routes_path ?: $this->BasePath('routes');
+        $this->_RoutesPath = $routes_path ?
+
+            Path::Normalize( realpath( $this->BasePath($routes_path) ) )
+
+            : $this->BasePath('src/routes');
 
         return $this;
     }

@@ -2,7 +2,14 @@
 <project version="4">
   <component name="PublishConfigData">
     <serverData>
-      <paths name="SEMIORBIT SERVER">
+      <paths name="SEMIORBIT-RPSRV">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="SEMIORBIT-SERVER">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
@@ -24,6 +31,13 @@
         </serverdata>
       </paths>
       <paths name="semiorbit">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="taibafood.net">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />

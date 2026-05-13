@@ -297,7 +297,7 @@ class Actions extends AltaArray
 
     public function DisabledMethods()
     {
-        $this->_DisabledMethods;
+        return $this->_DisabledMethods;
     }
 
     public function DefineAction($alias, $props)

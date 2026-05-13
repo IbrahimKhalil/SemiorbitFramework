@@ -40,7 +40,9 @@ class FinderResult extends AltaArray
     {
         if ( strtolower($key) == "path" && empty( $this->Path ) && ! empty( $this->Class )  ) {
 
-            return $this->Path = Path::ClassFileName($this->Class);
+            $this->Path = Path::ClassFileName($this->Class);
+
+            return $this->Path;
 
         }
 
