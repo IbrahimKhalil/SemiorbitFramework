@@ -21,9 +21,9 @@ class Client
 
     private static $_Locale;
 
-    private static $_Language;
+    private static string $_Language = '';
 
-    private static $_AcceptLanguage;
+    private static string $_AcceptLanguage = '';
 
     private static $_UserAgent;
 
@@ -103,7 +103,7 @@ class Client
     }
 
 
-    public static function Language()
+    public static function Language(): string
     {
         return static::$_Language ?:
 
@@ -131,11 +131,19 @@ class Client
     }
 
 
-    public static function AcceptLanguage()
+    /**
+     * Will return client/browser accepted language(s) using HTTP_ACCEPT_LANGUAGE
+     *
+     * @return string
+     */
+
+    public static function AcceptLanguage(): string
     {
+
         return static::$_AcceptLanguage ?:
 
-            static::$_AcceptLanguage = getenv('HTTP_ACCEPT_LANGUAGE');
+            static::$_AcceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? getenv('HTTP_ACCEPT_LANGUAGE') ?: '';
+
     }
 
 
