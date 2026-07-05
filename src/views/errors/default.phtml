@@ -16,7 +16,7 @@ if (!defined('LANG')) Lang::UseLang('en');
     <img
             src="<?= Render::Widget(['errors/icons/' . $this->code, 'errors/icons/default']) ?>"
             alt="<?= $this->code ?>"/>
-    <div dir="<?= DIR ?>">
+    <div dir="ltr">
         <h1>
             <i><?= $this->code ?: 503 ?></i>
             <span><?= $this->msg ?: "An error occurred!" ?></span>

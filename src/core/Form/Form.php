@@ -301,13 +301,11 @@ HEREHTML;
         if ( is_empty( static::Clipboard( $form . ':token' ) ) )
 		{
 
-            static::Clipboard( $form . ':input_token', isset ( $_SESSION[ $form . ':token' ] ) ? $_SESSION[ $form . ':token' ] : null );
+            static::Clipboard( $form . ':input_token', $_SESSION[$form . ':token'] ?? null);
 
             // if token already generated for session it will be used again
             // Ref:
-			static::Clipboard( $form . ':token', isset( $_SESSION[ $form . ':token' ] ) ? $_SESSION[ $form . ':token' ]
-
-                : hash_hmac( 'sha256',  $form . $_SERVER['HTTP_USER_AGENT'], static::GenerateRandomToken() ));
+			static::Clipboard( $form . ':token', $_SESSION[$form . ':token'] ?? hash_hmac('sha256', $form . ($_SERVER['HTTP_USER_AGENT'] ?? ''), static::GenerateRandomToken()));
 
 			if ( ! isset( $_SESSION[ $form . ':token' ] ) ) $_SESSION[ $form . ':token' ] = static::Clipboard( $form . ':token' );
 

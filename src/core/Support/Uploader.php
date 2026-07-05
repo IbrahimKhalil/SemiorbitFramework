@@ -590,6 +590,10 @@ class Uploader
 
         }
 
+        $thumbnail_width = max(1, (int) round($thumbnail_width));
+
+        $thumbnail_height = max(1, (int) round($thumbnail_height));
+
         //Creating Resized Image
 
         $thumb_img = imagecreatetruecolor( $thumbnail_width, $thumbnail_height );

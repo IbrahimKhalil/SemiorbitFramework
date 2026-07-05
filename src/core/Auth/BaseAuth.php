@@ -43,7 +43,7 @@ class BaseAuth implements AuthInterface
 
     public function UpdateLoginToken($new_password)
     {
-        $user_browser = $_SERVER['HTTP_USER_AGENT'];
+        $user_browser = $_SERVER['HTTP_USER_AGENT'] ?? getenv('HTTP_USER_AGENT');
 
         Session::Store(static::KEY_LOGIN_TOKEN, hash('sha512', $new_password . $user_browser));
     }

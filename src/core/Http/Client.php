@@ -70,7 +70,7 @@ class Client
     public static function MSIE_X_UA_CompatibleHeader()
     {
 
-        if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false))
+        if (isset($_SERVER['HTTP_USER_AGENT']) && (str_contains($_SERVER['HTTP_USER_AGENT'], 'MSIE')))
 
             header('X-UA-Compatible: IE=edge,chrome=1');
 
