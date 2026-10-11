@@ -171,7 +171,10 @@ class TreeDataSet extends DataSet
     public function onBeforeUpdate()
     {
 
-        $prev_ = DB::Row("SELECT {$this->ParentIDField()->Name} AS parent, {$this->PositionField()->Name} AS pos, {$this->LevelField()->Name} AS lvl FROM {$this->TableName()} WHERE {$this->ID->Name} = '{$this->ID->Value}' ");
+        $id_value = $this->ID->WhereClausePrepareValue($this->ID->Value);
+
+        $prev_ = DB::Row("SELECT {$this->ParentIDField()->Name} AS parent, {$this->PositionField()->Name} AS pos, {$this->LevelField()->Name} AS lvl FROM {$this->TableName()} WHERE `{$this->ID->Name}` = {$id_value}");
+
 
         $this->_prev_ = $prev_;
 

@@ -502,15 +502,29 @@ class DataSet extends Model
 
         $myDataSet = new static;
 
-        return DB::Find( "SELECT COUNT({$myDataSet->ID->Name}) AS total_count FROM {$myDataSet->TableName()} {$filter}" );
+        /** @noinspection SqlNoDataSourceInspection */
+        /** @noinspection SqlResolve */
+        $res = DB::Find( "SELECT COUNT({$myDataSet->ID->Name}) AS total_count FROM {$myDataSet->TableName()} {$filter}" );
+
+        return $res === null ? null : intval($res);
+
     }
+
 
     public static function Has($id)
     {
+
         $myDataSet = new static;
 
-        return DB::Find( "SELECT {$myDataSet->ID->Name} FROM {$myDataSet->TableName()} WHERE {$myDataSet->ID->Name} = '{$id}' LIMIT 1" );
+        $id_value = $myDataSet->ID->WhereClausePrepareValue($id);
+
+        /** @noinspection SqlNoDataSourceInspection */
+        /** @noinspection SqlResolve */
+        return DB::Find("SELECT `{$myDataSet->ID->Name}` FROM {$myDataSet->TableName()} WHERE `{$myDataSet->ID->Name}` = {$id_value} LIMIT 1");
+
     }
+
+
 
     /**
      * Create a new instance and load data table from selected source<p>
@@ -681,7 +695,7 @@ class DataSet extends Model
     }
 
 
-    public function Namespace()
+    public function Namespace(): string
     {
         return Path::ClassNamespace(static::class);
     }

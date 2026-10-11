@@ -89,6 +89,8 @@ class Mysqli implements Driver
 
         $myCon->query("SET CHARACTER SET {$this->CharSet}");
 
+        $myCon->set_charset($this->CharSet);
+
 
 
         $this->_Connector = $myCon;

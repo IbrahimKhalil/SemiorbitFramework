@@ -154,7 +154,7 @@ class Str
 
         $keep_lang = false;
 
-        $lang = current(array_reverse(explode("_", $str)));
+        $lang = current(array_reverse(explode("_", $str ?? '')));
 
         if (in_array($lang, array_merge(Config::Languages(), ['l1', 'l2', 'l3', 'l4']))) {
 
@@ -164,7 +164,7 @@ class Str
 
         }
 
-        $str = str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $str)));
+        $str = str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $str ?? '')));
 
         return self::Clipboard($key, $keep_lang ? $str . "_" . $lang : $str);
 
@@ -179,7 +179,7 @@ class Str
 
     public static function Title($str)
     {
-        return mb_convert_case($str, MB_CASE_TITLE, 'UTF-8');
+        return mb_convert_case($str ?? '', MB_CASE_TITLE, 'UTF-8');
     }
 
     /**

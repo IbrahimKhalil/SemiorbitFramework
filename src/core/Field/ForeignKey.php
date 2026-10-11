@@ -212,7 +212,7 @@ trait ForeignKey
 
             $this->_Cache_FKeyLoadedItems[$key] = $this->ActiveConnection()
 
-                ->Row("SELECT {$this->FKeyDataSet->ListSelectStmtFields()} FROM {$this->FKeyTable} WHERE {$this->FKeyValueFieldName} = " . $this->FKeyValueField->WhereClausePrepareValue($key));
+                ->Row("SELECT {$this->FKeyDataSet->ListSelectStmtFields()} FROM {$this->FKeyTable} WHERE `{$this->FKeyValueFieldName}` = " . $this->FKeyValueField->WhereClausePrepareValue($key));
 
             $this->FKeyDataSet->Fill($this->_Cache_FKeyLoadedItems[$key]);
 
@@ -220,9 +220,13 @@ trait ForeignKey
 
         } else {
 
-            return $this->_Cache_FKeyLoadedItems[$key] = htmlspecialchars($this->ActiveConnection()
+            $key_value = "'" . $this->ActiveConnection()->Escape($key) . "'";
 
-                ->Find("SELECT {$this->FKeyTextFieldName} FROM {$this->FKeyTable} WHERE {$this->FKeyValueFieldName} = '{$key}' ") ?: '');
+            return $this->_Cache_FKeyLoadedItems[$key] = htmlspecialchars(
+
+                $this->ActiveConnection()
+
+                    ->Find("SELECT {$this->FKeyTextFieldName} FROM {$this->FKeyTable} WHERE `{$this->FKeyValueFieldName}` = {$key_value}") ?: '');
 
         }
 
@@ -272,9 +276,11 @@ trait ForeignKey
 
         } else {
 
-            foreach ($loaded_rows as $row)
+            foreach ($loaded_rows as $row) {
 
-                $values[$row[$this->Name]] = "'{$row[$this->Name]}'";
+                $values[$row[$this->Name]] = "'" . $this->ActiveConnection()->Escape($row[$this->Name]) . "'";
+
+            }
 
         }
 
@@ -283,9 +289,12 @@ trait ForeignKey
 
         $fields_list = $this->FKeyDataSet ? "{$this->FKeyDataSet->ListSelectStmtFields()}" : "{$this->FKeyValueFieldName}, {$this->FKeyTextFieldName}";
 
+
+        /** @noinspection SqlNoDataSourceInspection */
+        /** @noinspection SqlResolve */
         $items_list = $this->ActiveConnection()
 
-               ->Table("SELECT {$fields_list} FROM {$this->FKeyTable} WHERE {$this->FKeyValueFieldName} IN ({$keys})");
+               ->Table("SELECT {$fields_list} FROM {$this->FKeyTable} WHERE `{$this->FKeyValueFieldName}` IN ({$keys})");
 
 
         while ($row = $items_list->Row()) {

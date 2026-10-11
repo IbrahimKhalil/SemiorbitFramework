@@ -109,13 +109,17 @@ class File extends Field
 
                 if ($this->CleanDataBeforeDeleteFile && $this->ActiveDataSet()) {
 
-                    $allow_delete = ($this->ExcludeFromSelect) ? true :
+                    $id_value = $this->ActiveDataSet()->ID->WhereClausePrepareValue($this->ActiveDataSet()->ID->Value);
+
+                    /** @noinspection SqlNoDataSourceInspection */
+                    /** @noinspection SqlResolve */
+                    $allow_delete = ($this->ExcludeFromSelect) ||
 
                         $this->ActiveDataSet()->ActiveConnection()
 
-                        ->Cmd("UPDATE {$this->ActiveDataSet()->TableName()} SET {$this->Name} = NULL
+                        ->Cmd("UPDATE {$this->ActiveDataSet()->TableName()} SET `{$this->Name}` = NULL
 
-                                WHERE {$this->ActiveDataSet()->ID->Name} = '{$this->ActiveDataSet()->ID->Value}'");
+                                WHERE `{$this->ActiveDataSet()->ID->Name}` = {$id_value}");
 
                 }
 

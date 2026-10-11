@@ -23,6 +23,7 @@ use Semiorbit\Component\Finder;
 
 /**
  * Controller Class
+ *
  * Controller class is a super class that all controllers in the application should extend
  *
  * @author       semiorbit.com

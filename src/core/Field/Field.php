@@ -119,6 +119,11 @@ class Field extends AltaArray implements FieldProps
 
     protected $_InputAttrs = [];
 
+    protected $_CastingCallback = null;
+
+    protected $_DataSerializer = null;
+
+
     use FieldBuilder;
 
 
@@ -858,145 +863,172 @@ class Field extends AltaArray implements FieldProps
     public function setCaption($value)
     {
         $this->Caption = strval($value);
+
         return $this;
     }
 
     public function setControl($value)
     {
         $this->Control = $value;
+
         return $this;
     }
 
     public function setTag($value)
     {
         $this->Tag = strval($value);
+
         return $this;
     }
 
     public function setValue($value)
     {
         $this->Value = $value;
+
         return $this;
     }
 
     public function setType($value)
     {
         $this->Type = strval($value);
+
         return $this;
     }
 
     public function setRequired($value = true)
     {
-        $this->Required = $value;
+        $this->Required = boolval($value);
+
         return $this;
-    } //TODO BOOLVAL
+    }
 
     public function setGroup($value)
     {
         $this->Group = strval($value);
+
         return $this;
     }
 
     public function setPermission($roles, $permissions = null)
     {
         $this->Permission = [$roles, $permissions];
+
         return $this;
     }
 
     public function setTemplate($value)
     {
         $this->Template = strval($value);
+
         return $this;
     }
 
     public function setCssClass($value)
     {
         $this->CssClass = strval($value);
+
         return $this;
     }
 
     public function setControlCssClass($value)
     {
         $this->ControlCssClass = strval($value);
+
         return $this;
     }
 
     public function setInputCssClass($value)
     {
         $this->InputCssClass = strval($value);
+
         return $this;
     }
 
     public function setID($value)
     {
         $this->ID = strval($value);
+
         return $this;
     }
 
     public function setValidate($value)
     {
         $this->Validate = strval($value);
+
         return $this;
     }
 
     public function setUnique($value = true)
     {
         $this->Unique = ($value);
+
         return $this;
     }
 
     public function setDefaultValue($value)
     {
+
         $this->DefaultValue = $value;
+
         if ($this->Value === null) $this->Value = $value;
+
         return $this;
+
     }
 
     public function setNote($value)
     {
         $this->Note = strval($value);
+
         return $this;
     }
 
     public function setIsTitle($value = true)
     {
         $this->IsTitle = ($value);
+
         return $this;
     }
 
     public function setIsID($value = true)
     {
         $this->IsID = ($value);
+
         return $this;
     }
 
     public function setReadOnly($value = true)
     {
         $this->ReadOnly = ($value);
+
         return $this;
     }
 
     public function setInputIsReadOnly($value = true)
     {
         $this->InputIsReadOnly = ($value);
+
         return $this;
     }
 
     public function setView($value)
     {
         $this->View = strval($value);
+
         return $this;
     }
 
     public function setErr($key, $value)
     {
         $this->Err[$key] = $value;
+
         return $this;
     }
 
     public function setInputID($value)
     {
         $this->InputID = strval($value);
+
         return $this;
     }
 
@@ -1139,7 +1171,7 @@ class Field extends AltaArray implements FieldProps
 
         if ($this->Type === DataType::BOOL) {
 
-            $this->Required ? $value = (int) $value : ($value === null ? $value : (int) $value);
+            $value = $this->Required ? (int) $value : ($value === null ? $value : (int) $value);
 
         }
 
@@ -1199,6 +1231,191 @@ class Field extends AltaArray implements FieldProps
         return $this;
     }
 
+
+    /**
+     * Set a custom value conversion callback.
+     *
+     * @param ?callable $callback Receives the raw value and returns its converted value.
+     *                            <br>null to unset casting.
+     */
+
+    public function UseCastingCallback(?callable $callback): static
+    {
+
+        $this->_CastingCallback = $callback;
+
+        return $this;
+
+    }
+
+
+    /**
+     * Set the callback that builds the exported representation.
+     *
+     * @param ?callable $callback Receives this Field. null to unset serializer.
+     */
+
+    public function UseDataSerializer(?callable $callback): static
+    {
+
+        $this->_DataSerializer = $callback;
+
+        return $this;
+
+    }
+
+
+    /**
+     * Apply the configured conversion casting callback without changing Value.
+     *
+     * @return mixed|null
+     */
+
+    public function CastValue(): mixed
+    {
+        return ($this->_CastingCallback) ? ($this->_CastingCallback)($this->Value) : $this->Value;
+    }
+
+
+    /**
+     * Run the data serializer, or return cast value by default.
+     *
+     * @return mixed The output of data serializer callback
+     */
+
+    public function SerializeData(): mixed
+    {
+        return ($this->_DataSerializer) ? ($this->_DataSerializer)($this) : $this->CastValue();
+    }
+
+
+
+    /**
+     * Convert the field value to a string.<br>
+     * Value casting *preserves null* by default.
+     *
+     * @param bool $nullable **TRUE** by default **explicit NULL value remains NULL.**
+     * @return static
+     */
+
+    public function SerializeValueAsString(bool $nullable = true): static
+    {
+
+        $this->_CastingCallback = $nullable ?
+
+            (static fn ($value): ?string => $value === null ? null : strval($value))
+
+            : (static fn ($value): string => strval($value));
+
+        return $this;
+
+    }
+
+
+
+    /**
+     * Convert the field value to a bool.<br>
+     * Value casting *preserves null* by default.
+     *
+     * @param bool $nullable **TRUE** by default **explicit NULL value remains NULL.**
+     * @return static
+     */
+
+    public function SerializeValueAsBool(bool $nullable = true): static
+    {
+
+        $this->_CastingCallback = ($nullable) ?
+
+            (static fn ($value): ?bool => ($value === null) ? null : boolval($value))
+
+            : (static fn ($value): bool => boolval($value));
+
+        return $this;
+
+    }
+
+
+
+    /**
+     * Convert the field value to an int.<br>
+     * Value casting *preserves null* by default.
+     *
+     * @param bool $nullable **TRUE** by default **explicit NULL value remains NULL.**
+     * @return static
+     */
+
+    public function SerializeValueAsInt(bool $nullable = true): static
+    {
+
+        $this->_CastingCallback = ($nullable) ?
+
+            (static fn ($value): ?int => ($value === null) ? null : intval($value))
+
+            : (static fn ($value): int => intval($value));
+
+        return $this;
+
+    }
+
+
+
+    /**
+     * Convert the field value to a decimal using PHP's float type.<br>
+     * Value casting *preserves null* by default.
+     *
+     * @param bool $nullable **TRUE** by default **explicit NULL value remains NULL.**
+     * @return static
+     */
+
+    public function SerializeValueAsDecimal(bool $nullable = true): static
+    {
+
+        $this->_CastingCallback = ($nullable) ?
+
+            (static fn ($value): ?float => ($value === null) ? null : floatval($value))
+
+            : (static fn ($value): float => floatval($value));
+
+        return $this;
+
+    }
+
+
+
+    /**
+     * Export an array of both the converted **value** and the existing **display text**.<br>
+     *
+     * **Value** is the output of ->CastValue() method.<br>
+     * **DisplayText** is the output of ->TextValue() method.<br>
+     *
+     *
+     * @template  ['value' => 12345, 'text' => 'John Doe']
+     *
+     * @param string $value_key Field value name
+     * @param string $text_key Display text key name
+     * @return static
+     */
+
+    public function SerializeValueAndText(string $value_key = 'value', string $text_key = 'text'): static
+    {
+
+        $this->_DataSerializer = static function (Field $field) use ($value_key, $text_key): array
+        {
+
+            return [
+
+                $value_key => $field->CastValue(),
+
+                $text_key => $field->TextValue()
+
+            ];
+
+        };
+
+
+        return $this;
+
+    }
 
 
 }

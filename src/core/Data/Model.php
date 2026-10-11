@@ -40,7 +40,7 @@ use Semiorbit\Translation\Lang;
  */
 #[AllowDynamicProperties]
 
-class Model
+class Model implements \JsonSerializable
 {
 
     const TABLE = null;
@@ -96,7 +96,7 @@ class Model
     /**
      * This will return table name if it was set using "setTableName()" function.
      * If not, it will use "TABLE" constant, if it was explicitly defined.
-     * Otherwise Table name will be set by default as same as DataSet class name, but in snake_case.
+     * Otherwise, Table name will be set by default as same as DataSet class name, but in snake_case.
      * The snake_case convention adds underscores between words, and convert all letters to lowercase.
      *
      * @return string Table name
@@ -400,10 +400,12 @@ class Model
 
     }
 
+
+
     /**
      * Check if data source table contains row with specific id
      *
-     * @param null $id id to check. If not assigned this model id will be used
+     * @param null|string $id id to check. If not assigned this model id will be used
      * @return bool
      */
 
@@ -429,9 +431,12 @@ class Model
 
         if ($remark) $this->MarkAsNew( ! $id_exists );
 
+
         return ( ! $id_exists );
 
     }
+
+
 
     /**
      * Fill the model with an array of attributes.<p>
@@ -440,10 +445,10 @@ class Model
      * @param $arr
      * @param bool $check_if_new
      * @param bool $reset_all Reset all fields to its default values
-     * @return $this returns this model
+     * @return static returns this model
      */
 
-    public function Fill($arr, $check_if_new = true, $reset_all = true)
+    public function Fill($arr, bool $check_if_new = true, bool $reset_all = true): static
     {
 
         if ($reset_all) $this->ResetToDefaults();
@@ -451,14 +456,14 @@ class Model
         if ( ! $arr instanceof Model ) {
 
             //Fields
-            foreach ($this->Fields() as $k => $fld) :
+            foreach ($this->Fields() as $fld) :
 
                 /**@var Field $fld*/
 
-                if ( isset( $arr[$fld->Name] ) ) {
+                if (isset( $arr[$fld->Name] )) {
 
 
-                    if ( in_array( $fld->Type, array( DataType::VARCHAR, DataType::CHAR, DataType::TEXT, DataType::FILE ) ) ) {
+                    if (in_array($fld->Type, [DataType::VARCHAR, DataType::CHAR, DataType::TEXT, DataType::FILE])) {
 
                         $fld->Value = stripslashes( $arr[ $fld->Name ] );
 
@@ -489,11 +494,14 @@ class Model
 
         if ( $check_if_new ) {
 
-            $sql = "select count(" . $this->ID->Name . ") as chk from " . $this->TableName() . " where " . $this->ID->Name . " = '{$this->ID->Value}' ";
+            $id_value = $this->ID->WhereClausePrepareValue($this->ID->Value);
+
+            $sql = "SELECT COUNT(" . $this->ID->Name . ") AS chk FROM " . $this->TableName() . " WHERE " . $this->ID->Name . " = {$id_value} ";
 
             $chk = $this->ActiveConnection()->Find( $sql );
 
-            $this->MarkAsNew( $chk > 0 ? false : true );
+            $this->MarkAsNew(!($chk > 0));
+
         }
 
 
@@ -754,16 +762,18 @@ class Model
         return $res;
     }
 
+
+
     /**
      * Upload files sent to file fields
      *
      * @return int Upload result (Msg::UPLOAD_OK, Msg::UPLOAD_FAILED, Msg::FILE_TYPE_ERR, Msg::RESIZE_FAILED, Msg::FILE_SIZE_ERR)
      */
 
-    public function UploadFiles()
+    public function UploadFiles(): int
     {
 
-        foreach ($this->Fields() as $k => $field) {
+        foreach ($this->Fields() as $field) {
 
 
             if ($field instanceof File) {
@@ -965,11 +975,15 @@ class Model
 
         if ($checkpoint === null || $checkpoint === true) {
 
+
+            $id_value = $this->ID->WhereClausePrepareValue($this->ID->Value);
+
+
             foreach ($this->Fields() as $field) :
 
                 /**@var File $field */
 
-                if (in_array($field->Type, array(DataType::FILE))) {
+                if ($field->Type == DataType::FILE) {
 
                     $field->DeleteFiles();
                 }
@@ -977,7 +991,9 @@ class Model
             endforeach;
 
 
-            $sql = "DELETE FROM {$this->TableName()} WHERE " . $this->ID->Name . " = '" . $this->ID->Value . "'";
+            /** @noinspection SqlNoDataSourceInspection */
+            /** @noinspection SqlResolve */
+            $sql = "DELETE FROM {$this->TableName()} WHERE `" . $this->ID->Name . "` = {$id_value}";
 
             $res = $this->ActiveConnection()->Cmd($sql);
 
@@ -989,11 +1005,14 @@ class Model
 
             }
 
+            /** @noinspection PhpExpressionResultUnusedInspection */
             $this->onRemove($res);
+
 
             return $res;
 
         }
+
 
         return $checkpoint;
 
@@ -1008,7 +1027,7 @@ class Model
      * @return mixed
      */
 
-    public function __get ($key)
+    public function __get (string $key)
     {
 
         if ( isset( $this->_Fields[ $key ] ) ) return $this->_Fields[ $key ];
@@ -1037,7 +1056,7 @@ class Model
 
 
     /**
-     * Whether or not a field exists by key (Field ID)
+     * Whether a field exists by key (Field ID)
      *
      * @param string $key (Field ID) to check for
      * @access public
@@ -1078,7 +1097,7 @@ class Model
 
         else if ( is_array( $field ) ) $myField = Field::Create( $field );
 
-        else $myField = new Field( array( 'FullName' => $id, 'Value' => $field ) );
+        else $myField = new Field(['Name' => $id, 'Value' => $field]);
 
         if ( $this instanceof DataSet ) $myField->UseDataSet( $this );
 
@@ -1112,20 +1131,23 @@ class Model
 
         $this->_Fields[ $id ] = $myField;
 
+
         return $myField;
 
     }
 
+
+
     /**
      * Bulk add an array of fields
      *
-     * @param $flds
-     * @return $this
+     * @param $fields
+     * @return static
      */
 
-    public function AddFields($flds)
+    public function AddFields($fields): static
     {
-        foreach ( $flds as $name => $fld ) {
+        foreach ($fields as $name => $fld ) {
 
             if ( is_numeric( $name ) ) $name = $fld[ 'name' ];
 
@@ -1136,66 +1158,77 @@ class Model
         return $this;
     }
 
+
+
     /**
      * Model Fields
      *
      * @return array
      */
 
-    public function Fields()
+    public function Fields(): array
     {
         return $this->_Fields;
     }
 
+
+
     /**
-     * Select fields that listed properties match assigned values in selector.
+     * Select fields matching any property/value pair in the selector.
      *
-     * @param array $selector _List of pairs (prop=>value) to match
-     * @param int $array_type
-     * @return array Array of fields
+     * @param array|null $selector Property/value pairs. null selects all fields.
+     * @param int $array_type Output indexing type.
+     * @return array Selected fields.
      */
 
-    public function SelectFields(array $selector = null, $array_type = AltaArrayType::ASOC )
+    public function SelectFields(?array $selector = null, int $array_type = AltaArrayType::ASOC): array
     {
 
-        if ( $selector == null && $array_type == AltaArrayType::ASOC ) return $this->_Fields;
+        if ($selector === null && $array_type === AltaArrayType::ASOC) {
 
-        $flds = array();
-        $n = 0;
+            // No selector ... return all fields
 
-
-        foreach ( $this->_Fields as $k => $fld ) {
-
-
-
-            if ( ! is_array( $selector ) ) {
-
-                $this->AddFieldToArray( $flds, $k, $n, $array_type );
-                continue;
-
-            } else {
-
-                foreach ( $selector as $prop => $val ) {
-
-
-                    if (  isset( $fld[ $prop ] ) && ( $val === '?' || $fld[ $prop ] === $val ) ) {
-
-                        $this->AddFieldToArray( $flds, $k, $n, $array_type );
-                        continue;
-
-                    }
-
-                }
-            }
-
+            return $this->_Fields;
 
         }
 
-        return $flds;
+        $fields = [];
+
+        $n = 0;
+
+        foreach ($this->_Fields as $k => $fld) {
+
+            if ($selector === null) {
+
+                $this->AddFieldToArray($fields, $k, $n, $array_type);
+
+                continue;
+
+            }
+
+            foreach ($selector as $prop => $val) {
+
+                if (isset($fld[$prop]) && ($val === '?' || $fld[$prop] === $val)) {
+
+                    $this->AddFieldToArray($fields, $k, $n, $array_type);
+
+                    // Once a prop value matches... stop searching props and go to next field
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+
+        return $fields;
 
     }
 
-    protected function AddFieldToArray(&$arr, $k, &$n, $array_type)
+
+    protected function AddFieldToArray(&$arr, $k, &$n, $array_type): void
     {
 
         if ( $array_type == AltaArrayType::BOTH || $array_type == AltaArrayType::ASOC ) $arr[ $k ] = $this->{$k};
@@ -1206,15 +1239,18 @@ class Model
 
     }
 
+
+
     /**
      * Select fields that have listed properties in selector
      *
-     * @param array|string $selector property name [or array of properties names] to check availability
+     * @param array|string|null $selector property name [or array of properties names] to check availability
      * @param int $array_type
      * @return array
      */
 
-    public function FieldsHave($selector = null, $array_type = AltaArrayType::BOTH ) {
+    public function FieldsHave(array|string|null $selector = null, int $array_type = AltaArrayType::BOTH ): array
+    {
 
         $has_selectors = array();
 
@@ -1237,44 +1273,54 @@ class Model
     }
 
 
+
     /**
-     * Find first field that matches selector
+     * Find the first field matching a property selector or database field name.
      *
-     * @param string|array $selector  Array _List of pairs (prop=>value) to match
-     *
-     * @return Field Returns first field that matches selector or NULL
+     * @param array|string $selector Property/value pairs or field name.
+     * @return Field|null
      */
 
-    public function SelectField(array $selector)
+    public function SelectField(array|string $selector): ?Field
     {
-        $flds = $this->SelectFields( $selector, AltaArrayType::NUM );
 
-        return isset( $flds[0] ) ? $flds[0] : null;
+        $selector = (is_string($selector)) ? ['Name' => $selector] : $selector;
+
+        $fields = $this->SelectFields($selector, AltaArrayType::NUM);
+
+
+        return $fields[0] ?? null;
+
     }
+
+
 
     /**
      * Select first field that its field name matches selector.
      *
      * @param string $name Field name selector
-     * @return Field Returns first field that matches selector or NULL
+     * @return Field|null Returns first field that matches selector or NULL
      */
 
-    public function FieldByName($name)
+    public function FieldByName(string $name): ?Field
     {
-        return $this->SelectField( array( 'FullName' => $name ) );
+        return $this->SelectField(['Name' => $name]);
     }
+
 
     /**
      * Field
      *
      * @param string $id Field id/key in model
-     * @return Field Returns selected field if id exists
+     * @return Field|null Returns selected field if id exists
      */
 
-    public function Field($id)
+    public function Field(string $id): ?Field
     {
-        return $this->_Fields[ $id ];
+        return $this->_Fields[ $id ] ?? null;
     }
+
+
 
     /**
      * Check if fields array has a field with selected key/id
@@ -1283,18 +1329,19 @@ class Model
      * @return bool
      */
 
-    public function HasField($id)
+    public function HasField(string $id): bool
     {
         return isset ( $this->_Fields[ $id ] );
     }
 
+
     /**
      * Get model ID field
      *
-     * @return Field
+     * @return Field|null
      */
 
-    public function ID()
+    public function ID(): ?Field
     {
 
         if ( $this->_ID != null ) return $this->_ID;
@@ -1302,7 +1349,7 @@ class Model
         $ids = $this->SelectFields( array( 'IsID' => true ) );
 
 
-        if ( is_array( $ids ) && count( $ids ) > 0 ) {
+        if ($ids) {
 
             reset($ids);
 
@@ -1318,31 +1365,35 @@ class Model
 
     }
 
+
+
     /**
      * @return string|null ID field key
      */
 
-    public function IDKey()
+    public function IDKey(): ?string
     {
         $this->ID();
 
         return $this->_IDKey;
     }
 
+
+
     /**
      * Get model Title field
      *
-     * @return Field
+     * @return Field|null
      */
 
-    public function Title()
+    public function Title(): ?Field
     {
 
         if ( $this->_Title != null ) return $this->_Title;
 
         $titles = $this->SelectFields( array( 'IsTitle' => true ) );
 
-        if ( is_array( $titles ) && count( $titles ) > 0 ) {
+        if ($titles) {
 
             reset($titles);
 
@@ -1356,26 +1407,30 @@ class Model
 
     }
 
+
+
     /**
      * @return string|null Title field key
      */
 
-    public function TitleKey()
+    public function TitleKey(): ?string
     {
         $this->Title();
 
         return $this->_TitleKey;
     }
 
+
+
     /**
      * Mark field as model Title field
      * so it could be accessed using Title() method or property
      *
      * @param Field $fld
-     * @return $this
+     * @return static
      */
 
-    public function UseFieldAsTitle(Field $fld)
+    public function UseFieldAsTitle(Field $fld): static
     {
 
         $old_title = $this->Title();
@@ -1392,15 +1447,17 @@ class Model
 
     }
 
+
+
     /**
      * Mark field as model ID field
      * so it could be accessed using ID() method or property
      *
      * @param Field $fld
-     * @return $this
+     * @return static
      */
 
-    public function UseFieldAsID(Field $fld)
+    public function UseFieldAsID(Field $fld): static
     {
 
         $old_id = $this->ID();
@@ -1418,16 +1475,17 @@ class Model
     }
 
 
+
     /**
      * Reset model's fields values to its default values.
      *
      * @param bool $clear_all TRUE      Reset all fields values to its default values <br />
      *                        FALSE     Reset only empty fields values to its default values
      *
-     * @return $this returns this model
+     * @return static returns this model
      */
 
-    public function ResetToDefaults($clear_all = true)
+    public function ResetToDefaults(bool $clear_all = true): static
     {
 
         foreach ( $this->Fields() as $fld ) {
@@ -1444,23 +1502,28 @@ class Model
 
     }
 
+
+
     /**
      * Array of model fields groups settings & properties
      *
      * @return array
      */
 
-    public function GroupsProps()
+    public function GroupsProps(): array
     {
         return $this->_GroupsProps;
     }
 
-    public function setGroupsProps($props)
+
+    public function setGroupsProps($props): static
     {
         $this->_GroupsProps = $props;
 
         return $this;
     }
+
+
 
     /**
      * Array of model fields groups
@@ -1469,7 +1532,7 @@ class Model
      * @return array
      */
 
-    public function Groups($include_hidden = false)
+    public function Groups(bool $include_hidden = false)
     {
         $groups = array();
 
@@ -1483,7 +1546,7 @@ class Model
 
             if ( isset( $fld['group'] )) {
 
-                $group = $fld['group'] ?? '';
+                $group = $fld['group'];
 
                 // Adding group properties, only if not added previously
 
@@ -1525,38 +1588,43 @@ class Model
 
         }
 
+
         return $groups;
+
     }
 
+
+
     /**
-     * Prepare model's fields list for sql select statement.<br/>
-     * If separator is set to FALSE||NULL an array will be returned.
-     * Otherwise comma separated list of fields select-expr or names wil be returned.
+     * Prepare model fields for a SQL SELECT statement.
      *
-     * @param bool $declare_table_name
-     * @param bool $return_array
-     * @param string $separator
+     * @param bool|string $declare_table_name TRUE uses the model table; a string uses that table or alias.
+     * @param bool $return_array TRUE returns the expression array.
+     * @param string $separator Separator used when returning a string.
      * @return array|string
      */
 
-    public function ListSelectStmtFields($declare_table_name = true, $return_array = false, $separator = ', ')
+    public function ListSelectStmtFields(bool|string $declare_table_name = true, bool $return_array = false, string $separator = ', '): array|string
     {
 
-        $list = array();
+        $list = [];
 
-        foreach ( $this->Fields() as $fld ) {
+        foreach ($this->Fields() as $field) {
 
-            /**@var Field $fld */
+            /** @var Field $field */
 
-            if ( $fld->ExcludeFromSelect ) continue;
+            if ($field->ExcludeFromSelect) continue;
 
-            $list[] = $fld->SelectExpr($declare_table_name);
+            $list[] = $field->SelectExpr($declare_table_name);
 
         }
+
 
         return $return_array ? $list : implode($separator, $list);
 
     }
+
+
 
     /**
      * Row array of model
@@ -1565,18 +1633,23 @@ class Model
      * @return array
      */
 
-    public function ToArrayRow()
+    public function ToArrayRow(): array
     {
-        $arr = array();
 
-        foreach ($this->Fields() as $k => $fld) {
+        $arr = [];
+
+        foreach ($this->Fields() as $fld) {
 
             $arr[ $fld->Name ] = $fld->Value;
 
         }
 
+
         return $arr;
+
     }
+
+
 
     /**
      * Model to array of (Field Key => Field Props Array) list
@@ -1585,10 +1658,10 @@ class Model
      * @return array
      */
 
-    public function ToArray(array $props = array())
+    public function ToArray(array $props = array()): array
     {
 
-        $arr = array();
+        $arr = [];
 
         foreach ($this->Fields() as $k => $fld) {
 
@@ -1602,15 +1675,72 @@ class Model
     }
 
 
+
     public function __toString()
     {
         return $this->Title->Value ?? '';
     }
 
-    public static function ModelName()
+
+
+    /**
+     * Serialize the current row fields using each field's data serialization rules.
+     * and returns an array of data
+     *
+     * @return array Data array
+     */
+
+    public function SerializeData(): array
+    {
+
+        $data = [];
+
+        foreach ($this->Fields() as $field) {
+
+            /** @var Field $field */
+
+            $data[$field->Name] = $field->SerializeData();
+
+        }
+
+
+        return $data;
+
+    }
+
+
+
+    /**
+     * Export the current row using each field's serialization rules.
+     *
+     * @return array Data array
+     */
+
+    public function JsonSerialize(): array
+    {
+        return $this->SerializeData();
+    }
+
+
+
+    /**
+     * Encode the serialized data list array as JSON.
+     *
+     * @return false|string.
+     */
+
+    public function ToJson(int $options = JSON_UNESCAPED_UNICODE, int $depth = 512): false|string
+    {
+        return json_encode($this->jsonSerialize(), $options, $depth);
+    }
+
+
+
+    public static function ModelName(): string
     {
         return Path::ClassShortName(static::class);
     }
+
 
     public function Package()
     {
@@ -1619,7 +1749,8 @@ class Model
         return $this->_Package ?: $this->_Package = Services::FindPackageByModelNs($this->Namespace());
     }
 
-    public function PackagePrefix()
+
+    public function PackagePrefix(): string
     {
         return $this->_PackagePrefix ?: $this->_PackagePrefix = (($pkg = $this->Package()) ? $pkg . '::' : '');
     }
