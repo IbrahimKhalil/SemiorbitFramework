@@ -5,6 +5,9 @@ use Semiorbit\Output\Render;
 use Semiorbit\Translation\Lang;
 
 if (!defined('LANG')) Lang::UseLang('en');
+
+$error_status = $this->status ?: $this->code ?: 503;
+
 ?>
 <html lang="en">
 
@@ -14,13 +17,29 @@ if (!defined('LANG')) Lang::UseLang('en');
 
 <div class="container">
     <img
-            src="<?= Render::Widget(['errors/icons/' . $this->status, 'errors/icons/default']) ?>"
+            src="<?= Render::Widget(['errors/icons/' . $error_status, 'errors/icons/default']) ?>"
             alt="<?= $this->status ?>"/>
     <div dir="ltr">
         <h1>
-            <i><?= $this->status ?: 503 ?></i>
-            <span><?= $this->msg ?: "An error occurred!" ?></span>
+            <i><?= $error_status ?></i>
+            <span>
+                <?= $this->msg ?: "An error occurred!" ?>
+            </span>
         </h1>
+
+        <button
+                type="button"
+                class="error-reference"
+                title="Click to copy error type"
+                aria-label="Copy error type">
+
+            <strong class="error-code">#<?= (int) $this->code ?></strong>
+
+            <code><?= htmlspecialchars((string) $this->type, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></code>
+
+        </button>
+
+
     </div>
 
     <?php if (Config::DebugMode()) :?>
@@ -40,6 +59,40 @@ if (!defined('LANG')) Lang::UseLang('en');
 
     <?php endif; ?>
 </div>
+
+<script>
+    const errorReference = document.querySelector('.error-reference');
+    const errorCodeBadge = errorReference.querySelector('.error-code');
+    const errorCodeLabel = errorCodeBadge.textContent;
+
+    let errorCopyTimeout;
+
+    errorReference.addEventListener('click', async () => {
+
+        clearTimeout(errorCopyTimeout);
+
+        try {
+
+            await navigator.clipboard.writeText(
+                errorReference.querySelector('code').textContent.trim()
+            );
+
+            errorCodeBadge.textContent = 'Copied';
+
+        } catch {
+
+            errorCodeBadge.textContent = 'Copy failed';
+
+        }
+
+        errorCopyTimeout = setTimeout(() => {
+
+            errorCodeBadge.textContent = errorCodeLabel;
+
+        }, 1500);
+
+    });
+</script>
 
 
 </body>

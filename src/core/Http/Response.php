@@ -157,7 +157,9 @@ class Response extends ResponseHeaders
         $parts[] = (string) $code;
 
 
-        return 'tag:' . Url::Host() . ',' . $application::LicenseYear() . ':' . implode('/', $parts);
+        return 'tag:' . rtrim(Url::Host(), '/') . ',' . $application::LicenseYear()
+
+            . ':' . implode('/', $parts);
 
     }
 

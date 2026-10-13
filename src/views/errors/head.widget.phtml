@@ -116,5 +116,66 @@
             user-select : none;
         }
 
+        .error-code {
+            display        : inline-block;
+            padding        : 2px 6px;
+            border         : 1px solid rgba(0, 0, 0, 0.12);
+            border-radius  : 4px;
+            background     : rgba(255, 255, 255, 0.45);
+            color          : #52616b;
+            font-family    : Consolas, "Cascadia Mono", "Courier New", monospace;
+            font-size      : 12px;
+            font-weight    : normal;
+            line-height    : 1.5;
+            vertical-align : middle;
+        }
+
+        h1 .error-code {
+            margin-right : 8px;
+        }
+
+        .error-reference {
+            display       : flex;
+            align-items   : flex-start;
+            gap           : 8px;
+            width         : fit-content;
+            max-width     : calc(100% - 24px);
+            box-sizing    : border-box;
+            padding       : 8px 10px;
+            border        : 1px solid #d9e0e4;
+            border-left   : 3px solid #79c5cc;
+            border-radius : 5px;
+            background    : #f5f7f8;
+            color         : #687780;
+            font-family   : Consolas, "Cascadia Mono", "Courier New", monospace;
+            font-size     : 11px;
+            line-height   : 1.6;
+            text-align    : left;
+            margin        : 36px auto 40px;
+            cursor        : copy;
+            user-select   : none;
+            appearance    : none;
+        }
+
+        .error-reference .error-code {
+            flex      : 0 0 auto;
+            font-size : inherit;
+        }
+
+        .error-reference code {
+            min-width     : 0;
+            font          : inherit;
+            overflow-wrap : anywhere;
+        }
+
+        .error-reference:hover {
+            border-color : #79c5cc;
+        }
+
+        .error-reference:focus-visible {
+            outline        : 2px solid #79c5cc;
+            outline-offset : 3px;
+        }
+
     </style>
 </head>
