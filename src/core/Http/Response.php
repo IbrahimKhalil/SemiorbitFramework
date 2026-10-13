@@ -9,6 +9,7 @@
 namespace Semiorbit\Http;
 
 
+use Semiorbit\Base\AppManager;
 use Semiorbit\Config\Config;
 use Semiorbit\Debug\AppExceptionInterface;
 use Semiorbit\Output\View;
@@ -44,15 +45,13 @@ class Response extends ResponseHeaders
 
         $content = [
 
-            'type' => '', /// ?
-
             'status' => $http_status_code ?: $code,
 
             'code' => $code ?: $http_status_code,
 
             'msg' => $msg ?: $this->DefaultStatusMessage($http_status_code),
 
-            'http_status_code' => $http_status_code
+            'type' => $this->ErrorType($code ?: $http_status_code),
 
         ];
 
@@ -88,7 +87,7 @@ class Response extends ResponseHeaders
 
             $this->setContent(
 
-                View::Load(['errors/' . $content['code'], 'errors/default'])->NoLayout()->WithParams($content)
+                View::Load(['errors/' . $content['status'], 'errors/default'])->NoLayout()->WithParams($content)
 
             );
 
@@ -126,6 +125,42 @@ class Response extends ResponseHeaders
         return $response->Exception($e)->Send($flush_output);
 
     }
+
+
+
+    /**
+     * Build the error type from the host, application metadata and error code.
+     *
+     * @param int $code
+     * @return string
+     */
+
+    protected function ErrorType($code): string
+    {
+
+        $app = AppManager::MainApp();
+
+        $application = $app->ApplicationClass();
+
+        $parts = [(string) $app->Composer('name')];
+
+        foreach (['Id', 'DbCode'] as $method) {
+
+            if (! method_exists($application, $method)) continue;
+
+            $value = (string) $application::$method();
+
+            if ($value !== '') $parts[] = $value;
+
+        }
+
+        $parts[] = (string) $code;
+
+
+        return 'tag:' . Url::Host() . ',' . $application::LicenseYear() . ':' . implode('/', $parts);
+
+    }
+
 
 
     public function UseView(ViewBase $view)

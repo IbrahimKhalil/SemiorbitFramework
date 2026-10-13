@@ -14,11 +14,11 @@ if (!defined('LANG')) Lang::UseLang('en');
 
 <div class="container">
     <img
-            src="<?= Render::Widget(['errors/icons/' . $this->code, 'errors/icons/default']) ?>"
-            alt="<?= $this->code ?>"/>
+            src="<?= Render::Widget(['errors/icons/' . $this->status, 'errors/icons/default']) ?>"
+            alt="<?= $this->status ?>"/>
     <div dir="ltr">
         <h1>
-            <i><?= $this->code ?: 503 ?></i>
+            <i><?= $this->status ?: 503 ?></i>
             <span><?= $this->msg ?: "An error occurred!" ?></span>
         </h1>
     </div>
