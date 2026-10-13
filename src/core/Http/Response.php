@@ -10,7 +10,7 @@ namespace Semiorbit\Http;
 
 
 use Semiorbit\Config\Config;
-use Semiorbit\Debug\AppException;
+use Semiorbit\Debug\AppExceptionInterface;
 use Semiorbit\Output\View;
 use Semiorbit\Output\ViewBase;
 
@@ -22,7 +22,7 @@ class Response extends ResponseHeaders
     protected $_View;
 
 
-    public function Json($data, $options = JSON_UNESCAPED_UNICODE )
+    public function Json($data, $options = JSON_UNESCAPED_UNICODE ): static
     {
 
         $this->setContentType('application/json');
@@ -34,7 +34,7 @@ class Response extends ResponseHeaders
     }
 
 
-    protected function ErrorHandler($code, $msg = '', $debug_msg = '', $http_status_code = 0, \Exception $e = null)
+    protected function ErrorHandler($code, $msg = '', $debug_msg = '', $http_status_code = 0, \Exception $e = null): static
     {
 
         if (! $http_status_code)
@@ -44,9 +44,11 @@ class Response extends ResponseHeaders
 
         $content = [
 
-            'status' => 'error',
+            'type' => '', /// ?
 
-            'code' => $code,
+            'status' => $http_status_code ?: $code,
+
+            'code' => $code ?: $http_status_code,
 
             'msg' => $msg ?: $this->DefaultStatusMessage($http_status_code),
 
@@ -97,10 +99,10 @@ class Response extends ResponseHeaders
     }
 
 
-    public function Exception(\Exception $e)
+    public function Exception(\Exception $e): static
     {
 
-        if ($e instanceof AppException) {
+        if ($e instanceof AppExceptionInterface) {
 
             $this->ErrorHandler($e->getCode(), $e->getMessage(), $e->getDebugMsg(), $e->getHttpStatusCode(), $e);
 

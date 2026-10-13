@@ -10,7 +10,9 @@ namespace Semiorbit\Base;
 
 use Semiorbit\Config\Config;
 use Semiorbit\Config\Environment\DotEnv;
+use Semiorbit\Debug\AppAbortException;
 use Semiorbit\Debug\AppException;
+use Semiorbit\Debug\AppRuntimeException;
 use Semiorbit\Http\Request;
 use Semiorbit\Support\Path;
 
@@ -27,6 +29,15 @@ abstract class Application implements AppInterface
     protected static $_ConfigPath;
 
     protected static $_PublicPath;
+
+
+
+    protected static ?string $_Id = null;
+
+    protected static ?string $_DbCode = null;
+
+    protected static ?string $_LicenseYear = null;
+
 
 
     final public static function Create($public_path = null, $base_path = null, $config_path = null)
@@ -53,25 +64,28 @@ abstract class Application implements AppInterface
     }
 
     /**
-     * @param int $code
+     * @param int $status Http Status Code
      * @param string $message
-     * @throws \RuntimeException
+     * @param int $code
+     * @param string $debug_message
      */
 
-    final public static function Abort($code, $message = '')
+    final public static function Abort($status, string $message = '', int $code = 0, string $debug_message = ''): never
     {
-        throw new \RuntimeException($message, $code);
+        throw new AppAbortException($code ?: $status, $message, $debug_message, $status);
     }
 
     /**
-     * @param int $code
+     * @param int $status Http Status code
      * @param string $message
+     * @param int $code
+     * @param string $debug_message
      * @throws AppException
      */
 
-    final public static function Exception($code, $message = '')
+    final public static function Exception($status, string $message = '', int $code = 0, string $debug_message = '')
     {
-        throw new AppException($code);
+        throw new AppException($code ?: $status, $message, $debug_message, $status);
     }
 
     /**
@@ -301,6 +315,47 @@ abstract class Application implements AppInterface
         return $key ? ($_ENV[$key] ?? $fallback) : $_ENV[Config::FWK_ENV_LIST];
 
     }
+
+
+
+    /**
+     * Get the cached application identifier, or an empty string when undefined.
+     *
+     * @return string
+     */
+
+    public static function Id(): string
+    {
+        return static::$_Id ??= (string) static::Environment('APP_ID', '');
+    }
+
+
+
+    /**
+     * Get the cached database code, or an empty string when undefined.
+     *
+     * @return string
+     */
+
+    public static function DbCode(): string
+    {
+        return static::$_DbCode ??= (string) static::Environment('DB_CODE', '');
+    }
+
+
+
+    /**
+     * Get the cached license year, falling back to the current year when undefined or empty.
+     *
+     * @return string
+     */
+
+    public static function LicenseYear(): string
+    {
+        return static::$_LicenseYear ??= (string) (static::Environment('LICENSE_YEAR') ?: date('Y'));
+    }
+
+
 
 
     /**

@@ -12,6 +12,7 @@ use http\Exception;
 use Semiorbit\Component\Finder;
 use Semiorbit\Component\Services;
 use Semiorbit\Config\Config;
+use Semiorbit\Debug\AppAbortException;
 use Semiorbit\Http\Request;
 use Semiorbit\Http\Response;
 use Semiorbit\Http\Url;
@@ -653,6 +654,26 @@ class AppService
             //Fire onRun Event
 
             AppManager::Call($this->ApplicationClass(), 'onRun', [&$output]);
+
+
+        } catch (AppAbortException $e) {
+
+            // Clearing all possible HMVC requests
+
+            while (ob_get_level() > 0) if (!ob_end_clean()) break;
+
+
+            $output = Response::SendException($e, false);
+
+
+            if (Config::SanitizeOutput()) $output = Output::Sanitize($output);
+
+            echo $output;
+
+
+            // Ending app execution on Abort
+
+            exit;
 
 
         } catch (\Exception $e) {
