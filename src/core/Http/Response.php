@@ -12,6 +12,7 @@ namespace Semiorbit\Http;
 use Semiorbit\Base\AppManager;
 use Semiorbit\Config\Config;
 use Semiorbit\Debug\AppExceptionInterface;
+use Semiorbit\Debug\ErrorMessage;
 use Semiorbit\Output\View;
 use Semiorbit\Output\ViewBase;
 
@@ -35,25 +36,30 @@ class Response extends ResponseHeaders
     }
 
 
-    protected function ErrorHandler($code, $msg = '', $debug_msg = '', $http_status_code = 0, \Exception $e = null): static
+
+    protected function ErrorHandler($code, $msg = '', $debug_msg = '',  $http_status_code = 0, ?\Exception $e = null): static
     {
 
-        if (! $http_status_code)
+        if (!$http_status_code)
 
-            $http_status_code = $this->HasStatusCode($code) ? $code : 503;
+            $http_status_code = $this->HasStatusCode($code) ? (int) $code : 503;
+
+
+        $message = ErrorMessage::Read((string) ($msg ?: $this->DefaultStatusMessage($http_status_code)));
 
 
         $content = [
 
-            'status' => $http_status_code ?: $code,
+            'status' => $http_status_code,
 
-            'code' => $code ?: $http_status_code,
+            'code' => (int) $code ?: $http_status_code,
 
-            'msg' => $msg ?: $this->DefaultStatusMessage($http_status_code),
+            'msg' => $message->Raw(),
 
-            'type' => $this->ErrorType($code ?: $http_status_code),
+            'type' => $this->ErrorType($code ?: $http_status_code)
 
         ];
+
 
 
         if (Config::DebugMode()) {
@@ -62,24 +68,27 @@ class Response extends ResponseHeaders
 
                 'debug_msg' => $debug_msg,
 
-                'file' => $e->getFile() ?? '',
+                'file' => $e?->getFile() ?? '',
 
-                'line' => $e->getLine() ?? '',
+                'line' => $e?->getLine() ?? '',
 
-                'trace' => (Config::ApiMode() ? $e->getTraceAsString() : $e->getTrace()) ?? []
+                'trace' => (Config::ApiMode())
+
+                    ? ($e?->getTraceAsString() ?? '')
+
+                    : ($e?->getTrace() ?? [])
 
             ]);
 
         }
 
-        // Set http status
 
-        $this->setStatus($http_status_code, $content['msg']);
+        $this->setStatus($http_status_code);
 
-
-        // Set response content
 
         if (Config::ApiMode()) {
+
+            $content['msg'] = ($message->IsTranslated()) ? $message->ToArray() : $message->English();
 
             $this->Json($content);
 
@@ -87,15 +96,21 @@ class Response extends ResponseHeaders
 
             $this->setContent(
 
-                View::Load(['errors/' . $content['status'], 'errors/default'])->NoLayout()->WithParams($content)
+                View::Load(['errors/' . $content['status'], 'errors/default'])
+
+                    ->NoLayout()
+
+                    ->WithParams($content)
 
             );
 
         }
 
+
         return $this;
 
     }
+
 
 
     public function Exception(\Exception $e): static
@@ -103,7 +118,15 @@ class Response extends ResponseHeaders
 
         if ($e instanceof AppExceptionInterface) {
 
-            $this->ErrorHandler($e->getCode(), $e->getMessage(), $e->getDebugMsg(), $e->getHttpStatusCode(), $e);
+
+            $message = (method_exists($e, 'getErrorMessage'))
+
+                ? $e->getErrorMessage()->Raw()
+
+                : $e->getMessage();
+
+
+            $this->ErrorHandler($e->getCode(), $message, $e->getDebugMsg(), $e->getHttpStatusCode(), $e);
 
         } else {
 
@@ -111,10 +134,10 @@ class Response extends ResponseHeaders
 
         }
 
-
         return $this;
 
     }
+
 
 
     public static function SendException(\Exception $e, $flush_output = true)
@@ -176,6 +199,8 @@ class Response extends ResponseHeaders
 
     }
 
+
+
     /**
      * @return ViewBase
      */
@@ -194,6 +219,8 @@ class Response extends ResponseHeaders
         return $this;
     }
 
+
+
     public function Content()
     {
 
@@ -205,12 +232,14 @@ class Response extends ResponseHeaders
 
     }
 
+
+
     /**
      * @param bool $flush_output
      * @return string
      */
 
-    public function Send($flush_output = true)
+    public function Send(bool $flush_output = true)
     {
 
         $this->SendHeaders();
@@ -221,9 +250,12 @@ class Response extends ResponseHeaders
 
     }
 
+
+
     public function __toString()
     {
         return strval( $this->Send(false) );
     }
+
 
 }

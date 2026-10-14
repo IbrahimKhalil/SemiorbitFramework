@@ -37,7 +37,7 @@ class AppRuntimeException extends \RuntimeException implements AppExceptionInter
     public function __construct($code, $message = "", $debug_msg = "",  $http_status_code = 503, Throwable $previous = null)
     {
 
-        parent::__construct($message, $code, $previous);
+        parent::__construct($this->setErrorMessage($message)->English(), $code, $previous);
 
         $this->setHttpStatusCode($http_status_code)->setDebugMsg($debug_msg);
 

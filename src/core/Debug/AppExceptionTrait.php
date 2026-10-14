@@ -13,6 +13,8 @@ trait AppExceptionTrait
 
     protected $_HttpStatusCode;
 
+    protected ?ErrorMessage $_ErrorMessage = null;
+
 
 
     /**
@@ -65,6 +67,23 @@ trait AppExceptionTrait
         $this->_HttpStatusCode = $HttpStatusCode;
 
         return $this;
+    }
+
+
+
+    /**
+     * Return the original message and its cached language map.
+     */
+
+    public function getErrorMessage(): ErrorMessage
+    {
+        return $this->_ErrorMessage ??= ErrorMessage::Read($this->getMessage());
+    }
+
+
+    public function setErrorMessage(string $message): ErrorMessage
+    {
+        return $this->_ErrorMessage = ErrorMessage::Read($message);
     }
 
 }

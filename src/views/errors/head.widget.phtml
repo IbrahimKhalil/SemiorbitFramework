@@ -136,7 +136,6 @@
 
         .error-reference {
             display       : flex;
-            align-items   : flex-start;
             gap           : 8px;
             width         : fit-content;
             max-width     : calc(100% - 24px);
@@ -155,11 +154,17 @@
             cursor        : copy;
             user-select   : none;
             appearance    : none;
+            align-items   : stretch;
         }
 
         .error-reference .error-code {
-            flex      : 0 0 auto;
-            font-size : inherit;
+            display         : flex;
+            align-items     : center;
+            justify-content : center;
+            align-self      : stretch;
+            flex            : 0 0 auto;
+            font-size       : inherit;
+            margin-block    : -2px;
         }
 
         .error-reference code {
@@ -176,6 +181,23 @@
             outline        : 2px solid #79c5cc;
             outline-offset : 3px;
         }
+
+        .error-reference-text {
+            display        : flex;
+            flex-direction : column;
+            gap            : 3px;
+            min-width      : 0;
+            flex           : 1 1 auto;
+        }
+
+        .error-reference .error-message,
+        .error-reference .error-type {
+            display       : block;
+            font          : inherit;
+            white-space   : pre-wrap;
+            overflow-wrap : anywhere;
+        }
+
 
     </style>
 </head>

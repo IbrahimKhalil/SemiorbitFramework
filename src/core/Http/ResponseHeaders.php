@@ -201,6 +201,8 @@ class ResponseHeaders implements ResponseStatus
         return 403 === $this->_StatusCode;
     }
 
+
+
     /**
      * Is the response a not found error?
      *
@@ -210,6 +212,8 @@ class ResponseHeaders implements ResponseStatus
     {
         return 404 === $this->_StatusCode;
     }
+
+
 
     /**
      * Is the response a redirect of some form?
@@ -232,9 +236,11 @@ class ResponseHeaders implements ResponseStatus
         return in_array($this->_StatusCode, array(204, 304));
     }
 
-    public function HasStatusCode($code)
+
+
+    public function HasStatusCode($code): bool
     {
-        return array_key_exists($code, static::STATUS_MESSAGES);
+        return array_key_exists((int) $code, static::STATUS_MESSAGES);
     }
 
 }

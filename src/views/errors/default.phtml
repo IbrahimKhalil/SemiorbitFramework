@@ -1,69 +1,111 @@
 <?php
 
 use Semiorbit\Config\Config;
+use Semiorbit\Debug\ErrorMessage;
 use Semiorbit\Output\Render;
 use Semiorbit\Translation\Lang;
 
+
+
 if (!defined('LANG')) Lang::UseLang('en');
+
 
 $error_status = $this->status ?: $this->code ?: 503;
 
+$error_locale = strtolower(str_replace('_', '-', (string) (Lang::ActiveLang() ?: 'en')));
+
+$error_message = ErrorMessage::Read((string) ($this->msg ?: 'An error occurred!'));
+
+$error_type = (string) $this->type;
+
 ?>
-<html lang="en">
+<html lang="<?= htmlspecialchars($error_locale, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
 
 <?= Render::Widget('errors/head') ?>
 
 <body>
 
 <div class="container">
+
     <img
             src="<?= Render::Widget(['errors/icons/' . $error_status, 'errors/icons/default']) ?>"
-            alt="<?= $this->status ?>"/>
+            alt="<?= (int) $error_status ?>"
+    />
+
     <div dir="ltr">
+
         <h1>
-            <i><?= $error_status ?></i>
-            <span>
-                <?= $this->msg ?: "An error occurred!" ?>
-            </span>
+
+            <i><?= (int) $error_status ?></i>
+
+            <span dir="auto">
+				<?= htmlspecialchars($error_message->ActiveLang(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+			</span>
+
         </h1>
 
         <button
                 type="button"
                 class="error-reference"
-                title="Click to copy error type"
-                aria-label="Copy error type">
+                title="Click to copy message and error type"
+                aria-label="Copy message and error type">
 
             <strong class="error-code">#<?= (int) $this->code ?></strong>
 
-            <code><?= htmlspecialchars((string) $this->type, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></code>
+            <span class="error-reference-text">
+
+				<span class="error-message"><?= htmlspecialchars($error_message->English(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></span>
+
+				<code class="error-type"><?= htmlspecialchars($error_type, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></code>
+
+			</span>
 
         </button>
 
-
     </div>
 
-    <?php if (Config::DebugMode()) :?>
+    <?php if (Config::DebugMode()) : ?>
 
-    <section>
-        <h5>Exception <?= $this->code ?></h5>
-        <p><?= $this->debug_msg ?: $this->msg ?></p>
-        <p class="lighter">
-            <strong>Line:</strong> <?= $this->line ?> -
-            <strong>File:</strong> <?= $this->file ?>
-        </p>
-    </section>
+        <section>
 
-    <div class="trace">
-        <?= Render::Widget('errors/trace')->With('trace', $this->trace) ?>
-    </div>
+            <h5>Exception <?= (int) $this->code ?></h5>
+
+            <p><?= htmlspecialchars((string) ($this->debug_msg ?: $error_message->ActiveLang()), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
+
+            <p class="lighter">
+
+                <strong>Line:</strong> <?= (int) $this->line ?> -
+
+                <strong>File:</strong> <?= htmlspecialchars((string) $this->file, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+
+            </p>
+
+        </section>
+
+        <div class="trace">
+            <?= Render::Widget('errors/trace')->With('trace', $this->trace) ?>
+        </div>
 
     <?php endif; ?>
+
 </div>
 
 <script>
+
     const errorReference = document.querySelector('.error-reference');
+
     const errorCodeBadge = errorReference.querySelector('.error-code');
+
     const errorCodeLabel = errorCodeBadge.textContent;
+
+    const errorCopyText = [
+
+        errorReference.querySelector('.error-message').textContent.trim(),
+
+        errorReference.querySelector('.error-type').textContent.trim()
+
+    ].join('\n');
+
 
     let errorCopyTimeout;
 
@@ -73,9 +115,7 @@ $error_status = $this->status ?: $this->code ?: 503;
 
         try {
 
-            await navigator.clipboard.writeText(
-                errorReference.querySelector('code').textContent.trim()
-            );
+            await navigator.clipboard.writeText(errorCopyText);
 
             errorCodeBadge.textContent = 'Copied';
 
@@ -93,7 +133,6 @@ $error_status = $this->status ?: $this->code ?: 503;
 
     });
 </script>
-
 
 </body>
 </html>
