@@ -14,8 +14,7 @@ use Semiorbit\Translation\Lang;
 /**
  * Bilingual messages for integer-backed error enums.
  *
- * @property-read int $value
- * @property-read string $name
+ * @mixin \BackedEnum
  */
 
 trait ErrorEnumTrait
