@@ -806,7 +806,7 @@ abstract class DefaultConfig
     #endregion
 
 
-    abstract public static function ValueOf($config_group, $config_key, $default = false);
+    abstract public static function ValueOf($config_group, $config_key, $fallback = false);
 
 	abstract public static function setValueOf($config_group, $config_key, $value);
 	

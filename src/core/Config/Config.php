@@ -82,6 +82,7 @@ final class Config extends DefaultConfig
     }
 
 
+
     /**
      * @param $config_key
      * @param null $fallback
@@ -94,22 +95,28 @@ final class Config extends DefaultConfig
         return static::ValueOf($group, $key, $fallback);
     }
 
+
+
     /**
      * @param $config_group
      * @param $config_key
-     * @param null $fallback
+     * @param mixed $fallback
      * @return mixed Returns config value, or <b>abort</b> application if not config key found.
      */
-    final public static function ValueOf($config_group, $config_key, $fallback = null)
+    final public static function ValueOf($config_group, $config_key, $fallback = null): mixed
     {
-        /** @noinspection PhpVoidFunctionResultUsedInspection */
-        return self::$__Config[$config_group][$config_key] ??
 
-            ($fallback ?: self::MissingConfig($config_group, $config_key));
+        return array_key_exists($config_key, self::$__Config[$config_group] ?? [])
+
+            ? self::$__Config[$config_group][$config_key]
+
+            : ($fallback ?? self::MissingConfig($config_group, $config_key));
+
+
     }
 
 
-    final public static function MissingConfig($config_group, $config_key)
+    final public static function MissingConfig($config_group, $config_key): never
     {
         FrameworkCache::Clear('config');
 
