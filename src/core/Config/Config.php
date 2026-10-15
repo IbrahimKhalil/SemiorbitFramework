@@ -25,13 +25,13 @@ final class Config extends DefaultConfig
     private static $__Connections = [];
 
 
-	private static $__Loaded;
+	private static bool $__Loaded = false;
 
 
-	final public static function Load($reload = false)
-	{
+	final public static function Load($reload = false): void
+    {
 
-	    if (static::$__Loaded && !$reload) return;
+	    if (self::$__Loaded && !$reload) return;
 
 
 	    if (! self::$__Config = FrameworkCache::ReadVar('config')) {
@@ -45,6 +45,8 @@ final class Config extends DefaultConfig
             FrameworkCache::StoreVar('config', self::$__Config);
 
         }
+
+        self::$__Loaded = true;
 
     }
 
