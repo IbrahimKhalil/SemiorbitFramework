@@ -482,4 +482,31 @@ class Str
         return Str::Quote($str, '"');
     }
 
+
+
+    /**
+     * Escape a string for insertion into HTML text or a quoted HTML attribute.
+     *
+     * Defaults to UTF-8, escapes both quote types, and replaces invalid encoding
+     * sequences with the Unicode replacement character.
+     *
+     * This method does not sanitize HTML or validate URLs, CSS, or JavaScript.
+     * Apply it to plain text rather than markup intended to remain HTML.
+     *
+     * @param string $value The text to escape.
+     * @param int $flags Bitmask of htmlspecialchars() flags. Defaults to ENT_QUOTES | ENT_SUBSTITUTE.
+     * @param string $encoding Character encoding of the input. Defaults to UTF-8.
+     * @param bool $double_encode Whether to encode existing HTML entities again.
+     *                            Set to false to preserve recognized entities.
+     *
+     * @return string The escaped text.
+     *
+     * @see htmlspecialchars()
+     */
+
+    public static function EscapeHtml(string $value, int $flags = ENT_QUOTES | ENT_SUBSTITUTE, string $encoding = 'UTF-8', bool $double_encode = true): string
+    {
+        return htmlspecialchars($value, $flags, $encoding, $double_encode);
+    }
+
 }
