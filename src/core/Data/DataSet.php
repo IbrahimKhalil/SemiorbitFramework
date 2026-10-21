@@ -66,7 +66,7 @@ class DataSet extends Model
 
                 if ($ds->Policy()->AllowsCreate()) {
 
-                    $res = $ds->InsertRow();
+                    $res = $ds->Save();
 
                     $ds->onUserInsertedRow($res, $show_form, Config::ShowErrReport(), $output);
 
@@ -76,7 +76,7 @@ class DataSet extends Model
 
                 if ($ds->Policy()->AllowsUpdate()) {
 
-                    $res = $ds->UpdateRow();
+                    $res = $ds->Save();
 
                     $ds->onUserUpdatedRow($res, $show_form, Config::ShowErrReport(), $output);
 
