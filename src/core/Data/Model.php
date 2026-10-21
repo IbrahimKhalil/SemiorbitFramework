@@ -979,18 +979,6 @@ class Model implements \JsonSerializable
             $id_value = $this->ID->WhereClausePrepareValue($this->ID->Value);
 
 
-            foreach ($this->Fields() as $field) :
-
-                /**@var File $field */
-
-                if ($field->Type == DataType::FILE) {
-
-                    $field->DeleteFiles();
-                }
-
-            endforeach;
-
-
             /** @noinspection SqlNoDataSourceInspection */
             /** @noinspection SqlResolve */
             $sql = "DELETE FROM {$this->TableName()} WHERE `" . $this->ID->Name . "` = {$id_value}";
@@ -1008,6 +996,22 @@ class Model implements \JsonSerializable
             /** @noinspection PhpExpressionResultUnusedInspection */
             $this->onRemove($res);
 
+
+            if ($res) {
+
+                foreach ($this->Fields() as $field) :
+
+                    /**@var File $field */
+
+                    if ($field->Type == DataType::FILE) {
+
+                        $field->DeleteFiles();
+
+                    }
+
+                endforeach;
+
+            }
 
             return $res;
 
