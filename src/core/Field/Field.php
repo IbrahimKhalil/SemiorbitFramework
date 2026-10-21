@@ -16,6 +16,8 @@ use Semiorbit\Data\DataSet;
 use Semiorbit\Db\DB;
 use Semiorbit\Form\Form;
 use Semiorbit\Form\FormTemplate;
+use Semiorbit\Http\RequestInput;
+use Semiorbit\Http\RequestInputPost;
 use Semiorbit\Output\TableViewCol;
 use Semiorbit\Support\AltaArray;
 use Semiorbit\Support\Filter;
@@ -1415,6 +1417,70 @@ class Field extends AltaArray implements FieldProps
 
         return $this;
 
+    }
+
+
+
+
+
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * Create a GET input reader bound to this field.
+     *
+     * Call a filtering method on the returned reader to assign the requested input.
+     * Creating the reader alone does not change this field's value.
+     *
+     * Supported missing-input policies:
+     * - KEEP_FIELD_VALUE: preserve the current field value.
+     * - SET_FIELD_DEFAULT_VALUE: restore the field's DefaultValue.
+     * - SET_ALT_VALUE: assign the supplied alternative value.
+     * - EMPTY_VALUE: assign null.
+     *
+     * An unknown policy falls back to KEEP_FIELD_VALUE.
+     * These policies apply only when the requested input key is absent.
+     *
+     * Example: $record->Lang->SetFromRequestInput()->String('lang');
+     *
+     * @param int $on_missing_input A RequestInput policy controlling absent inputs.
+     * @param mixed $alt_value The value assigned when SET_ALT_VALUE is selected.
+     *
+     * @return RequestInput A GET input reader bound to this field.
+     */
+
+    public function setFromRequestInput(int $on_missing_input = RequestInput::KEEP_FIELD_VALUE, mixed $alt_value = null): RequestInput
+    {
+        return new RequestInput($this, $on_missing_input, $alt_value);
+    }
+
+
+
+    /**
+     * ---------------------------------------------------------------------------------------------
+     * Create a POST input reader bound to this field.
+     *
+     * Call a filtering method on the returned reader to assign the requested input.
+     * Creating the reader alone does not change this field's value.
+     *
+     * Supported missing-input policies:
+     * - KEEP_FIELD_VALUE: preserve the current field value.
+     * - SET_FIELD_DEFAULT_VALUE: restore the field's DefaultValue.
+     * - SET_ALT_VALUE: assign the supplied alternative value.
+     * - EMPTY_VALUE: assign null.
+     *
+     * An unknown policy falls back to KEEP_FIELD_VALUE.
+     * These policies apply only when the requested input key is absent.
+     *
+     * Example: $record->Lang->SetFromRequestInputPost()->String('lang');
+     *
+     * @param int $on_missing_input A RequestInput policy controlling absent inputs.
+     * @param mixed $alt_value The value assigned when SET_ALT_VALUE is selected.
+     *
+     * @return RequestInputPost A POST input reader bound to this field.
+     */
+
+    public function setFromRequestInputPost(int $on_missing_input = RequestInput::KEEP_FIELD_VALUE, mixed $alt_value = null): RequestInputPost
+    {
+        return new RequestInputPost($this, $on_missing_input, $alt_value);
     }
 
 
