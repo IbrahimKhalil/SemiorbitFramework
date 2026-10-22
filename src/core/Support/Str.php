@@ -509,4 +509,37 @@ class Str
         return htmlspecialchars($value, $flags, $encoding, $double_encode);
     }
 
+
+
+    /**
+     * Keep Latin letters, combining accents, digits, spaces and supported punctuation.
+     * Preserves literal apostrophes without HTML encoding and trims the result.
+     *
+     * @param string|null $input Text to filter.
+     * @param bool $strip_tags Remove HTML tags before filtering.
+     *
+     * @return string Filtered text, or an empty string for null input.
+     */
+
+    public static function LatinText(?string $input, bool $strip_tags = true): string
+    {
+
+        $input ??= '';
+
+        if ($strip_tags) $input = strip_tags($input);
+
+
+        return trim(preg_replace(
+
+            '/[^\p{Latin}\p{M}0-9 .,\'’&()_:+!?#@%\-]+/u',
+
+            '',
+
+            $input
+
+        ) ?? '');
+
+    }
+
+
 }
