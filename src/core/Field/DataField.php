@@ -33,6 +33,8 @@ class DataField
 
             ->IsUUID_SHORT()
 
+            ->SerializeValueAsString()
+
             ->setUnsigned()
 
             ->setRequired();
