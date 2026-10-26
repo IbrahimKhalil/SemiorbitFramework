@@ -511,6 +511,48 @@ class Model implements \JsonSerializable
 
     }
 
+
+    /**
+     * -------------------------------------------------------------------------------------------------------------
+     * Lock a row until the current transaction commits or rolls back.
+     * -------------------------------------------------------------------------------------------------------------
+     *
+     * Call inside an active transaction on this model's connection.
+     *
+     * @param mixed $id Row ID; null uses the model's current ID.
+     * @return bool True when the row exists and is locked; false when no row is found.
+     */
+
+    public function LockRow($id = null): bool
+    {
+
+        if (!$this->ID()) return false;
+
+        $id ??= $this->ID->Value;
+
+        if (is_empty($id)) return false;
+
+
+        $id_value = $this->ID->WhereClausePrepareValue($id);
+
+
+        /** @noinspection SqlNoDataSourceInspection */
+        /** @noinspection SqlResolve */
+
+        $sql = "SELECT `{$this->ID->Name}`
+
+        FROM {$this->TableName()}
+
+        WHERE `{$this->ID->Name}` = {$id_value}
+
+        FOR UPDATE";
+
+
+        return $this->ActiveConnection()->Has($sql) > 0;
+
+    }
+
+
     public function ImplementsAccessControlPolicyInterface(): bool
     {
         return $this->_ImplementsAccessControlPolicyInterface === null ?
