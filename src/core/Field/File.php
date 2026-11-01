@@ -65,6 +65,8 @@ class File extends Field
 
     public $TargetFileName;
 
+    public $FileNameField;
+
     public $FileTypes = 'jpg|png|gif|jpeg';
 
     public $SubDirectory;
@@ -83,11 +85,16 @@ class File extends Field
 
     public $CleanDataBeforeDeleteFile = true;
 
+    protected ?\Closure $_UrlBuilder = null;
+
+
     const REMOVE_FILE_KEY = 'f86257bd9ce35726333e90ede8d34ac6';
     
     const REMOVE_FILE_KEY_TM = File::REMOVE_FILE_KEY . 'tm';
 
     const TRACKER_PREFIX = 'tracker::';
+
+
 
     public function PreRender()
     {
@@ -249,16 +256,62 @@ class File extends Field
 
 
 
-    public function FileName($old_data_value = false)
+    /**
+     * Resolve the filename stem without its extension.
+     *
+     * Resolution order:
+     * 1. The part before the last dot in the **stored file "value"**, if any.
+     * 2. **TargetFileName**, when configured.
+     * 3. **FileNameField value**, when configured and a dataset is attached.
+     *    Accepts a field name (string), or a Field object (Field).
+     * 4. **ID value** of the active dataset.
+     * 5. A newly generated uniqid() when no dataset is attached.
+     *
+     * Field values are returned as-is, without formatting or binary conversion.
+     *
+     * @param bool $old_data_value Read the stored file value through DataValue()
+     *                             instead of the current Value. This does not
+     *                             select an old FileNameField or ID value.
+     *
+     * @return string The resolved filename stem.
+     */
+
+    public function FileName(bool $old_data_value = false): string
     {
 
         $value_parts = $this->ValueParts($old_data_value);
 
-        return ( count($value_parts)  > 1 ) ? $value_parts[0] : ( $this->ActiveDataSet() ? $this->ActiveDataSet()->ID->Value :
+        return (count($value_parts) > 1) ? strval($value_parts[0]) :
 
-            ( $this->TargetFileName ?: ( $this->TargetFileName = uniqid() ) ) );
+            strval($this->TargetFileName ?: (
+
+                $this->ActiveDataSet() ?
+
+                    ($this->FileNameField
+
+                        ? (is_string($this->FileNameField) ?
+
+                            $this->ActiveDataSet()->FieldByName($this->FileNameField)->ToStringOrHex()
+
+                            : $this->FileNameField->ToStringOrHex())
+
+                        : $this->ActiveDataSet()->ID->ToStringOrHex())
+
+                : ($this->TargetFileName = uniqid())
+
+            ));
+
 
     }
+
+
+    protected function FileNameFromField(Field $field): string
+    {
+        return $field->Type === DataType::BINARY
+            ? bin2hex($field->Value ?? '')
+            : strval($field->Value);
+    }
+
 
     public function FileExt($old_data_value = false)
     {
@@ -275,14 +328,46 @@ class File extends Field
 
     }
 
-    protected function ValueParts($old_data_value = false)
+
+    /**
+     * Split the file value into a filename stem and extension.
+     *
+     * Splits at the last dot, preserving earlier dots in the filename.
+     * A value without a dot remains a single element, supporting the
+     * framework's extension-only storage format.
+     *
+     * Examples:
+     * - 'pdf'              → ['pdf']
+     * - 'report.pdf'       → ['report', 'pdf']
+     * - 'report.final.pdf' → ['report.final', 'pdf']
+     * - 'photo.backup.jpg' → ['photo.backup', 'jpg']
+     * - ''                 → ['']
+     *
+     * This method only parses the file value. It does not resolve
+     * TargetFileName, FileNameField, or the dataset ID.
+     *
+     * @param bool $old_data_value Use DataValue() instead of the current Value.
+     *
+     * @return array{0: string, 1?: string} One element for an extension-only
+     *                                    value; otherwise, the stem and extension.
+     */
+
+    protected function ValueParts(bool $old_data_value = false): array
     {
-        return explode( '.', $old_data_value ? $this->DataValue() : ($this->Value ?? '') );
+
+        $value = $old_data_value ? $this->DataValue() : ($this->Value ?? '');
+
+        return str_contains($value, '.')
+
+            ? [pathinfo($value, PATHINFO_FILENAME), pathinfo($value, PATHINFO_EXTENSION)]
+
+            : [$value];
+
     }
 
     public function BaseName($old_data_value = false)
     {
-        return $this->FileName($old_data_value) . '.' . $this->FileExt($old_data_value);
+        return $this->FileName(boolval($old_data_value)) . '.' . $this->FileExt($old_data_value);
     }
 
     public function Path($thumbnail = null, $old_data_value = false)
@@ -307,8 +392,11 @@ class File extends Field
 
     }
 
-    public function URL($thumbnail = null, $add_file_time = true)
+    public function URL($thumbnail = null, $add_file_time = true): string
     {
+
+        if ($this->_UrlBuilder) return (string) ($this->_UrlBuilder)($this, $thumbnail, $add_file_time);
+
 
         $documents_url = $this->ActiveDataSet() ? $this->ActiveDataSet()->DocumentsURL() : Config::DocumentsURL();
 
@@ -318,9 +406,27 @@ class File extends Field
 
         $file_time_suffix = $add_file_time ? '?' . $this->FileTime($thumbnail) : '';
 
-        return $documents_url . $relative_dir_path . $this->BaseName() . $file_time_suffix;
+        return $documents_url . $relative_dir_path .  rawurlencode($this->BaseName()) . $file_time_suffix;
 
     }
+
+
+    /**
+     * Set a custom file URL builder.
+     *
+     * @param callable|null $callback Receives (File $file, $thumbnail, $add_file_time)
+     *                                and returns the URL. Pass null to reset.
+     * @return static
+     */
+    public function UseUrlBuilder(?callable $callback): static
+    {
+
+        $this->_UrlBuilder = $callback === null ? null : $callback(...);
+
+        return $this;
+
+    }
+
 
     public function Upload()
     {
@@ -339,15 +445,38 @@ class File extends Field
 
         }
 
+
+
+
+        $file_ext = Uploader::FileExt(is_array($this->SourceFile) ? $this->SourceFile['name'] : $this->SourceFile);
+
+
         $this->DeleteFiles(true, true);
 
-        $upload_res = Uploader::Upload( $this->SourceFile, $this->DirPath( null, true, true ), $this->FileName() );
+
+        $this->Value = $file_ext;
+
+        $file_name = $this->FileName();
+
+
+        $upload_res = Uploader::Upload(
+
+            $this->SourceFile,
+
+            $this->DirPath(null, true, true),
+
+            $file_name
+
+        );
+
+
+
 
         if ( $upload_res === Msg::UPLOAD_OK ) {
 
-            $file_ext = is_array( $this->SourceFile ) ? Uploader::FileExt( $this->SourceFile['name'] ) : Uploader::FileExt( $this->SourceFile );
 
-            $this->Value = $this->TargetFileName ? $this->TargetFileName . $file_ext : $file_ext;
+            $this->Value = ($this->TargetFileName || count($this->ValueParts()) > 1) ? $file_name . '.' . $file_ext : $file_ext;
+
 
             if (! $this->CreateThumbnails()) return  Msg::RESIZE_FAILED;
             
@@ -553,10 +682,26 @@ class File extends Field
 
     public function setTargetFileName($value)
     {
-        $this->TargetFileName = strval($value);
+        $this->TargetFileName = trim(strval($value));
 
         return $this;
     }
+
+
+    /**
+     * Use another dataset field as the filename stem.
+     *
+     * @param string|Field $field
+     * @return File
+     */
+    public function UseFieldAsFileName(string|Field $field): static
+    {
+        $this->FileNameField = $field instanceof Field ? $field->Name : $field;
+
+        return $this;
+    }
+
+
 
     /**
      * @param $value

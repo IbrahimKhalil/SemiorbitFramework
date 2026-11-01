@@ -470,7 +470,7 @@ class Field extends AltaArray implements FieldProps
 
                     $file_ext = is_array($this->SourceFile) ? Uploader::FileExt($this->SourceFile['name']) : Uploader::FileExt($this->SourceFile);
 
-                    $this->Value = $this->TargetFileName ? $this->TargetFileName . $file_ext : $file_ext;
+                    $this->Value = $this->TargetFileName ? $this->TargetFileName . '.' . $file_ext : $file_ext;
                 }
 
             } else {
@@ -846,6 +846,16 @@ class Field extends AltaArray implements FieldProps
     public function __toString()
     {
         return strval($this->Html());
+    }
+
+    public function ToHex(): string
+    {
+        return bin2hex($this->Value ?? '');
+    }
+
+    public function ToStringOrHex(): string
+    {
+        return $this->Type === DataType::BINARY ? $this->ToHex() : $this->ToString();
     }
 
 

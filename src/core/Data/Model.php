@@ -832,11 +832,29 @@ class Model implements \JsonSerializable
 
     }
 
-    public function RenameUploadedFiles($current_id, $new_id)
+    public function RenameUploadedFiles($current_id, $new_id): void
     {
-        foreach ($this->Fields() as $k => $field)
 
-            if ($field instanceof File) $field->Rename($current_id, $new_id);
+        foreach ($this->Fields() as $field) {
+
+            if (!($field instanceof File)) continue;
+
+            if ($field->TargetFileName || str_contains($field->Value ?? '', '.')) continue;
+
+
+            $myFileNameField = is_string($field->FileNameField)
+
+                ? $this->FieldByName($field->FileNameField)
+
+                : $field->FileNameField;
+
+
+            if (!$field->FileNameField || $myFileNameField === $this->ID)
+
+                $field->Rename($current_id, $new_id);
+
+        }
+
     }
 
     public function SaveEditorResources()
