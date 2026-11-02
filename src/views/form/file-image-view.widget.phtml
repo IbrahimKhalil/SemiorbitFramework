@@ -1,1 +1,10 @@
-<img class="semiorbit-file-image" src="<?=$this->url?>?<?=$this->time?>" alt="<?=$this->title?>" />
+<?php
+
+use Semiorbit\Http\Url;
+
+
+$url = Url::WithFileTime($this->url ?? '', $this->time);
+
+?>
+
+<img class="semiorbit-file-image" src="<?= htmlspecialchars($url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" alt="<?= htmlspecialchars($this->title ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" />

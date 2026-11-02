@@ -183,6 +183,9 @@ class AppManager
         ## EXT ##
         define('EXT', PUBLIC_URL . Path::Normalize( Config::JsExtDir() ));
 
+        ## STORAGE ##
+        define('STORAGE_PATH', Path::Normalize($app->StoragePath()));
+
 
 
 

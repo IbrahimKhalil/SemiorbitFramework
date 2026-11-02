@@ -19,7 +19,7 @@ $myTemplate = $field->ActiveTemplate();
 
     <?= $myTemplate->OpenInput($dummyField) ?>
 
-    <?php if (in_array($field->FileExt(), array('png', 'jpg', 'gif', 'jpeg'))) echo $field->HtmlView(reset($field->Thumbnails) ? key($field->Thumbnails) : null, 'image'); ?>
+    <?php if (in_array($field->FileExt(), array('png', 'jpg', 'gif', 'jpeg', 'svg', 'webp'))) echo $field->HtmlView(reset($field->Thumbnails) ? key($field->Thumbnails) : null, 'image'); ?>
 
     <?php if (!empty($field->Value)) : ?>
 

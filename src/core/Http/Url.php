@@ -282,6 +282,23 @@ class Url
 
     }
 
+
+    /**
+     * Append a file timestamp while preserving query parameters and fragments.
+     */
+
+    public static function WithFileTime(string $url, int $file_time): string
+    {
+
+        $url_parts = explode('#', $url, 2);
+
+        $url = static::ConcatUrl($url_parts[0], strval($file_time));
+
+        return $url . (isset($url_parts[1]) ? '#' . $url_parts[1] : '');
+
+    }
+
+
     public static function QueryString(array $exclude_params = array(), array $set_params = array(), $prepend = '?')
     {
 

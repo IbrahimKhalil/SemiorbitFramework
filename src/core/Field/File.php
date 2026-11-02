@@ -11,8 +11,10 @@ namespace Semiorbit\Field;
 
 use Semiorbit\Config\Config;
 use Semiorbit\Data\Msg;
+use Semiorbit\Http\Url;
 use Semiorbit\Output\TableViewCol;
 use Semiorbit\Session\Session;
+use Semiorbit\Support\Downloader;
 use Semiorbit\Support\Path;
 use Semiorbit\Support\Uploader;
 
@@ -267,7 +269,7 @@ class File extends Field
      * 4. **ID value** of the active dataset.
      * 5. A newly generated uniqid() when no dataset is attached.
      *
-     * Field values are returned as-is, without formatting or binary conversion.
+     * Binary field values are converted to hexadecimal; other field values to strings.
      *
      * @param bool $old_data_value Read the stored file value through DataValue()
      *                             instead of the current Value. This does not
@@ -302,14 +304,6 @@ class File extends Field
             ));
 
 
-    }
-
-
-    protected function FileNameFromField(Field $field): string
-    {
-        return $field->Type === DataType::BINARY
-            ? bin2hex($field->Value ?? '')
-            : strval($field->Value);
     }
 
 
@@ -404,9 +398,11 @@ class File extends Field
 
         if ( ! empty( $relative_dir_path ) ) $relative_dir_path .= '/';
 
-        $file_time_suffix = $add_file_time ? '?' . $this->FileTime($thumbnail) : '';
 
-        return $documents_url . $relative_dir_path .  rawurlencode($this->BaseName()) . $file_time_suffix;
+        $url = $documents_url . $relative_dir_path . rawurlencode($this->BaseName());
+
+
+        return $add_file_time ? Url::WithFileTime($url, $this->FileTime($thumbnail)) : $url;
 
     }
 
@@ -475,7 +471,7 @@ class File extends Field
         if ( $upload_res === Msg::UPLOAD_OK ) {
 
 
-            $this->Value = ($this->TargetFileName || count($this->ValueParts()) > 1) ? $file_name . '.' . $file_ext : $file_ext;
+            $this->Value = $this->TargetFileName ? $file_name . '.' . $file_ext : $file_ext;
 
 
             if (! $this->CreateThumbnails()) return  Msg::RESIZE_FAILED;
@@ -590,7 +586,13 @@ class File extends Field
     public function HtmlView($thumbnail = null, $view = null)
     {
 
+        if (empty($this->Value)) return '';
+
+        if ($thumbnail && !$this->FileExists($thumbnail)) $thumbnail = null;
+
+
         if ( ! $view ) $view = $this->View;
+
 
         $html_output = '';
 
@@ -598,7 +600,7 @@ class File extends Field
 
         if ( $view == FieldView::IMAGE ) {
 
-            if ( in_array( $this->FileExt(), array('png', 'jpg', 'gif', 'jpeg', 'svg') ) )
+            if ( in_array( $this->FileExt(), ['png', 'jpg', 'gif', 'jpeg', 'svg', 'webp'] ) )
 
                 $html_output = $this->ActiveTemplate()->Widget('file-image-view', array('url' => $url,
 
@@ -650,6 +652,21 @@ class File extends Field
         return $myCol;
     }
 
+    /**
+     * Send this file and end the request.
+     *
+     * @param string|null $download_name Browser filename; null uses basename.
+     * @param bool $inline Display in the browser instead of forcing download.
+     * @param string|null $thumbnail Thumbnail name; null sends the original.
+     * @param bool $no_cache Prevent browser caching; false allows private caching.
+     */
+
+    public function Download(?string $download_name = null, bool $inline = false, ?string $thumbnail = null, bool $no_cache = false): never
+    {
+
+        Downloader::Send($this->RealPath($thumbnail), $download_name, $inline, $no_cache);
+
+    }
 
     /**
      * @param $value

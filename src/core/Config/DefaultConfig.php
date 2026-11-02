@@ -47,6 +47,8 @@ abstract class DefaultConfig
 
     const GROUP_SERVICES = "services";
 
+    const GROUP__DOWNLOADS = "downloads";
+
     #endregion
 
 
@@ -99,6 +101,49 @@ abstract class DefaultConfig
         return static::ValueOf(self::GROUP__APP, self::APP__DEBUG_MODE);
     }
 
+
+
+    #region "DOWNLOADS"
+
+    ## -----------------------------------------------------------
+    ## FILE DOWNLOAD SETTINGS
+    ## -----------------------------------------------------------
+
+
+    const DOWNLOADS__HTTP_SERVER = "http_server";
+
+
+    public static function DownloadHttpServer()
+    {
+
+        return static::ValueOf(self::GROUP__DOWNLOADS, self::DOWNLOADS__HTTP_SERVER, 'apache');
+
+    }
+
+
+    const DOWNLOADS__SENDFILE_ENABLED = "sendfile_enabled";
+
+
+    public static function DownloadSendfileEnabled()
+    {
+
+        return static::ValueOf(self::GROUP__DOWNLOADS, self::DOWNLOADS__SENDFILE_ENABLED, false);
+
+    }
+
+
+    const DOWNLOADS__NGINX_MAPPINGS = "nginx_mappings";
+
+
+    public static function DownloadNginxMappings()
+    {
+
+        return static::ValueOf(self::GROUP__DOWNLOADS, self::DOWNLOADS__NGINX_MAPPINGS, []);
+
+    }
+
+
+    #endregion
 
 
     ## -----------------------------------------------------------

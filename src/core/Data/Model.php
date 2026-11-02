@@ -47,6 +47,7 @@ class Model implements \JsonSerializable
 
     const CONNECTION = null;
 
+    const STORAGE = null;
 
     protected $_ID = null;
 
@@ -160,16 +161,19 @@ class Model implements \JsonSerializable
      * @return $this
      */
 
-    public function UseDocuments($documents_path = null)
+    public function UseDocuments($documents_path = null): static
     {
 
-        if ( is_empty($documents_path) ) $documents_path = Config::DocumentsPath(false);
+        if ( is_empty($documents_path) )
+
+            $documents_path = static::STORAGE ?? Config::DocumentsPath(false);
+
 
         $this->_DocumentsPath = Path::Normalize($documents_path);
 
         if ( ! Path::IsAbsolute($documents_path) ) $documents_path = PUBLICPATH . $documents_path;
 
-        $this->_DocumentsRealPath = $documents_path;
+        $this->_DocumentsRealPath = Path::Normalize($documents_path);
 
         return $this;
 

@@ -1,6 +1,15 @@
 <?php
+
+use Semiorbit\Http\Url;
 use Semiorbit\Output\Render;
+
+
+$url = Url::WithFileTime($this->url ?? '', $this->time);
+
 ?>
-<a href="<?= $this->url ?>?<?=$this->time?>" class="semiorbit-file-icon-link" target="_blank" title="<?= $this->title ?>">
-    <?= Render::FileIcon( $this->ext ) ?>
+
+<a href="<?= htmlspecialchars($url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="semiorbit-file-icon-link" target="_blank" title="<?= htmlspecialchars($this->title ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+
+    <?= Render::FileIcon($this->ext) ?>
+
 </a>
