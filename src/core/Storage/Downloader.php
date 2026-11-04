@@ -1,6 +1,6 @@
 <?php
 
-namespace Semiorbit\Support;
+namespace Semiorbit\Storage;
 
 
 use Semiorbit\Config\Config;

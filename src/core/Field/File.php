@@ -14,9 +14,9 @@ use Semiorbit\Data\Msg;
 use Semiorbit\Http\Url;
 use Semiorbit\Output\TableViewCol;
 use Semiorbit\Session\Session;
-use Semiorbit\Support\Downloader;
+use Semiorbit\Storage\Downloader;
+use Semiorbit\Storage\Uploader;
 use Semiorbit\Support\Path;
-use Semiorbit\Support\Uploader;
 
 
 /**
