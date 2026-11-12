@@ -12,7 +12,7 @@ class FilterInput
     {
         $val = static::ValueOf($var);
 
-        return $val ? Str::Filter($val) : null;
+        return $val === null || $val === '' ? null : Str::Filter($val);
     }
 
     public static function Date($var, $format = 'Y-m-d'): ?string
