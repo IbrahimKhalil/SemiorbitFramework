@@ -16,6 +16,7 @@ namespace Semiorbit\Db\Driver;
 
 use Semiorbit\Base\Application;
 use Semiorbit\Config\Config;
+use Semiorbit\Db\TransactionIsolation;
 use Semiorbit\Debug\FileLog;
 use Semiorbit\Support\AltaArray;
 use Semiorbit\Support\AltaArrayKeys;
@@ -394,7 +395,7 @@ class Sqlite3 implements Driver
         return  uniqid('', true);
     }
 
-    public function BeginTransaction()
+    public function BeginTransaction(?TransactionIsolation $isolation = null): bool
     {
         return $this->Connector()->exec('BEGIN;');
     }

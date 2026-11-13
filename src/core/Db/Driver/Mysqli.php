@@ -15,6 +15,7 @@ namespace Semiorbit\Db\Driver;
 
 use Semiorbit\Base\Application;
 use Semiorbit\Config\Config;
+use Semiorbit\Db\TransactionIsolation;
 use Semiorbit\Debug\FileLog;
 use Semiorbit\Field\DataType;
 use Semiorbit\Field\Field;
@@ -455,9 +456,13 @@ class Mysqli implements Driver
 
     }
 
-    public function BeginTransaction()
+    public function BeginTransaction(?TransactionIsolation $isolation = null): bool
     {
+
+        if ($isolation && !$this->Connector()->query('SET TRANSACTION ISOLATION LEVEL ' . $isolation->value)) return false;
+
         return $this->Connector()->begin_transaction();
+
     }
 
     public function Commit()

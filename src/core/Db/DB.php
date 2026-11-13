@@ -312,9 +312,29 @@ class DB
     }
 
 
-    public static function BeginTransaction()
+    /**
+     * Begins a transaction, optionally requesting an isolation level.
+     *
+     * Passing null preserves the connection's existing isolation setting.
+     * An explicit level applies only to this transaction; drivers must reject
+     * unsupported levels and avoid affecting subsequent transactions.
+     *
+     * Isolation does not replace row locks, constraints or retry handling.
+     * Complete a successful transaction with Commit() or Rollback().
+     *
+     * @param TransactionIsolation|null $isolation Requested level, or null for existing behavior.
+     *
+     * @return bool True on success; false when failure is reported without an exception.
+     *
+     * @see Commit()
+     * @see Rollback()
+     * @link https://github.com/semiorbit/framework/blob/master/docs/Reference/TRANSACTIONS.md DOCS: Transaction and Isolation Guide.
+     *
+     */
+
+    public static function BeginTransaction(?TransactionIsolation $isolation = null): bool
     {
-        return  static::ActiveConnection()->Driver()->BeginTransaction();
+        return  static::ActiveConnection()->Driver()->BeginTransaction($isolation);
     }
 
     public static function Commit()
